@@ -1,3 +1,4 @@
+import 'package:culinary_compass/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +12,7 @@ class NavigationMenu extends StatelessWidget {
     return Scaffold(
       bottomNavigationBar: Obx(
         () => NavigationBar(
-          height: 80, // height of navigation bar
+          height: 70, // height of navigation bar
           elevation: 0,
           selectedIndex: controller.selectedIndex.value, //access int wrapped in Rx context
           onDestinationSelected: (index) => controller.selectedIndex.value = index,
@@ -19,7 +20,7 @@ class NavigationMenu extends StatelessWidget {
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
             NavigationDestination(icon: Icon(Icons.book), label: 'Past Logs'),
-            NavigationDestination(icon: Icon(Icons.camera), label: 'Log'),
+            NavigationDestination(icon: Icon(Icons.camera_alt), label: 'Log'),
             NavigationDestination(icon: Icon(Icons.people), label: 'Groups'),
             NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
           ],
@@ -36,7 +37,7 @@ class NavigationController extends GetxController {
 
   // Change when screens are created
   final screens = [
-    Container(color: Colors.green),
+    const HomePage(),
     Container(color: Colors.amber),
     Container(color: Colors.blue),
     Container(color: Colors.orange),
