@@ -1,4 +1,5 @@
 import 'package:culinary_compass/home.dart';
+import 'package:culinary_compass/logging_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -39,7 +40,7 @@ class NavigationController extends GetxController {
   final screens = [
     const HomePage(),
     Container(color: Colors.amber),
-    Container(color: Colors.blue),
+    const LoggingPage(),
     Container(color: Colors.orange),
     Container(color: Colors.purple)
   ];
