@@ -13,12 +13,19 @@ class LoggingPage extends StatefulWidget {
 }
 
 class _LoggingPageState extends State<LoggingPage> {
+  // Logging values
+  // File _picture;
+  late String _name;
+  // var _location;
+  late String _description;
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ImageController());
 
     return Scaffold(
       body: ListView(children: <Widget>[
+        // Image Selection
         Stack(children: [
           // spot for image to show
           Obx(() => controller.selectedImagePath.value == ''
@@ -49,7 +56,6 @@ class _LoggingPageState extends State<LoggingPage> {
           ),
           // camera image picker
           Positioned(
-            // camera image picker
             top: 230,
             right: 20,
             child: FloatingActionButton(
@@ -60,11 +66,44 @@ class _LoggingPageState extends State<LoggingPage> {
             ),
           )
         ]),
-        const Padding(padding: EdgeInsets.only(top: 20)),
-        const TextField(
-          decoration: InputDecoration(
-              hintText: 'Dish Name', border: OutlineInputBorder()),
-        )
+        // Name TextField
+        Container(
+          padding: const EdgeInsets.all(20.0),
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                _name = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Dish Name',
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+        // Location TextField (TO BE IMPLEMENTED)
+        // Tags (TO BE IMPLEMENTED)
+        // Description TextField
+        Container(
+          padding: const EdgeInsets.all(20.0),
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                _description = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Description',
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+        // Save log button (TO BE IMPLEMENTED)
+        ElevatedButton(
+            onPressed: () async {
+              print(_name);
+            },
+            child: const Text('Save'))
       ]),
     );
   }
