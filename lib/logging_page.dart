@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // for reading and writing files
+import 'package:culinary_compass/utils/constants/colors.dart';
+
 
 class LoggingPage extends StatefulWidget {
   const LoggingPage({super.key});
@@ -51,7 +53,7 @@ class _LoggingPageState extends State<LoggingPage> {
                 onPressed: () {
                   controller.getImage(ImageSource.gallery);
                 },
-                backgroundColor: Colors.amber,
+                backgroundColor: CCColors.primaryColor,
                 child: const Icon(Icons.photo)),
           ),
           // camera image picker

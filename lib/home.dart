@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:culinary_compass/utils/constants/colors.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,7 +12,7 @@ class HomePage extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            color: Colors.orange,
+            color: CCColors.primaryColor,
             padding: const EdgeInsets.all(0),
             child: SizedBox(
               height: 400,

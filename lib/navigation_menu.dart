@@ -2,6 +2,7 @@ import 'package:culinary_compass/home.dart';
 import 'package:culinary_compass/logging_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:culinary_compass/utils/constants/colors.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -15,7 +16,7 @@ class NavigationMenu extends StatelessWidget {
         () => NavigationBar(
           height: 70, // height of navigation bar
           elevation: 0,
-          indicatorColor: Colors.amber,
+          indicatorColor: CCColors.primaryColor,
           selectedIndex: controller.selectedIndex.value, //access int wrapped in Rx context
           onDestinationSelected: (index) => controller.selectedIndex.value = index,
           
