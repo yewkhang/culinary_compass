@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 
 class CCAppTheme {
   CCAppTheme._();
@@ -24,7 +25,8 @@ class CCAppTheme {
 
       labelLarge: const TextStyle().copyWith(fontSize: 12, fontWeight: FontWeight.normal, color: Colors.black),
       labelMedium: const TextStyle().copyWith(fontSize: 12, fontWeight: FontWeight.normal, color: Colors.black.withOpacity(0.5)),
-    )
+    ),
+    inputDecorationTheme: CCTextFieldTheme.lightInputDecorationTheme
   );
 
   // dark mode settings
@@ -48,6 +50,7 @@ class CCAppTheme {
 
       labelLarge: const TextStyle().copyWith(fontSize: 12, fontWeight: FontWeight.normal, color: Colors.white),
       labelMedium: const TextStyle().copyWith(fontSize: 12, fontWeight: FontWeight.normal, color: Colors.white.withOpacity(0.5)),
-    )
+    ),
+    inputDecorationTheme: CCTextFieldTheme.lightInputDecorationTheme
   );
 }
