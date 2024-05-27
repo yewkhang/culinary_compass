@@ -1,3 +1,4 @@
+import 'package:culinary_compass/utils/controllers/location_controller.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // for reading and writing files
 import 'package:culinary_compass/utils/constants/colors.dart';
-
 
 class LoggingPage extends StatefulWidget {
   const LoggingPage({super.key});
@@ -25,10 +25,11 @@ class _LoggingPageState extends State<LoggingPage> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ImageController());
+    final locationController = Get.put(LocationController());
 
     return Scaffold(
       body: ListView(children: <Widget>[
-        // Image Selection
+        // ----- IMAGE SELECTION ----- //
         Stack(children: [
           // spot for image to show
           Obx(() => controller.selectedImagePath.value == ''
@@ -69,6 +70,8 @@ class _LoggingPageState extends State<LoggingPage> {
             ),
           )
         ]),
+
+        // ----- TEXT INPUTS ----- //
         // Name TextField
         Container(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
@@ -78,13 +81,76 @@ class _LoggingPageState extends State<LoggingPage> {
                 _name = value;
               });
             },
-            decoration: InputDecoration(
-              hintText: 'Dish Name',
-              border: OutlineInputBorder(),
-            ),
+            decoration: const InputDecoration(
+                hintText: 'Dish Name',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(
+                  Icons.local_dining,
+                  color: CCColors.primaryColor,
+                )),
           ),
         ),
-        // Location TextField (TO BE IMPLEMENTED)
+        // Location TextField
+        Container(
+          padding: const EdgeInsets.all(CCSizes.defaultSpace),
+          child: TextField(
+            controller: locationController.locationSearch,
+            onChanged: (String value) {
+              if (value.isNotEmpty) {
+                locationController.selectedAddress.value = value;
+              }
+            },
+            decoration: const InputDecoration(
+              hintText: 'Location',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(
+                Icons.location_on,
+                color: CCColors.primaryColor,
+              ),
+            ),
+            maxLines: null,
+          ),
+        ),
+        // Location suggestions
+        Obx(
+          () {
+            locationController.isLoading.value;
+            return locationController.showAutoCompleteList
+                ? ListView.builder(
+                    padding: const EdgeInsets.only(
+                        right: CCSizes.defaultSpace,
+                        left: CCSizes.defaultSpace),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: locationController.data != []
+                        ? locationController.data.length
+                        : 0,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(locationController.data[index]
+                                ['description']
+                            .toString()),
+                        leading: const Icon(
+                          Icons.location_on_outlined,
+                          color: CCColors.primaryColor,
+                        ),
+                        onTap: () {
+                          final placeId =
+                              locationController.data[index]['description'];
+                          locationController.inputAddress.value = placeId;
+                          // Display chosen location in textfield
+                          locationController.locationSearch.text =
+                              locationController.inputAddress.value;
+                          // Reset search
+                          locationController.selectedAddress.value = '';
+                          locationController.data = [];
+                        },
+                        tileColor: Colors.grey.withOpacity(0.3),
+                      );
+                    })
+                : const SizedBox(); // When there are not results from location search
+          },
+        ),
         // Tags (TO BE IMPLEMENTED)
         // Description TextField
         Container(
@@ -95,9 +161,10 @@ class _LoggingPageState extends State<LoggingPage> {
                 _description = value;
               });
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Description',
               border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.notes, color: CCColors.primaryColor,) 
             ),
           ),
         ),
