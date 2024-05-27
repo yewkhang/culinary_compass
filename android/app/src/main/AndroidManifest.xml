@@ -3,6 +3,9 @@
         android:label="culinary_compass"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+            <!-- GOOGLE MAPS API KEY-->
+            <meta-data android:name = "com.google.android.geo.API_KEY"
+            android:value = "AIzaSyDV1RmA2Pm1bvj8nUSSYJox2sfEO_jMti8"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
