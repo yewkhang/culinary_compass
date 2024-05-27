@@ -1,3 +1,4 @@
+import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -70,7 +71,7 @@ class _LoggingPageState extends State<LoggingPage> {
         ]),
         // Name TextField
         Container(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
             onChanged: (value) {
               setState(() {
@@ -87,7 +88,7 @@ class _LoggingPageState extends State<LoggingPage> {
         // Tags (TO BE IMPLEMENTED)
         // Description TextField
         Container(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
             onChanged: (value) {
               setState(() {

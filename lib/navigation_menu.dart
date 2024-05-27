@@ -16,7 +16,7 @@ class NavigationMenu extends StatelessWidget {
         () => NavigationBar(
           height: 70, // height of navigation bar
           elevation: 0,
-          indicatorColor: CCColors.primaryColor,
+          indicatorColor: Colors.amber,
           selectedIndex: controller.selectedIndex.value, //access int wrapped in Rx context
           onDestinationSelected: (index) => controller.selectedIndex.value = index,
           
