@@ -22,15 +22,18 @@ class _LoggingPageState extends State<LoggingPage> {
   late String _location;
   late String _description;
 
-  // Text Controllers
+  // TextField Controllers
   TextEditingController nameTextController = TextEditingController();
   TextEditingController descriptionTextController = TextEditingController();
 
+  // Image Controller
+  final imageController = Get.put(ImageController());
+
+  // Location Suggestion Controller
+  final locationController = Get.put(LocationController());
+
   @override
   Widget build(BuildContext context) {
-    final imageController = Get.put(ImageController());
-    final locationController = Get.put(LocationController());
-
     return Scaffold(
       body: ListView(children: <Widget>[
         // ----- IMAGE SELECTION ----- //

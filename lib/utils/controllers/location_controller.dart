@@ -45,6 +45,7 @@ class LocationController extends GetxController {
     }
   }
 
+  // Determine whether to show location output
   bool get showAutoCompleteList {
     return selectedAddress.value.isNotEmpty && data != [];
   }
