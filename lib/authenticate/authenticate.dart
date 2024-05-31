@@ -1,4 +1,5 @@
 import 'package:culinary_compass/authenticate/signin.dart';
+import 'package:culinary_compass/authenticate/register.dart';
 import 'package:flutter/material.dart';
 
 class Authenticate extends StatefulWidget {
@@ -9,10 +10,18 @@ class Authenticate extends StatefulWidget {
 }
 
 class _AuthenticateState extends State<Authenticate> {
+
+  bool showSignInPage = true;
+  void togglePageView() {
+    setState(() => showSignInPage = !showSignInPage);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SignIn(),
-    );
+    if (showSignInPage) {
+      return SignIn(togglePageView: togglePageView);
+    } else {
+      return Register(togglePageView: togglePageView);
+    }
   }
 }
