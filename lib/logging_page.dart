@@ -19,20 +19,27 @@ class _LoggingPageState extends State<LoggingPage> {
   // Logging values
   // File _picture;
   late String _name;
-  // var _location;
+  late String _location;
   late String _description;
+
+  // TextField Controllers
+  TextEditingController nameTextController = TextEditingController();
+  TextEditingController descriptionTextController = TextEditingController();
+
+  // Image Controller
+  final imageController = Get.put(ImageController());
+
+  // Location Suggestion Controller
+  final locationController = Get.put(LocationController());
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ImageController());
-    final locationController = Get.put(LocationController());
-
     return Scaffold(
       body: ListView(children: <Widget>[
         // ----- IMAGE SELECTION ----- //
         Stack(children: [
           // spot for image to show
-          Obx(() => controller.selectedImagePath.value == ''
+          Obx(() => imageController.selectedImagePath.value == ''
               ? Container(
                   width: 450,
                   height: 390,
@@ -42,7 +49,7 @@ class _LoggingPageState extends State<LoggingPage> {
                   ),
                 )
               : Image.file(
-                  File(controller.selectedImagePath.value),
+                  File(imageController.selectedImagePath.value),
                   fit: BoxFit.cover,
                   width: 450,
                   height: 390,
@@ -53,7 +60,7 @@ class _LoggingPageState extends State<LoggingPage> {
             right: 20,
             child: FloatingActionButton(
                 onPressed: () {
-                  controller.getImage(ImageSource.gallery);
+                  imageController.getImage(ImageSource.gallery);
                 },
                 backgroundColor: CCColors.primaryColor,
                 child: const Icon(Icons.photo)),
@@ -64,7 +71,7 @@ class _LoggingPageState extends State<LoggingPage> {
             right: 20,
             child: FloatingActionButton(
               onPressed: () {
-                controller.getImage(ImageSource.camera);
+                imageController.getImage(ImageSource.camera);
               },
               child: const Icon(Icons.camera_alt),
             ),
@@ -76,6 +83,7 @@ class _LoggingPageState extends State<LoggingPage> {
         Container(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
+            controller: nameTextController,
             onChanged: (value) {
               setState(() {
                 _name = value;
@@ -141,6 +149,8 @@ class _LoggingPageState extends State<LoggingPage> {
                           // Display chosen location in textfield
                           locationController.locationSearch.text =
                               locationController.inputAddress.value;
+                          // update value to be saved to Firebase
+                          _location = locationController.inputAddress.value;
                           // Reset search
                           locationController.selectedAddress.value = '';
                           locationController.data = [];
@@ -156,22 +166,30 @@ class _LoggingPageState extends State<LoggingPage> {
         Container(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
+            controller: descriptionTextController,
             onChanged: (value) {
               setState(() {
                 _description = value;
               });
             },
             decoration: const InputDecoration(
-              hintText: 'Description',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.notes, color: CCColors.primaryColor,) 
-            ),
+                hintText: 'Description',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(
+                  Icons.notes,
+                  color: CCColors.primaryColor,
+                )),
           ),
         ),
         // Save log button (TO BE IMPLEMENTED)
         ElevatedButton(
             onPressed: () async {
               print(_name);
+              // Reset fields upon saving
+              imageController.selectedImagePath.value = '';
+              nameTextController.text = '';
+              locationController.locationSearch.text = '';
+              descriptionTextController.text = '';
             },
             child: const Text('Save'))
       ]),
