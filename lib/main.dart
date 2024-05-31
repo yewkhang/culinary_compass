@@ -1,8 +1,18 @@
-import 'package:culinary_compass/navigation_menu.dart';
+import 'package:culinary_compass/firebase_options.dart';
+import 'package:culinary_compass/services/auth.dart';
+import 'package:culinary_compass/wrapper.dart';
+import 'package:culinary_compass/models/myuser.dart';
 import 'package:flutter/material.dart';
-import 'package:culinary_compass/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+// main.dart is the root widget file
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -12,13 +22,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    // by wrapping MaterialApp() inside Provider, all descendant widgets can access MyUser Stream
+    return StreamProvider<MyUser?>.value(
+      catchError: (_, __) {},
+      initialData: null, // self-explanatory, set initial to nothing (null)
+      value: AuthService().user, // to access the MyUser Stream
+      child: MaterialApp(
+        home: Wrapper(),
       ),
-      home: const NavigationMenu(),
     );
   }
 }
