@@ -6,19 +6,22 @@ class LoggingModel {
   final Image picture;
   final String name;
   final String location;
+  final String? description; // Description is optional
 
   const LoggingModel({
     this.id,
     required this.picture,
     required this.name,
     required this.location,
+    this.description
   });
 
   toJson() {
     return {
       "Picture": picture,
       "Name": name,
-      "Location": location
+      "Location": location,
+      "Description": description
     };
   }
 }
