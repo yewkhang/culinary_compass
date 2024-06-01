@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/services/auth.dart';
+import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -9,23 +10,20 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.brown[50],
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Culinary Compass'),
-        backgroundColor: Colors.purple,
+        title: const Text('Culinary Compass'),
+        backgroundColor: CCColors.primaryColor,
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
-            icon: Icon(Icons.person),
+            icon: const Icon(Icons.person),
             style: ButtonStyle(
               iconColor: WidgetStateProperty.all(Colors.black),
               backgroundColor: WidgetStateProperty.all(Colors.white),
               foregroundColor: null,
-              textStyle: WidgetStateProperty.all(TextStyle(
-                color: Colors.black
-              ))
             ),
-            label: Text('Log Out'),
+            label: const Text('Log Out', style: TextStyle(color: Colors.black)),
             onPressed: () async {
               await _auth.signOut();
             },
