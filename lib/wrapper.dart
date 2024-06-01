@@ -14,9 +14,9 @@ class Wrapper extends StatelessWidget {
 
     final myUser = Provider.of<MyUser?>(context);
     if (myUser == null) {
-      return Authenticate();
+      return const Authenticate();
     } else {
-      return NavigationMenu();
+      return const NavigationMenu();
     }
   }
 }
