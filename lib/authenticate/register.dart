@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:culinary_compass/services/auth.dart';
+import 'package:culinary_compass/utils/constants/colors.dart';
+import 'package:culinary_compass/utils/constants/loading.dart';
+import 'package:culinary_compass/utils/constants/misc.dart';
+import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
   final Function? togglePageView;
@@ -16,6 +19,8 @@ class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
   // to help keep track of state of form, can access validation techniques
   final _formKey = GlobalKey<FormState>();
+  // loading state
+  bool isLoading = false;
 
   // text field states
   String email = "";
@@ -25,15 +30,15 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 244, 225, 219),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.brown[400],
+        backgroundColor: CCColors.primaryColor,
         elevation: 0.0, // drop shadow
-        title: Text("Register with Culinary Compass"),
+        title: const Text("Register with Culinary Compass", style: TextStyle(fontSize: 18.0)),
         actions: <Widget>[
           TextButton.icon(
-            icon: Icon(Icons.person, color: Colors.black),
-            label: Text(
+            icon: const Icon(Icons.person, color: Colors.black),
+            label: const Text(
               "Sign In",
               style: TextStyle(color: Colors.black)), // to swap pages
             onPressed: () {
@@ -43,13 +48,14 @@ class _RegisterState extends State<Register> {
         ]
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
           child:Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: "Email"),
                 // returns null --> means is valid
                 validator: (typedEmail) =>
 // can validate more
@@ -58,8 +64,9 @@ class _RegisterState extends State<Register> {
                   setState(() => email = typedEmail);
                 },
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: "Password"),
                 obscureText: true,
                 validator: (typedPassword) => 
                   (typedPassword!.length < 6) ? "Enter a valid password\nRequirement: At least 6 characters long" : null,
@@ -67,29 +74,43 @@ class _RegisterState extends State<Register> {
                   setState(() => password = typedPassword);
                 },
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color?>(Colors.pink[400]!)
+                  backgroundColor: WidgetStateProperty.all<Color?>(CCColors.primaryColor)
                 ),
-                child: Text("Register", style: TextStyle(color: Colors.white)),
+                child: const Text("Register", style: TextStyle(color: Colors.black)),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) { // uses validator properties above
+                    setState(() => isLoading = true); // to show loading screen
                     dynamic result = await _auth.registerUserEmail(email, password);
                     if (result == null) {
-                      setState(() => error = "Please enter a valid email");
+                      setState(() {
+                        error = "Please enter a valid email";
+                        isLoading = false; // if credentials are wrong, then show sign in page
+                      });
                     }
                     // no need for else clause, because User enters through stream in _auth anyways and authenticates
                   }
                 },
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               // Displays error message if there is, else not displayed
               Text(
                 error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0)
+                style: const TextStyle(color: Colors.red, fontSize: 14.0)
+              ),
+              Center(
+                child: Builder(
+                  builder: (context) {
+                    if (isLoading) {
+                      return const Loading();
+                    }
+                    return Container(color: Colors.white);
+                  }
+                )
               )
-            ],
+            ]
           )
         )
       )
