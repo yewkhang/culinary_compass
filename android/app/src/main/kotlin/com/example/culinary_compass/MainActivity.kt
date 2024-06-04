@@ -1,4 +1,4 @@
-package com.example.culinary_compass
+package com.ykwp.culinary_compass
 
 import io.flutter.embedding.android.FlutterActivity
 
