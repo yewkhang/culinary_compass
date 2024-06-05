@@ -1,4 +1,3 @@
-import 'package:culinary_compass/utils/controllers/location_controller.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +6,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // for reading and writing files
 import 'package:culinary_compass/utils/constants/colors.dart';
+// Controllers
+import 'package:culinary_compass/utils/controllers/ratingbar_controller.dart';
+import 'package:culinary_compass/utils/controllers/location_controller.dart';
 
 class LoggingPage extends StatefulWidget {
   const LoggingPage({super.key});
@@ -25,12 +27,12 @@ class _LoggingPageState extends State<LoggingPage> {
   // TextField Controllers
   TextEditingController nameTextController = TextEditingController();
   TextEditingController descriptionTextController = TextEditingController();
-
   // Image Controller
   final imageController = Get.put(ImageController());
-
   // Location Suggestion Controller
   final locationController = Get.put(LocationController());
+  // Rating Bar Controller
+  final ratingBarController = Get.put(RatingBarController());
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +80,7 @@ class _LoggingPageState extends State<LoggingPage> {
           )
         ]),
 
-        // ----- TEXT INPUTS ----- //
-        // Name TextField
+        // ----- NAME TEXTFIELD ----- //
         Container(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
@@ -98,7 +99,7 @@ class _LoggingPageState extends State<LoggingPage> {
                 )),
           ),
         ),
-        // Location TextField
+        // ----- LOCATION TEXTFIELD ----- //
         Container(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
@@ -119,7 +120,7 @@ class _LoggingPageState extends State<LoggingPage> {
             maxLines: null,
           ),
         ),
-        // Location suggestions
+        // ----- LOCATION SUGGESTIONS ----- //
         Obx(
           () {
             locationController.isLoading.value;
@@ -162,7 +163,7 @@ class _LoggingPageState extends State<LoggingPage> {
           },
         ),
         // Tags (TO BE IMPLEMENTED)
-        // Description TextField
+        // ----- DESCRIPTION TEXTFIELD ----- //
         Container(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
@@ -181,15 +182,21 @@ class _LoggingPageState extends State<LoggingPage> {
                 )),
           ),
         ),
-        // Save log button (TO BE IMPLEMENTED)
+        // ----- RATING BAR ----- //
+        Container(
+            padding: const EdgeInsets.all(CCSizes.defaultSpace),
+            alignment: Alignment.center,
+            child: Obx(() => ratingBarController
+                .buildRating(ratingBarController.currentRating.value))),
+        // ----- SAVE LOG BUTTON ----- // (TO BE IMPLEMENTED)
         ElevatedButton(
             onPressed: () async {
-              print(_name);
               // Reset fields upon saving
               imageController.selectedImagePath.value = '';
               nameTextController.text = '';
               locationController.locationSearch.text = '';
               descriptionTextController.text = '';
+              ratingBarController.currentRating.value = 0;
             },
             child: const Text('Save'))
       ]),
