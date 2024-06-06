@@ -1,7 +1,5 @@
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // for reading and writing files
@@ -9,6 +7,7 @@ import 'package:culinary_compass/utils/constants/colors.dart';
 // Controllers
 import 'package:culinary_compass/utils/controllers/ratingbar_controller.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
 class LoggingPage extends StatefulWidget {
   const LoggingPage({super.key});
@@ -23,6 +22,15 @@ class _LoggingPageState extends State<LoggingPage> {
   late String _name;
   late String _location;
   late String _description;
+  late double _distanceToField;
+  static const List<String> _initialTags = <String>[
+    'c',
+    'c++',
+    'java',
+    'json',
+    'python',
+    'javascript',
+  ];
 
   // TextField Controllers
   TextEditingController nameTextController = TextEditingController();
@@ -31,11 +39,14 @@ class _LoggingPageState extends State<LoggingPage> {
   final imageController = Get.put(ImageController());
   // Location Suggestion Controller
   final locationController = Get.put(LocationController());
+  // TextFieldTags Controller
+  final tagsController = StringTagController();
   // Rating Bar Controller
   final ratingBarController = Get.put(RatingBarController());
 
   @override
   Widget build(BuildContext context) {
+    _distanceToField = MediaQuery.of(context).size.width;
     return Scaffold(
       body: ListView(children: <Widget>[
         // ----- IMAGE SELECTION ----- //
@@ -81,7 +92,7 @@ class _LoggingPageState extends State<LoggingPage> {
         ]),
 
         // ----- NAME TEXTFIELD ----- //
-        Container(
+        Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
             controller: nameTextController,
@@ -100,7 +111,7 @@ class _LoggingPageState extends State<LoggingPage> {
           ),
         ),
         // ----- LOCATION TEXTFIELD ----- //
-        Container(
+        Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
             controller: locationController.locationSearch,
@@ -125,46 +136,217 @@ class _LoggingPageState extends State<LoggingPage> {
           () {
             locationController.isLoading.value;
             return locationController.showAutoCompleteList
-                ? ListView.builder(
-                    padding: const EdgeInsets.only(
-                        right: CCSizes.defaultSpace,
-                        left: CCSizes.defaultSpace),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: locationController.data != []
-                        ? locationController.data.length
-                        : 0,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(locationController.data[index]
-                                ['description']
-                            .toString()),
-                        leading: const Icon(
-                          Icons.location_on_outlined,
+                ? locationController.isLoading.value
+                    ? const Center(
+                        // Show loading indicator when fetching results
+                        child: CircularProgressIndicator(
                           color: CCColors.primaryColor,
+                          strokeWidth: 3,
                         ),
-                        onTap: () {
-                          final placeId =
-                              locationController.data[index]['description'];
-                          locationController.inputAddress.value = placeId;
-                          // Display chosen location in textfield
-                          locationController.locationSearch.text =
-                              locationController.inputAddress.value;
-                          // update value to be saved to Firebase
-                          _location = locationController.inputAddress.value;
-                          // Reset search
-                          locationController.selectedAddress.value = '';
-                          locationController.data = [];
-                        },
-                        tileColor: Colors.grey.withOpacity(0.3),
-                      );
-                    })
+                      )
+                    : ListView.builder(
+                        // Show results after fetched
+                        padding: const EdgeInsets.only(
+                            right: CCSizes.defaultSpace,
+                            left: CCSizes.defaultSpace),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: locationController.data != []
+                            ? locationController.data.length
+                            : 0,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(locationController.data[index]
+                                    ['description']
+                                .toString()),
+                            leading: const Icon(
+                              Icons.location_on_outlined,
+                              color: CCColors.primaryColor,
+                            ),
+                            onTap: () {
+                              final placeId =
+                                  locationController.data[index]['description'];
+                              locationController.inputAddress.value = placeId;
+                              // Display chosen location in textfield
+                              locationController.locationSearch.text =
+                                  locationController.inputAddress.value;
+                              // update value to be saved to Firebase
+                              _location = locationController.inputAddress.value;
+                              // Reset search
+                              locationController.selectedAddress.value = '';
+                              locationController.data.clear();
+                            },
+                            tileColor: Colors.grey.withOpacity(0.3),
+                          );
+                        })
                 : const SizedBox(); // When there are not results from location search
           },
         ),
         // Tags (TO BE IMPLEMENTED)
+        Autocomplete<String>(
+          // Suggested Tags
+          optionsViewBuilder: (context, onSelected, options) {
+            return Container(
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Material(
+                  elevation: 4.0,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: options.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final String option = options.elementAt(index);
+                        return TextButton(
+                          onPressed: () {
+                            onSelected(option);
+                          },
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              option,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                color: CCColors.primaryColor,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+          optionsBuilder: (TextEditingValue textEditingValue) {
+            if (textEditingValue.text == '') {
+              return const Iterable<String>.empty();
+            }
+            return _initialTags.where((String option) {
+              return option.contains(textEditingValue.text.toLowerCase());
+            });
+          },
+          onSelected: (String selectedTag) {
+            tagsController.onTagSubmitted(selectedTag);
+          },
+          fieldViewBuilder:
+              (context, textEditingController, focusNode, onFieldSubmitted) {
+            return TextFieldTags<String>(
+              textEditingController: textEditingController,
+              focusNode: focusNode,
+              textfieldTagsController: tagsController,
+              textSeparators: const [' ', ','],
+              letterCase: LetterCase.normal,
+              validator: (String tag) {
+                if (tag == 'php') {
+                  return 'php not available';
+                } else if (tagsController.getTags!.contains(tag)) {
+                  return 'You\'ve already entered that';
+                }
+                return null;
+              },
+              inputFieldBuilder: (context, inputFieldValues) {
+                return Padding(
+                  padding: const EdgeInsets.all(CCSizes.defaultSpace),
+                  child: TextField(
+                    controller: inputFieldValues.textEditingController,
+                    focusNode: inputFieldValues.focusNode,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: CCColors.primaryColor,
+                          width: 3.0,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: CCColors.primaryColor,
+                          width: 3.0,
+                        ),
+                      ),
+                      helperStyle: const TextStyle(
+                        color: Colors.black,
+                      ),
+                      hintText: inputFieldValues.tags.isNotEmpty
+                          ? ''
+                          : "Enter tag...",
+                      errorText: inputFieldValues.error,
+                      prefixIconConstraints:
+                          BoxConstraints(maxWidth: _distanceToField * 0.74),
+                      prefixIcon: inputFieldValues.tags.isNotEmpty
+                          ? SingleChildScrollView(
+                              controller: inputFieldValues.tagScrollController,
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                  children:
+                                      inputFieldValues.tags.map((String tag) {
+                                return Container(
+                                  // Tags Button Style
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0),
+                                    ),
+                                    color: CCColors.primaryColor,
+                                  ),
+                                  // space between tag buttons
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 5.0),
+                                  // tags size
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 6.0),
+                                  child: Row(
+                                    // Row for Tags to display
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Text Style for Tags
+                                      InkWell(
+                                        child: Text(
+                                          tag,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14),
+                                        ),
+                                        onTap: () {
+                                          //print("$tag selected");
+                                        },
+                                      ),
+                                      const SizedBox(
+                                          width:
+                                              5.0), // size between text and 'x' button
+                                      // Cancel Button Style for Tags
+                                      InkWell(
+                                        child: const Icon(
+                                          Icons.cancel,
+                                          size: 16.0,
+                                          color: Color.fromARGB(
+                                              255, 233, 233, 233),
+                                        ),
+                                        onTap: () {
+                                          inputFieldValues.onTagRemoved(tag);
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }).toList()),
+                            )
+                          : null,
+                    ),
+                    onChanged: inputFieldValues.onTagChanged,
+                    onSubmitted: inputFieldValues.onTagSubmitted,
+                  ),
+                );
+              },
+            );
+          },
+        ),
         // ----- DESCRIPTION TEXTFIELD ----- //
-        Container(
+        Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
             controller: descriptionTextController,
@@ -195,6 +377,7 @@ class _LoggingPageState extends State<LoggingPage> {
               imageController.selectedImagePath.value = '';
               nameTextController.text = '';
               locationController.locationSearch.text = '';
+              tagsController.clearTags();
               descriptionTextController.text = '';
               ratingBarController.currentRating.value = 0;
             },
