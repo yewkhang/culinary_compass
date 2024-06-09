@@ -1,3 +1,10 @@
+// Firebase
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// Models
+import 'package:culinary_compass/models/logging_model.dart';
+import 'package:culinary_compass/user_repository.dart';
+// Dependencies
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,22 +14,12 @@ import 'package:culinary_compass/utils/constants/colors.dart';
 // Controllers
 import 'package:culinary_compass/utils/controllers/ratingbar_controller.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
+import 'package:culinary_compass/utils/controllers/image_controller.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+import 'package:culinary_compass/user_repository.dart';
 
-class LoggingPage extends StatefulWidget {
+class LoggingPage extends StatelessWidget {
   const LoggingPage({super.key});
-
-  @override
-  State<LoggingPage> createState() => _LoggingPageState();
-}
-
-class _LoggingPageState extends State<LoggingPage> {
-  // Logging values
-  // File _picture;
-  late String _name;
-  late String _location;
-  late String _description;
-  late double _distanceToField;
   static const List<String> _initialTags = <String>[
     'c',
     'c++',
@@ -32,21 +29,23 @@ class _LoggingPageState extends State<LoggingPage> {
     'javascript',
   ];
 
-  // TextField Controllers
-  TextEditingController nameTextController = TextEditingController();
-  TextEditingController descriptionTextController = TextEditingController();
-  // Image Controller
-  final imageController = Get.put(ImageController());
-  // Location Suggestion Controller
-  final locationController = Get.put(LocationController());
-  // TextFieldTags Controller
-  final tagsController = StringTagController();
-  // Rating Bar Controller
-  final ratingBarController = Get.put(RatingBarController());
-
   @override
   Widget build(BuildContext context) {
-    _distanceToField = MediaQuery.of(context).size.width;
+    final _distanceToField = MediaQuery.of(context).size.width;
+    // TextField Controllers
+    TextEditingController nameTextController = TextEditingController();
+    TextEditingController descriptionTextController = TextEditingController();
+    // Image Controller
+    final imageController = Get.put(ImageController());
+    // Location Suggestion Controller
+    final locationController = Get.put(LocationController());
+    // TextFieldTags Controller
+    final textFieldTagsController = StringTagController();
+    // Rating Bar Controller
+    final ratingBarController = Get.put(RatingBarController());
+    final userRepository = Get.put(UserRepository());
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
     return Scaffold(
       body: ListView(children: <Widget>[
         // ----- IMAGE SELECTION ----- //
@@ -96,11 +95,6 @@ class _LoggingPageState extends State<LoggingPage> {
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
             controller: nameTextController,
-            onChanged: (value) {
-              setState(() {
-                _name = value;
-              });
-            },
             decoration: const InputDecoration(
                 hintText: 'Dish Name',
                 border: OutlineInputBorder(),
@@ -171,7 +165,6 @@ class _LoggingPageState extends State<LoggingPage> {
                               locationController.locationSearch.text =
                                   locationController.inputAddress.value;
                               // update value to be saved to Firebase
-                              _location = locationController.inputAddress.value;
                               // Reset search
                               locationController.selectedAddress.value = '';
                               locationController.data.clear();
@@ -231,20 +224,19 @@ class _LoggingPageState extends State<LoggingPage> {
             });
           },
           onSelected: (String selectedTag) {
-            tagsController.onTagSubmitted(selectedTag);
+            textFieldTagsController.onTagSubmitted(selectedTag);
           },
           fieldViewBuilder:
               (context, textEditingController, focusNode, onFieldSubmitted) {
             return TextFieldTags<String>(
               textEditingController: textEditingController,
               focusNode: focusNode,
-              textfieldTagsController: tagsController,
+              textfieldTagsController: textFieldTagsController,
               textSeparators: const [' ', ','],
-              letterCase: LetterCase.normal,
               validator: (String tag) {
                 if (tag == 'php') {
                   return 'php not available';
-                } else if (tagsController.getTags!.contains(tag)) {
+                } else if (textFieldTagsController.getTags!.contains(tag)) {
                   return 'You\'ve already entered that';
                 }
                 return null;
@@ -350,11 +342,6 @@ class _LoggingPageState extends State<LoggingPage> {
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
             controller: descriptionTextController,
-            onChanged: (value) {
-              setState(() {
-                _description = value;
-              });
-            },
             decoration: const InputDecoration(
                 hintText: 'Description',
                 border: OutlineInputBorder(),
@@ -373,30 +360,25 @@ class _LoggingPageState extends State<LoggingPage> {
         // ----- SAVE LOG BUTTON ----- // (TO BE IMPLEMENTED)
         ElevatedButton(
             onPressed: () async {
+              // Save user log to Firestore
+              await userRepository.saveUserLog(
+                _auth.currentUser?.uid,
+                imageController.selectedImagePath.value,
+                nameTextController.text,
+                locationController.locationSearch.text,
+                ratingBarController.currentRating.value,
+                descriptionTextController.text
+              );
               // Reset fields upon saving
               imageController.selectedImagePath.value = '';
               nameTextController.text = '';
               locationController.locationSearch.text = '';
-              tagsController.clearTags();
+              textFieldTagsController.clearTags();
               descriptionTextController.text = '';
               ratingBarController.currentRating.value = 0;
             },
             child: const Text('Save'))
       ]),
     );
-  }
-}
-
-class ImageController extends GetxController {
-  var selectedImagePath = ''.obs;
-
-  void getImage(ImageSource imageSource) async {
-    final selectedFile = await ImagePicker().pickImage(source: imageSource);
-    if (selectedFile != null) {
-      // user picks an image
-      selectedImagePath.value = selectedFile.path;
-    } else {
-      return;
-    }
   }
 }
