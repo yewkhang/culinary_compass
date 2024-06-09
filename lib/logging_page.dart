@@ -1,9 +1,3 @@
-// Firebase
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-// Models
-import 'package:culinary_compass/models/logging_model.dart';
-import 'package:culinary_compass/user_repository.dart';
 // Dependencies
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +5,12 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // for reading and writing files
 import 'package:culinary_compass/utils/constants/colors.dart';
+// Firebase
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// Models
+import 'package:culinary_compass/models/logging_model.dart';
+import 'package:culinary_compass/user_repository.dart';
 // Controllers
 import 'package:culinary_compass/utils/controllers/ratingbar_controller.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
@@ -357,18 +357,54 @@ class LoggingPage extends StatelessWidget {
             alignment: Alignment.center,
             child: Obx(() => ratingBarController
                 .buildRating(ratingBarController.currentRating.value))),
-        // ----- SAVE LOG BUTTON ----- // (TO BE IMPLEMENTED)
+        // ----- SAVE LOG BUTTON ----- // 
         ElevatedButton(
             onPressed: () async {
+              // Circular progress indicator for saving user logs
+              showDialog(context: context, builder: (context) {
+                return const Center(child: CircularProgressIndicator(color: CCColors.primaryColor,),);
+              });
               // Save user log to Firestore
               await userRepository.saveUserLog(
-                _auth.currentUser?.uid,
-                imageController.selectedImagePath.value,
-                nameTextController.text,
-                locationController.locationSearch.text,
-                ratingBarController.currentRating.value,
-                descriptionTextController.text
-              );
+                  _auth.currentUser?.uid,
+                  imageController.selectedImagePath.value,
+                  nameTextController.text,
+                  locationController.locationSearch.text,
+                  ratingBarController.currentRating.value,
+                  descriptionTextController.text);
+              // Saved log snackbar to tell user log has been saved
+              if (context.mounted) {
+                Navigator.of(context).pop(); // remove circular progress indicator
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Container(
+                    padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+                    height: 60,
+                    decoration: const BoxDecoration(
+                        color: CCColors.secondaryColor,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle_outline_outlined,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        SizedBox(width: CCSizes.spaceBtwItems),
+                        Text(
+                          'Log Saved!',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                ));
+              }
               // Reset fields upon saving
               imageController.selectedImagePath.value = '';
               nameTextController.text = '';
