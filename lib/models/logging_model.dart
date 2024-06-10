@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class LoggingModel {
   final String? uid;
   final String pictureURL;
