@@ -6,17 +6,14 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // for reading and writing files
 import 'package:culinary_compass/utils/constants/colors.dart';
 // Firebase
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // Models
-import 'package:culinary_compass/models/logging_model.dart';
 import 'package:culinary_compass/user_repository.dart';
 // Controllers
 import 'package:culinary_compass/utils/controllers/ratingbar_controller.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
 import 'package:culinary_compass/utils/controllers/image_controller.dart';
 import 'package:textfield_tags/textfield_tags.dart';
-import 'package:culinary_compass/user_repository.dart';
 
 class LoggingPage extends StatelessWidget {
   const LoggingPage({super.key});
@@ -44,7 +41,6 @@ class LoggingPage extends StatelessWidget {
     // Rating Bar Controller
     final ratingBarController = Get.put(RatingBarController());
     final userRepository = Get.put(UserRepository());
-    final FirebaseAuth _auth = FirebaseAuth.instance;
 
     return Scaffold(
       body: ListView(children: <Widget>[
@@ -366,7 +362,6 @@ class LoggingPage extends StatelessWidget {
               });
               // Save user log to Firestore
               await userRepository.saveUserLog(
-                  _auth.currentUser?.uid,
                   imageController.selectedImagePath.value,
                   nameTextController.text,
                   locationController.locationSearch.text,
