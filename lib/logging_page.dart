@@ -1,4 +1,5 @@
 // Dependencies
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,31 +14,19 @@ import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/controllers/ratingbar_controller.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
 import 'package:culinary_compass/utils/controllers/image_controller.dart';
-import 'package:textfield_tags/textfield_tags.dart';
+import 'package:culinary_compass/utils/controllers/textfield_controllers.dart';
 
 class LoggingPage extends StatelessWidget {
   const LoggingPage({super.key});
-  static const List<String> _initialTags = <String>[
-    'c',
-    'c++',
-    'java',
-    'json',
-    'python',
-    'javascript',
-  ];
 
   @override
   Widget build(BuildContext context) {
-    final _distanceToField = MediaQuery.of(context).size.width;
     // TextField Controllers
-    TextEditingController nameTextController = TextEditingController();
-    TextEditingController descriptionTextController = TextEditingController();
+    final textFieldControllers = Get.put(TextfieldControllers());
     // Image Controller
     final imageController = Get.put(ImageController());
     // Location Suggestion Controller
     final locationController = Get.put(LocationController());
-    // TextFieldTags Controller
-    final textFieldTagsController = StringTagController();
     // Rating Bar Controller
     final ratingBarController = Get.put(RatingBarController());
     final userRepository = Get.put(UserRepository());
@@ -90,7 +79,7 @@ class LoggingPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
-            controller: nameTextController,
+            controller: textFieldControllers.nameTextField,
             decoration: const InputDecoration(
                 hintText: 'Dish Name',
                 border: OutlineInputBorder(),
@@ -160,7 +149,6 @@ class LoggingPage extends StatelessWidget {
                               // Display chosen location in textfield
                               locationController.locationSearch.text =
                                   locationController.inputAddress.value;
-                              // update value to be saved to Firebase
                               // Reset search
                               locationController.selectedAddress.value = '';
                               locationController.data.clear();
@@ -172,172 +160,11 @@ class LoggingPage extends StatelessWidget {
           },
         ),
         // Tags (TO BE IMPLEMENTED)
-        Autocomplete<String>(
-          // Suggested Tags
-          optionsViewBuilder: (context, onSelected, options) {
-            return Container(
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Material(
-                  elevation: 4.0,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 200),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: options.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final String option = options.elementAt(index);
-                        return TextButton(
-                          onPressed: () {
-                            onSelected(option);
-                          },
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              option,
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                color: CCColors.primaryColor,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-          optionsBuilder: (TextEditingValue textEditingValue) {
-            if (textEditingValue.text == '') {
-              return const Iterable<String>.empty();
-            }
-            return _initialTags.where((String option) {
-              return option.contains(textEditingValue.text.toLowerCase());
-            });
-          },
-          onSelected: (String selectedTag) {
-            textFieldTagsController.onTagSubmitted(selectedTag);
-          },
-          fieldViewBuilder:
-              (context, textEditingController, focusNode, onFieldSubmitted) {
-            return TextFieldTags<String>(
-              textEditingController: textEditingController,
-              focusNode: focusNode,
-              textfieldTagsController: textFieldTagsController,
-              textSeparators: const [' ', ','],
-              validator: (String tag) {
-                if (tag == 'php') {
-                  return 'php not available';
-                } else if (textFieldTagsController.getTags!.contains(tag)) {
-                  return 'You\'ve already entered that';
-                }
-                return null;
-              },
-              inputFieldBuilder: (context, inputFieldValues) {
-                return Padding(
-                  padding: const EdgeInsets.all(CCSizes.defaultSpace),
-                  child: TextField(
-                    controller: inputFieldValues.textEditingController,
-                    focusNode: inputFieldValues.focusNode,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: CCColors.primaryColor,
-                          width: 3.0,
-                        ),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: CCColors.primaryColor,
-                          width: 3.0,
-                        ),
-                      ),
-                      helperStyle: const TextStyle(
-                        color: Colors.black,
-                      ),
-                      hintText: inputFieldValues.tags.isNotEmpty
-                          ? ''
-                          : "Enter tag...",
-                      errorText: inputFieldValues.error,
-                      prefixIconConstraints:
-                          BoxConstraints(maxWidth: _distanceToField * 0.74),
-                      prefixIcon: inputFieldValues.tags.isNotEmpty
-                          ? SingleChildScrollView(
-                              controller: inputFieldValues.tagScrollController,
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                  children:
-                                      inputFieldValues.tags.map((String tag) {
-                                return Container(
-                                  // Tags Button Style
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20.0),
-                                    ),
-                                    color: CCColors.primaryColor,
-                                  ),
-                                  // space between tag buttons
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 5.0),
-                                  // tags size
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 6.0),
-                                  child: Row(
-                                    // Row for Tags to display
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Text Style for Tags
-                                      InkWell(
-                                        child: Text(
-                                          tag,
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14),
-                                        ),
-                                        onTap: () {
-                                          //print("$tag selected");
-                                        },
-                                      ),
-                                      const SizedBox(
-                                          width:
-                                              5.0), // size between text and 'x' button
-                                      // Cancel Button Style for Tags
-                                      InkWell(
-                                        child: const Icon(
-                                          Icons.cancel,
-                                          size: 16.0,
-                                          color: Color.fromARGB(
-                                              255, 233, 233, 233),
-                                        ),
-                                        onTap: () {
-                                          inputFieldValues.onTagRemoved(tag);
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                );
-                              }).toList()),
-                            )
-                          : null,
-                    ),
-                    onChanged: inputFieldValues.onTagChanged,
-                    onSubmitted: inputFieldValues.onTagSubmitted,
-                  ),
-                );
-              },
-            );
-          },
-        ),
         // ----- DESCRIPTION TEXTFIELD ----- //
         Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
-            controller: descriptionTextController,
+            controller: textFieldControllers.descriptionTextField,
             decoration: const InputDecoration(
                 hintText: 'Description',
                 border: OutlineInputBorder(),
@@ -353,23 +180,30 @@ class LoggingPage extends StatelessWidget {
             alignment: Alignment.center,
             child: Obx(() => ratingBarController
                 .buildRating(ratingBarController.currentRating.value))),
-        // ----- SAVE LOG BUTTON ----- // 
+        // ----- SAVE LOG BUTTON ----- //
         ElevatedButton(
             onPressed: () async {
               // Circular progress indicator for saving user logs
-              showDialog(context: context, builder: (context) {
-                return const Center(child: CircularProgressIndicator(color: CCColors.primaryColor,),);
-              });
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: CCColors.primaryColor,
+                      ),
+                    );
+                  });
               // Save user log to Firestore
               await userRepository.saveUserLog(
                   imageController.selectedImagePath.value,
-                  nameTextController.text,
+                  textFieldControllers.nameTextField.text,
                   locationController.locationSearch.text,
                   ratingBarController.currentRating.value,
-                  descriptionTextController.text);
+                  textFieldControllers.descriptionTextField.text);
               // Saved log snackbar to tell user log has been saved
               if (context.mounted) {
-                Navigator.of(context).pop(); // remove circular progress indicator
+                Navigator.of(context)
+                    .pop(); // remove circular progress indicator
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Container(
                     padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
@@ -402,13 +236,12 @@ class LoggingPage extends StatelessWidget {
               }
               // Reset fields upon saving
               imageController.selectedImagePath.value = '';
-              nameTextController.text = '';
+              textFieldControllers.nameTextField.text = '';
               locationController.locationSearch.text = '';
-              textFieldTagsController.clearTags();
-              descriptionTextController.text = '';
+              textFieldControllers.descriptionTextField.text = '';
               ratingBarController.currentRating.value = 0;
             },
-            child: const Text('Save'))
+            child: const Text('Save')),
       ]),
     );
   }
