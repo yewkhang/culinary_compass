@@ -1,41 +1,36 @@
+// Dependencies
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // for reading and writing files
 import 'package:culinary_compass/utils/constants/colors.dart';
+// Firebase
+import 'package:firebase_auth/firebase_auth.dart';
+// Models
+import 'package:culinary_compass/user_repository.dart';
 // Controllers
 import 'package:culinary_compass/utils/controllers/ratingbar_controller.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
+import 'package:culinary_compass/utils/controllers/image_controller.dart';
+import 'package:culinary_compass/utils/controllers/textfield_controllers.dart';
 
-class LoggingPage extends StatefulWidget {
+class LoggingPage extends StatelessWidget {
   const LoggingPage({super.key});
 
   @override
-  State<LoggingPage> createState() => _LoggingPageState();
-}
-
-class _LoggingPageState extends State<LoggingPage> {
-  // Logging values
-  // File _picture;
-  late String _name;
-  late String _location;
-  late String _description;
-
-  // TextField Controllers
-  TextEditingController nameTextController = TextEditingController();
-  TextEditingController descriptionTextController = TextEditingController();
-  // Image Controller
-  final imageController = Get.put(ImageController());
-  // Location Suggestion Controller
-  final locationController = Get.put(LocationController());
-  // Rating Bar Controller
-  final ratingBarController = Get.put(RatingBarController());
-
-  @override
   Widget build(BuildContext context) {
+    // TextField Controllers
+    final textFieldControllers = Get.put(TextfieldControllers());
+    // Image Controller
+    final imageController = Get.put(ImageController());
+    // Location Suggestion Controller
+    final locationController = Get.put(LocationController());
+    // Rating Bar Controller
+    final ratingBarController = Get.put(RatingBarController());
+    final userRepository = Get.put(UserRepository());
+
     return Scaffold(
       body: ListView(children: <Widget>[
         // ----- IMAGE SELECTION ----- //
@@ -81,15 +76,10 @@ class _LoggingPageState extends State<LoggingPage> {
         ]),
 
         // ----- NAME TEXTFIELD ----- //
-        Container(
+        Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
-            controller: nameTextController,
-            onChanged: (value) {
-              setState(() {
-                _name = value;
-              });
-            },
+            controller: textFieldControllers.nameTextField,
             decoration: const InputDecoration(
                 hintText: 'Dish Name',
                 border: OutlineInputBorder(),
@@ -100,7 +90,7 @@ class _LoggingPageState extends State<LoggingPage> {
           ),
         ),
         // ----- LOCATION TEXTFIELD ----- //
-        Container(
+        Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
             controller: locationController.locationSearch,
@@ -125,54 +115,56 @@ class _LoggingPageState extends State<LoggingPage> {
           () {
             locationController.isLoading.value;
             return locationController.showAutoCompleteList
-                ? ListView.builder(
-                    padding: const EdgeInsets.only(
-                        right: CCSizes.defaultSpace,
-                        left: CCSizes.defaultSpace),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: locationController.data != []
-                        ? locationController.data.length
-                        : 0,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(locationController.data[index]
-                                ['description']
-                            .toString()),
-                        leading: const Icon(
-                          Icons.location_on_outlined,
+                ? locationController.isLoading.value
+                    ? const Center(
+                        // Show loading indicator when fetching results
+                        child: CircularProgressIndicator(
                           color: CCColors.primaryColor,
+                          strokeWidth: 3,
                         ),
-                        onTap: () {
-                          final placeId =
-                              locationController.data[index]['description'];
-                          locationController.inputAddress.value = placeId;
-                          // Display chosen location in textfield
-                          locationController.locationSearch.text =
-                              locationController.inputAddress.value;
-                          // update value to be saved to Firebase
-                          _location = locationController.inputAddress.value;
-                          // Reset search
-                          locationController.selectedAddress.value = '';
-                          locationController.data = [];
-                        },
-                        tileColor: Colors.grey.withOpacity(0.3),
-                      );
-                    })
+                      )
+                    : ListView.builder(
+                        // Show results after fetched
+                        padding: const EdgeInsets.only(
+                            right: CCSizes.defaultSpace,
+                            left: CCSizes.defaultSpace),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: locationController.data != []
+                            ? locationController.data.length
+                            : 0,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(locationController.data[index]
+                                    ['description']
+                                .toString()),
+                            leading: const Icon(
+                              Icons.location_on_outlined,
+                              color: CCColors.primaryColor,
+                            ),
+                            onTap: () {
+                              final placeId =
+                                  locationController.data[index]['description'];
+                              locationController.inputAddress.value = placeId;
+                              // Display chosen location in textfield
+                              locationController.locationSearch.text =
+                                  locationController.inputAddress.value;
+                              // Reset search
+                              locationController.selectedAddress.value = '';
+                              locationController.data.clear();
+                            },
+                            tileColor: Colors.grey.withOpacity(0.3),
+                          );
+                        })
                 : const SizedBox(); // When there are not results from location search
           },
         ),
         // Tags (TO BE IMPLEMENTED)
         // ----- DESCRIPTION TEXTFIELD ----- //
-        Container(
+        Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
-            controller: descriptionTextController,
-            onChanged: (value) {
-              setState(() {
-                _description = value;
-              });
-            },
+            controller: textFieldControllers.descriptionTextField,
             decoration: const InputDecoration(
                 hintText: 'Description',
                 border: OutlineInputBorder(),
@@ -188,32 +180,69 @@ class _LoggingPageState extends State<LoggingPage> {
             alignment: Alignment.center,
             child: Obx(() => ratingBarController
                 .buildRating(ratingBarController.currentRating.value))),
-        // ----- SAVE LOG BUTTON ----- // (TO BE IMPLEMENTED)
+        // ----- SAVE LOG BUTTON ----- //
         ElevatedButton(
             onPressed: () async {
+              // Circular progress indicator for saving user logs
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: CCColors.primaryColor,
+                      ),
+                    );
+                  });
+              // Save user log to Firestore
+              await userRepository.saveUserLog(
+                  imageController.selectedImagePath.value,
+                  textFieldControllers.nameTextField.text,
+                  locationController.locationSearch.text,
+                  ratingBarController.currentRating.value,
+                  textFieldControllers.descriptionTextField.text);
+              // Saved log snackbar to tell user log has been saved
+              if (context.mounted) {
+                Navigator.of(context)
+                    .pop(); // remove circular progress indicator
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Container(
+                    padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+                    height: 60,
+                    decoration: const BoxDecoration(
+                        color: CCColors.secondaryColor,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle_outline_outlined,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        SizedBox(width: CCSizes.spaceBtwItems),
+                        Text(
+                          'Log Saved!',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                ));
+              }
               // Reset fields upon saving
               imageController.selectedImagePath.value = '';
-              nameTextController.text = '';
+              textFieldControllers.nameTextField.text = '';
               locationController.locationSearch.text = '';
-              descriptionTextController.text = '';
+              textFieldControllers.descriptionTextField.text = '';
               ratingBarController.currentRating.value = 0;
             },
-            child: const Text('Save'))
+            child: const Text('Save')),
       ]),
     );
-  }
-}
-
-class ImageController extends GetxController {
-  var selectedImagePath = ''.obs;
-
-  void getImage(ImageSource imageSource) async {
-    final selectedFile = await ImagePicker().pickImage(source: imageSource);
-    if (selectedFile != null) {
-      // user picks an image
-      selectedImagePath.value = selectedFile.path;
-    } else {
-      return;
-    }
   }
 }

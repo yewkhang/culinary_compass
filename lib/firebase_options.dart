@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -65,4 +56,32 @@ class DefaultFirebaseOptions {
     storageBucket: 'culinary-compass-c8dcc.appspot.com',
     iosBundleId: 'com.example.culinaryCompass',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBDlqgXJZ6i6C8VXwYn_pJzmjNdUlcJISc',
+    appId: '1:685371262860:web:49000cae587433ddc2f8a9',
+    messagingSenderId: '685371262860',
+    projectId: 'culinary-compass-c8dcc',
+    authDomain: 'culinary-compass-c8dcc.firebaseapp.com',
+    storageBucket: 'culinary-compass-c8dcc.appspot.com',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyA5M6ItdN6TmUm4sAQmHcs45sBkDViRm_M',
+    appId: '1:685371262860:ios:dbf09ec18f3d1b66c2f8a9',
+    messagingSenderId: '685371262860',
+    projectId: 'culinary-compass-c8dcc',
+    storageBucket: 'culinary-compass-c8dcc.appspot.com',
+    iosBundleId: 'com.example.culinaryCompass',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBDlqgXJZ6i6C8VXwYn_pJzmjNdUlcJISc',
+    appId: '1:685371262860:web:4e9148f6e0d9cc58c2f8a9',
+    messagingSenderId: '685371262860',
+    projectId: 'culinary-compass-c8dcc',
+    authDomain: 'culinary-compass-c8dcc.firebaseapp.com',
+    storageBucket: 'culinary-compass-c8dcc.appspot.com',
+  );
+
 }
