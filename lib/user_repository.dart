@@ -10,7 +10,6 @@ class UserRepository extends GetxController {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
   // Save user logs
   Future<void> saveUserLog(String selectedImagePath, String name,
       String location, double rating, String description) async {
@@ -20,7 +19,8 @@ class UserRepository extends GetxController {
         .toString(); // Save file as under this name
     String savedImageURL = ''; // Firebase URL to access image in the future
     String uid = _auth.currentUser!.uid; // Current user uid
-    final path = '$uid/images/$fileName'; // folder directory images are saved in
+    final path =
+        '$uid/images/$fileName'; // folder directory images are saved in
     final file = File(selectedImagePath);
     final ref = FirebaseStorage.instance.ref().child(path);
     try {
@@ -42,5 +42,15 @@ class UserRepository extends GetxController {
     } on FirebaseException catch (e) {
       throw FirebaseException(plugin: 'Please try again');
     }
+  }
+
+  // Fetch user logs
+  Future<QuerySnapshot> fetchAllUserLogs() async {
+    QuerySnapshot result = await _db
+        .collection("Logs")
+        .where('UID', isEqualTo: _auth.currentUser!.uid)
+        .where('Name', )
+        .get();
+    return result;
   }
 }

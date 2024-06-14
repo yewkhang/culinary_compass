@@ -1,6 +1,7 @@
 import 'package:culinary_compass/home.dart';
-import 'package:culinary_compass/logging_page.dart';
-import 'package:culinary_compass/settings_page.dart';
+import 'package:culinary_compass/pages/logging_page.dart';
+import 'package:culinary_compass/pages/settings_page.dart';
+import 'package:culinary_compass/pages/yourlogs_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
@@ -42,7 +43,7 @@ class NavigationController extends GetxController {
   // Change when screens are created
   final screens = [
     const HomePage(),
-    Container(color: Colors.amber),
+    const YourlogsPage(),
     const LoggingPage(),
     Container(color: Colors.orange),
     SettingsPage()
