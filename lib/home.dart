@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 
 class HomePage extends StatelessWidget {
