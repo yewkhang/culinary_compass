@@ -1,8 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/search_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
