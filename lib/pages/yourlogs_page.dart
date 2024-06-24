@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/user_repository.dart';
+import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/search_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,15 +21,18 @@ class YourlogsPage extends StatelessWidget {
                 searchController.query.value = value;
               },
               decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search), hintText: 'Search logs'),
+                prefixIcon: Icon(Icons.search),
+                focusColor: Colors.transparent,
+                hintText: 'Search logs',
+              ),
             ),
           ),
-          backgroundColor: Colors.amber,
+          backgroundColor: CCColors.primaryColor,
         ),
         body: SingleChildScrollView(
           child: Obx(
-            () =>
-                searchController.buildSearchResults(searchController.query.value),
+            () => searchController
+                .buildSearchResults(searchController.query.value),
           ),
         ));
   }
