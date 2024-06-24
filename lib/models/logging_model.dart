@@ -7,6 +7,7 @@ class LoggingModel {
   final String location;
   final double rating;
   final String description;
+  final List<String> tags;
 
   const LoggingModel(
       {required this.uid,
@@ -14,7 +15,8 @@ class LoggingModel {
       required this.name,
       required this.location,
       required this.rating,
-      required this.description});
+      required this.description,
+      required this.tags});
 
   Map<String, dynamic> toJson() {
     return {
@@ -24,6 +26,7 @@ class LoggingModel {
       "Location": location,
       "Rating": rating,
       "Description": description,
+      "Tags": tags,
     };
   }
 
@@ -35,6 +38,7 @@ class LoggingModel {
         name: data ['name'] ?? '',
         location: data['location'] ?? '',
         rating: data['rating'] ?? '',
-        description: data['description'] ?? '');
+        description: data['description'] ?? '',
+        tags: data['tags'] ?? '',);
   }
 }

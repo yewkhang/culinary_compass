@@ -12,7 +12,8 @@ class UserRepository extends GetxController {
 
   // Save user logs
   Future<void> saveUserLog(String selectedImagePath, String name,
-      String location, double rating, String description) async {
+      String location, double rating, String description, List<String> tags) async {
+
     // --- Upload image to Firebase storage --- //
     String fileName = DateTime.now()
         .millisecondsSinceEpoch
@@ -29,6 +30,7 @@ class UserRepository extends GetxController {
     } catch (error) {
       'An error';
     }
+    
     // --- Upload Log to Firestore --- //
     final newLog = LoggingModel(
         uid: uid,
@@ -36,7 +38,8 @@ class UserRepository extends GetxController {
         name: name,
         location: location,
         rating: rating,
-        description: description);
+        description: description,
+        tags: tags);
     try {
       await _db.collection("Logs").doc().set(newLog.toJson());
     } on FirebaseException catch (e) {
@@ -48,6 +51,7 @@ class UserRepository extends GetxController {
   Future<QuerySnapshot> fetchAllUserLogs() async {
     QuerySnapshot result = await _db
         .collection("Logs")
+        // select logs where UID matches user ID
         .where('UID', isEqualTo: _auth.currentUser!.uid)
         .where('Name', )
         .get();

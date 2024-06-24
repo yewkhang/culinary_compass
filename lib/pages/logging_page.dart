@@ -1,20 +1,20 @@
 // Dependencies
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // for reading and writing files
 import 'package:culinary_compass/utils/constants/colors.dart';
-// Firebase
-import 'package:firebase_auth/firebase_auth.dart';
 // Models
 import 'package:culinary_compass/user_repository.dart';
+import 'package:culinary_compass/models/tags_model.dart';
 // Controllers
 import 'package:culinary_compass/utils/controllers/ratingbar_controller.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
 import 'package:culinary_compass/utils/controllers/image_controller.dart';
 import 'package:culinary_compass/utils/controllers/textfield_controllers.dart';
+import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 
 class LoggingPage extends StatelessWidget {
   const LoggingPage({super.key});
@@ -27,6 +27,8 @@ class LoggingPage extends StatelessWidget {
     final imageController = Get.put(ImageController());
     // Location Suggestion Controller
     final locationController = Get.put(LocationController());
+    // Tags Controller
+    final tagsController = Get.put(TagsController());
     // Rating Bar Controller
     final ratingBarController = Get.put(RatingBarController());
     final userRepository = Get.put(UserRepository());
@@ -156,10 +158,63 @@ class LoggingPage extends StatelessWidget {
                             tileColor: Colors.grey.withOpacity(0.3),
                           );
                         })
-                : const SizedBox(); // When there are not results from location search
+                : const SizedBox(); // When there are no results from location search
           },
         ),
-        // Tags (TO BE IMPLEMENTED)
+        // ----- TAG SUGGESTIONS ----- //
+        Padding(
+          padding: const EdgeInsets.all(CCSizes.defaultSpace),
+          child: TypeAheadField(
+              builder: (context, controller, focusNode) {
+                return TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  decoration: const InputDecoration(
+                    hintText: 'Tags',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(
+                      Icons.tag,
+                      color: CCColors.primaryColor,
+                    ),
+                  ),
+                );
+              },
+              itemBuilder: (BuildContext context, String itemData) {
+                return ListTile(
+                  title: Text(itemData),
+                );
+              },
+              onSelected: (String suggestion) {
+                // add tags only if selected tags doesn't contain 'suggestion'
+                if (tagsController.selectedTags.contains(suggestion) == false) {
+                  tagsController.selectedTags.add(suggestion);
+                }},
+              suggestionsCallback: (String query) {
+                // get tag matches from a list of tags
+                return TagsModel.getSuggestions(query);
+              }),
+        ),
+        // ----- SELECTED TAGS DISPLAY ----- //
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: CCSizes.defaultSpace),
+          child: Obx(() => tagsController.selectedTags.isEmpty
+              ? const Center(
+                  child: Text('Please select a tag'),
+                )
+              : Wrap(
+                  children: tagsController.selectedTags
+                      .map((element) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Chip(
+                              label: Text(element),
+                              deleteIcon: const Icon(Icons.clear),
+                              onDeleted: () =>
+                                  tagsController.selectedTags.remove(element),
+                            ),
+                          ))
+                      .toList(),
+                )),
+        ),
         // ----- DESCRIPTION TEXTFIELD ----- //
         Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
@@ -199,7 +254,8 @@ class LoggingPage extends StatelessWidget {
                   textFieldControllers.nameTextField.text,
                   locationController.locationSearch.text,
                   ratingBarController.currentRating.value,
-                  textFieldControllers.descriptionTextField.text);
+                  textFieldControllers.descriptionTextField.text,
+                  tagsController.selectedTags);
               // Saved log snackbar to tell user log has been saved
               if (context.mounted) {
                 Navigator.of(context)
@@ -240,6 +296,7 @@ class LoggingPage extends StatelessWidget {
               locationController.locationSearch.text = '';
               textFieldControllers.descriptionTextField.text = '';
               ratingBarController.currentRating.value = 0;
+              tagsController.selectedTags.clear();
             },
             child: const Text('Save')),
       ]),
