@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/user_repository.dart';
+import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,7 @@ class SearchFieldController extends GetxController {
 
   Stream<QuerySnapshot> getResults() {
     return Stream.fromFuture(userRepository.fetchAllUserLogs());
-  } 
+  }
 
   Widget buildSearchResults(String search) {
     return StreamBuilder<QuerySnapshot>(
@@ -18,7 +19,7 @@ class SearchFieldController extends GetxController {
       builder: (context, snapshot) {
         return (snapshot.connectionState == ConnectionState.waiting)
             ? const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(color: CCColors.primaryColor,),
               )
             : ListView.builder(
                 shrinkWrap: true,
@@ -30,27 +31,21 @@ class SearchFieldController extends GetxController {
                       snapshot.data!.docs[index].data() as Map<String, dynamic>;
 
                   // Show results that match search
-                  if (data['Name']
-                      .toString()
-                      .toLowerCase()
-                      .contains(search)) {
+                  if (data['Name'].toString().toLowerCase().contains(search)) {
                     return ListTile(
-                      title: Text(data['Name']),
-                      subtitle: Text(data['Location']),
                       leading: Container(
-                        height: 80,
-                        width: 80,
                         child: data.containsKey('Picture')
-                            ? Image.network(data['Picture'])
-                            : Container(
-                                child: Text('No picture!'),
-                              ),
-                      ),
+                          ? Image.network(data['Picture'])
+                          : const Text('No picture!')),
+                      title: Text(data['Name'], style: const TextStyle(fontSize: 18),),
+                      subtitle: Text(data['Location']),
+                      trailing: Text('${data['Rating']}⭐', style: const TextStyle(fontSize: 16),),
                       onTap: () {
                         // Redirect to edit/delete log
                       },
                     );
-                  } else { // Hide results that do not match the search
+                  } else {
+                    // Hide results that do not match the search
                     return const SizedBox();
                   }
                 });
