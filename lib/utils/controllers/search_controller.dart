@@ -9,8 +9,10 @@ class SearchFieldController extends GetxController {
   static SearchFieldController get instance => Get.find();
   final userRepository = Get.put(UserRepository());
   var query = ''.obs;
-  // Filtering
-  var selectedCuisineFilters = List<String>.empty(growable: true).obs;
+
+  // --- Filtering --- //
+  var selectedCuisineFilters = List<String>.empty(growable: true).obs; // for filtering page
+  var finalCuisineFilters = List<String>.empty(growable: true).obs; // for yourlogs page to update ListView
   var cuisineFilters = TagsModel.tags;
 
   // retrieve user data from Firestore
@@ -40,7 +42,7 @@ class SearchFieldController extends GetxController {
                   // Show results that match search
                   if (data['Name'].toString().toLowerCase().contains(search) &&
                           cuisineFilters.isEmpty
-                      ? true
+                      ? true // show all entries if filter is empty
                       : cuisineFilters
                           .any((e) => data['Tags'].toList().contains(e))) {
                     return ListTile(

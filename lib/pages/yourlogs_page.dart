@@ -43,7 +43,7 @@ class YourlogsPage extends StatelessWidget {
         body: SingleChildScrollView(
           child: Obx(
             () => searchController // add a toList() to access the value List<String> instead of RxList<String>
-                .buildSearchResults(searchController.query.value, searchController.selectedCuisineFilters.toList()),
+                .buildSearchResults(searchController.query.value, searchController.finalCuisineFilters.toList()),
           ),
         ));
   }

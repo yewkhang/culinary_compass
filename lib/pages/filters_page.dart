@@ -20,7 +20,8 @@ class FiltersPage extends StatelessWidget {
             margin: const EdgeInsets.all(10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: filtersController.cuisineFilters // contains all cuisines
+              children: filtersController
+                  .cuisineFilters // contains all cuisines
                   .map((element) => Obx(
                         () => FilterChip(
                             label: Text(element),
@@ -40,7 +41,13 @@ class FiltersPage extends StatelessWidget {
                   .toList(),
             ),
           ),
-          ElevatedButton(onPressed: () {Get.back();}, child: const Text('Done'))
+          ElevatedButton(
+              onPressed: () {
+                filtersController.finalCuisineFilters.clear();
+                filtersController.finalCuisineFilters.addAll(filtersController.selectedCuisineFilters);
+                Get.back();
+              },
+              child: const Text('Done'))
         ],
       ),
     );
