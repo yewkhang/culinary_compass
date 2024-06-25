@@ -1,4 +1,4 @@
-import 'package:culinary_compass/utils/controllers/filter_controller.dart';
+import 'package:culinary_compass/utils/controllers/search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,7 +7,7 @@ class FiltersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filtersController = Get.put(FilterController());
+    SearchFieldController filtersController = Get.find();
 
     return Scaffold(
       appBar: AppBar(
@@ -20,7 +20,7 @@ class FiltersPage extends StatelessWidget {
             margin: const EdgeInsets.all(10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: filtersController.cuisineFilters
+              children: filtersController.cuisineFilters // contains all cuisines
                   .map((element) => Obx(
                         () => FilterChip(
                             label: Text(element),
@@ -40,7 +40,7 @@ class FiltersPage extends StatelessWidget {
                   .toList(),
             ),
           ),
-          ElevatedButton(onPressed: () {Navigator.pop(context);}, child: const Text('Done'))
+          ElevatedButton(onPressed: () {Get.back();}, child: const Text('Done'))
         ],
       ),
     );

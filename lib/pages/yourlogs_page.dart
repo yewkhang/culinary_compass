@@ -1,6 +1,5 @@
 import 'package:culinary_compass/pages/filters_page.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
-import 'package:culinary_compass/utils/controllers/filter_controller.dart';
 import 'package:culinary_compass/utils/controllers/search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,15 +10,13 @@ class YourlogsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final searchController = Get.put(SearchFieldController());
-    final filtersController = Get.put(FilterController());
 
+    // Show filter bottom sheet
     void showFilters() {
       showModalBottomSheet(
           context: context,
           builder: (context) {
-            return Container(
-              child: FiltersPage(),
-            );
+            return FiltersPage();
           });
     }
 
@@ -45,8 +42,8 @@ class YourlogsPage extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           child: Obx(
-            () => searchController
-                .buildSearchResults(searchController.query.value, filtersController.selectedCuisineFilters),
+            () => searchController // add a toList() to access the value List<String> instead of RxList<String>
+                .buildSearchResults(searchController.query.value, searchController.selectedCuisineFilters.toList()),
           ),
         ));
   }

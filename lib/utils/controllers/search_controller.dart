@@ -3,12 +3,15 @@ import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:culinary_compass/models/tags_model.dart';
 
 class SearchFieldController extends GetxController {
   static SearchFieldController get instance => Get.find();
   final userRepository = Get.put(UserRepository());
   var query = ''.obs;
+  // Filtering
   var selectedCuisineFilters = List<String>.empty(growable: true).obs;
+  var cuisineFilters = TagsModel.tags;
 
   // retrieve user data from Firestore
   Stream<QuerySnapshot> getResults() {
