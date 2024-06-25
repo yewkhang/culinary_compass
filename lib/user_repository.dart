@@ -53,7 +53,6 @@ class UserRepository extends GetxController {
         .collection("Logs")
         // select logs where UID matches user ID
         .where('UID', isEqualTo: _auth.currentUser!.uid)
-        .where('Name', )
         .get();
     return result;
   }
