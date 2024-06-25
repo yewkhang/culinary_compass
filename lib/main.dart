@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 // main.dart is the root widget file
 Future<void> main() async {
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       catchError: (_, __) {},
       initialData: null, // self-explanatory, set initial to nothing (null)
       value: AuthService().user, // to access the MyUser Stream
-      child: MaterialApp(
+      child: GetMaterialApp(
         home: Wrapper(),
       ),
     );
