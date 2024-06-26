@@ -15,11 +15,12 @@ class FiltersPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const Text('Cuisine:'),
+          const Text('Cuisine:', style: TextStyle(fontSize: 16),),
           Container(
-            margin: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            height: 50,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
               children: filtersController
                   .cuisineFilters // contains all cuisines
                   .map((element) => Obx(
