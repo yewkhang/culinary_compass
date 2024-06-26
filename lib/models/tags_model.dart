@@ -14,6 +14,7 @@ class TagsModel {
     '🇬🇷 Greek'
   ];
 
+  // get a list of tags that matches the query for logging page
   static List<String> getSuggestions(String query) {
     List<String> matches = [];
     matches.addAll(tags);
