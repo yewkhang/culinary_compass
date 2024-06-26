@@ -13,14 +13,14 @@ class SearchFieldController extends GetxController {
   // --- Filtering --- //
   var selectedCuisineFilters = List<String>.empty(growable: true).obs; // for filtering page
   var finalCuisineFilters = List<String>.empty(growable: true).obs; // for yourlogs page to update ListView
-  var cuisineFilters = TagsModel.tags;
+  var cuisineFilters = TagsModel.tags; // for filters_page to reference, can be made to store in Firestore
 
   // retrieve user data from Firestore
   Stream<QuerySnapshot> getResults() {
     return Stream.fromFuture(userRepository.fetchAllUserLogs());
   }
 
-  Widget buildSearchResults(String search, List<String> cuisineFilters) {
+  Widget buildSearchResults(String search, List<String> selectedCuisineFilters) {
     return StreamBuilder<QuerySnapshot>(
       stream: Stream.fromFuture(userRepository.fetchAllUserLogs()),
       builder: (context, snapshot) {
@@ -41,9 +41,9 @@ class SearchFieldController extends GetxController {
                   // Filter results
                   // Show results that match search
                   if (data['Name'].toString().toLowerCase().contains(search) &&
-                          cuisineFilters.isEmpty
+                          selectedCuisineFilters.isEmpty
                       ? true // show all entries if filter is empty
-                      : cuisineFilters
+                      : selectedCuisineFilters // show any entry that contains a tag in selected filters
                           .any((e) => data['Tags'].toList().contains(e))) {
                     return ListTile(
                       leading: Container(
