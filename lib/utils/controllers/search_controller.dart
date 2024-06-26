@@ -12,11 +12,11 @@ class SearchFieldController extends GetxController {
 
   // --- FILTERING VARIABLES --- //
   // for filtering page to track selected tags
-  var selectedCuisineFilters = List<String>.empty(growable: true).obs; 
+  var selectedCuisineFilters = List<String>.empty(growable: true).obs;
   // for yourlogs page to update ListView
-  var finalCuisineFilters = List<String>.empty(growable: true).obs; 
+  var finalCuisineFilters = List<String>.empty(growable: true).obs;
   // for filters_page to reference, can be made to store in Firestore
-  var cuisineFilters = TagsModel.tags; 
+  var cuisineFilters = TagsModel.tags;
 
   // --- METHODS --- //
   // retrieve user data from Firestore
@@ -24,12 +24,14 @@ class SearchFieldController extends GetxController {
     return Stream.fromFuture(userRepository.fetchAllUserLogs());
   }
 
-  Widget buildSearchResults(String search, List<String> cuisineFiltersFromUser) {
+  Widget buildSearchResults(
+      String search, List<String> cuisineFiltersFromUser) {
     return StreamBuilder<QuerySnapshot>(
       stream: Stream.fromFuture(userRepository.fetchAllUserLogs()),
       builder: (context, snapshot) {
         return (snapshot.connectionState == ConnectionState.waiting)
-            ? const Center( // Retrieving from Firestore
+            ? const Center(
+                // Retrieving from Firestore
                 child: CircularProgressIndicator(
                   color: CCColors.primaryColor,
                 ),
@@ -44,10 +46,11 @@ class SearchFieldController extends GetxController {
                       snapshot.data!.docs[index].data() as Map<String, dynamic>;
                   // Show results that match search AND filters
                   if (data['Name'].toString().toLowerCase().contains(search) &&
-                          cuisineFiltersFromUser.isEmpty
-                      ? true // show all entries if filter is empty
-                      : cuisineFiltersFromUser // show any entry that contains a tag from user selected filters
-                          .any((e) => data['Tags'].toList().contains(e))) {
+                  // returns true and displays search only results if isEmpty,
+                  // else also displays filter results
+                      (cuisineFiltersFromUser.isEmpty ||
+                          cuisineFiltersFromUser 
+                              .any((e) => data['Tags'].toList().contains(e)))) {
                     return ListTile(
                       leading: Container(
                           child: data.containsKey('Picture')
