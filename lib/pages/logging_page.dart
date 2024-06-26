@@ -208,7 +208,7 @@ class LoggingPage extends StatelessWidget {
               : Wrap(
                   children: tagsController.selectedTags
                       .map((element) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Chip(
                               label: Text(element),
                               deleteIcon: const Icon(Icons.clear),

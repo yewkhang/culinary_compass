@@ -24,20 +24,23 @@ class FiltersPage extends StatelessWidget {
               children: filtersController
                   .cuisineFilters // contains all cuisines
                   .map((element) => Obx(
-                        () => FilterChip(
-                            label: Text(element),
-                            selected: filtersController.selectedCuisineFilters
-                                .contains(element),
-                            onSelected: (selected) {
-                              // determine whether to remove or add tags
-                              if (selected) {
-                                filtersController.selectedCuisineFilters
-                                    .add(element);
-                              } else {
-                                filtersController.selectedCuisineFilters
-                                    .remove(element);
-                              }
-                            }),
+                        () => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: FilterChip(
+                              label: Text(element),
+                              selected: filtersController.selectedCuisineFilters
+                                  .contains(element),
+                              onSelected: (selected) {
+                                // determine whether to remove or add tags
+                                if (selected) {
+                                  filtersController.selectedCuisineFilters
+                                      .add(element);
+                                } else {
+                                  filtersController.selectedCuisineFilters
+                                      .remove(element);
+                                }
+                              }),
+                        ),
                       ))
                   .toList(),
             ),
