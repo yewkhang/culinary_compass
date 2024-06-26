@@ -6,4 +6,5 @@ class TextfieldControllers extends GetxController{
 
   TextEditingController nameTextField = TextEditingController();
   TextEditingController descriptionTextField = TextEditingController();
+  TextEditingController tagsTextField = TextEditingController();
 }

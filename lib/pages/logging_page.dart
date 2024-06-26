@@ -165,6 +165,7 @@ class LoggingPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TypeAheadField(
+              controller: textFieldControllers.tagsTextField,
               builder: (context, controller, focusNode) {
                 return TextField(
                   controller: controller,
@@ -188,9 +189,12 @@ class LoggingPage extends StatelessWidget {
                 // add tags only if selected tags doesn't contain 'suggestion'
                 if (tagsController.selectedTags.contains(suggestion) == false) {
                   tagsController.selectedTags.add(suggestion);
-                }},
+                  // clear text field upon selection of a tag
+                  textFieldControllers.tagsTextField.clear();
+                }
+              },
               suggestionsCallback: (String query) {
-                // get tag matches from a list of tags
+                // list of cuisine tags to select from
                 return TagsModel.getSuggestions(query);
               }),
         ),
@@ -199,12 +203,12 @@ class LoggingPage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: CCSizes.defaultSpace),
           child: Obx(() => tagsController.selectedTags.isEmpty
               ? const Center(
-                  child: Text('Please select a tag'),
+                  child: Text('Select a tag'),
                 )
               : Wrap(
                   children: tagsController.selectedTags
                       .map((element) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Chip(
                               label: Text(element),
                               deleteIcon: const Icon(Icons.clear),
@@ -238,65 +242,108 @@ class LoggingPage extends StatelessWidget {
         // ----- SAVE LOG BUTTON ----- //
         ElevatedButton(
             onPressed: () async {
-              // Circular progress indicator for saving user logs
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: CCColors.primaryColor,
+              // Check if any of the fields are empty
+              if (imageController.selectedImagePath.value.isEmpty ||
+                  textFieldControllers.nameTextField.text.isEmpty ||
+                  locationController.locationSearch.text.isEmpty ||
+                  ratingBarController.currentRating.value.isEqual(0) ||
+                  textFieldControllers.descriptionTextField.text.isEmpty ||
+                  tagsController.selectedTags.isEmpty) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Container(
+                      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+                      height: 60,
+                      decoration: const BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.cancel_outlined,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                          SizedBox(width: CCSizes.spaceBtwItems),
+                          Text(
+                            'Please enter a value for all fields!',
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                overflow: TextOverflow.ellipsis),
+                          ),
+                        ],
                       ),
-                    );
-                  });
-              // Save user log to Firestore
-              await userRepository.saveUserLog(
-                  imageController.selectedImagePath.value,
-                  textFieldControllers.nameTextField.text,
-                  locationController.locationSearch.text,
-                  ratingBarController.currentRating.value,
-                  textFieldControllers.descriptionTextField.text,
-                  tagsController.selectedTags);
-              // Saved log snackbar to tell user log has been saved
-              if (context.mounted) {
-                Navigator.of(context)
-                    .pop(); // remove circular progress indicator
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Container(
-                    padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
-                    height: 60,
-                    decoration: const BoxDecoration(
-                        color: CCColors.secondaryColor,
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.check_circle_outline_outlined,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                        SizedBox(width: CCSizes.spaceBtwItems),
-                        Text(
-                          'Log Saved!',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
                     ),
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                ));
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                  ));
+                }
               }
-              // Reset fields upon saving
-              imageController.selectedImagePath.value = '';
-              textFieldControllers.nameTextField.text = '';
-              locationController.locationSearch.text = '';
-              textFieldControllers.descriptionTextField.text = '';
-              ratingBarController.currentRating.value = 0;
-              tagsController.selectedTags.clear();
+              // All input fields are filled, proceed to save log
+              else {
+                // Circular progress indicator for saving user logs
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: CCColors.primaryColor,
+                        ),
+                      );
+                    });
+                // Save user log to Firestore
+                await userRepository.saveUserLog(
+                    imageController.selectedImagePath.value,
+                    textFieldControllers.nameTextField.text,
+                    locationController.locationSearch.text,
+                    ratingBarController.currentRating.value,
+                    textFieldControllers.descriptionTextField.text,
+                    tagsController.selectedTags);
+                // Saved log snackbar to tell user log has been saved
+                if (context.mounted) {
+                  Navigator.of(context)
+                      .pop(); // remove circular progress indicator
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Container(
+                      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+                      height: 60,
+                      decoration: const BoxDecoration(
+                          color: CCColors.secondaryColor,
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline_outlined,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                          SizedBox(width: CCSizes.spaceBtwItems),
+                          Text(
+                            'Log Saved!',
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                overflow: TextOverflow.ellipsis),
+                          ),
+                        ],
+                      ),
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                  ));
+                }
+                // Reset fields upon saving
+                imageController.selectedImagePath.value = '';
+                textFieldControllers.nameTextField.text = '';
+                locationController.locationSearch.text = '';
+                textFieldControllers.descriptionTextField.text = '';
+                ratingBarController.currentRating.value = 0;
+                tagsController.selectedTags.clear();
+                textFieldControllers.tagsTextField.clear();
+              }
             },
             child: const Text('Save')),
       ]),
