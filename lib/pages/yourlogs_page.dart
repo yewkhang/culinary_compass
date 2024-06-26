@@ -41,6 +41,7 @@ class YourlogsPage extends StatelessWidget {
           backgroundColor: CCColors.primaryColor,
         ),
         body: SingleChildScrollView(
+          // rebuild widget based on changes in search query and finalCuisineFilters
           child: Obx(
             () => searchController // add a toList() to access the value List<String> instead of RxList<String>
                 .buildSearchResults(searchController.query.value, searchController.finalCuisineFilters.toList()),
