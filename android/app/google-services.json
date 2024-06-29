@@ -12,7 +12,20 @@
           "package_name": "com.ykwp.culinary_compass"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "685371262860-rebtc576khnl70ahnpfliqqd01j0ckos.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ykwp.culinary_compass",
+            "certificate_hash": "6dca376204cc4c550755fc729398065d819c5555"
+          }
+        },
+        {
+          "client_id": "685371262860-u4r1hvka3ijl3bedejlcau852f9td31e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCAcok_UroCox5ZB0pyk0SbnXswCo8dSJE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685371262860-u4r1hvka3ijl3bedejlcau852f9td31e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "685371262860-t23o6fs8uaqgm577i86dpon9ff3kc49k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.culinaryCompass"
+              }
+            }
+          ]
         }
       }
     }
