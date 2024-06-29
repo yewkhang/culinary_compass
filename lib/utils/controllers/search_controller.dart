@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/models/tags_model.dart';
@@ -19,15 +20,11 @@ class SearchFieldController extends GetxController {
   var cuisineFilters = TagsModel.tags;
 
   // --- METHODS --- //
-  // retrieve user data from Firestore
-  Stream<QuerySnapshot> getResults() {
-    return Stream.fromFuture(userRepository.fetchAllUserLogs());
-  }
 
   Widget buildSearchResults(
       String search, List<String> cuisineFiltersFromUser) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Stream.fromFuture(userRepository.fetchAllUserLogs()),
+      stream: userRepository.fetchAllUserLogs(),
       builder: (context, snapshot) {
         return (snapshot.connectionState == ConnectionState.waiting)
             ? const Center(
@@ -41,33 +38,67 @@ class SearchFieldController extends GetxController {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
+                  // ID of each document
+                  String docID = snapshot.data!.docs[index].id;
                   // data contains ALL logs from user
                   var data =
                       snapshot.data!.docs[index].data() as Map<String, dynamic>;
                   // Show results that match search AND filters
                   if (data['Name'].toString().toLowerCase().contains(search) &&
-                  // returns true and displays search only results if isEmpty,
-                  // else also displays filter results
+                      // returns true and displays search only results if isEmpty,
+                      // else also displays filter results
                       (cuisineFiltersFromUser.isEmpty ||
-                          cuisineFiltersFromUser 
+                          cuisineFiltersFromUser
                               .any((e) => data['Tags'].toList().contains(e)))) {
-                    return ListTile(
-                      leading: Container(
-                          child: data.containsKey('Picture')
-                              ? Image.network(data['Picture'])
-                              : const Text('No picture!')),
-                      title: Text(
-                        data['Name'],
-                        style: const TextStyle(fontSize: 18),
+                    return Slidable(
+                      // Slide to left to delete log
+                      endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: 0.25,
+                          children: [
+                            SlidableAction(
+                                backgroundColor: Colors.red,
+                                icon: Icons.delete,
+                                onPressed: (context) => Get.defaultDialog(
+                                      title: 'Delete Log',
+                                      middleText:
+                                          'Are you sure you want to delete this log?',
+                                      confirm: ElevatedButton(
+                                          onPressed: () {
+                                            userRepository.deleteUserLog(docID);
+                                            Get.back();
+                                          },
+                                          child: const Text('Delete Log')),
+                                      cancel: ElevatedButton(
+                                          onPressed: () => Get.back(),
+                                          child: const Text('Cancel')),
+                                    ))
+                          ]),
+                      child: ListTile(
+                        leading: SizedBox(
+                            height: 80,
+                            width: 80,
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: data.containsKey('Picture')
+                                    ? Image.network(
+                                        data['Picture'],
+                                        fit: BoxFit.cover,
+                                      )
+                                    : const Text('No picture!'))),
+                        title: Text(
+                          data['Name'],
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        subtitle: Text(data['Location']),
+                        trailing: Text(
+                          '${data['Rating']}⭐',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        onTap: () {
+                          // Redirect to edit/delete log
+                        },
                       ),
-                      subtitle: Text(data['Location']),
-                      trailing: Text(
-                        '${data['Rating']}⭐',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      onTap: () {
-                        // Redirect to edit/delete log
-                      },
                     );
                   } else {
                     // Hide results that do not match the search

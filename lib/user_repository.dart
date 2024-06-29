@@ -48,12 +48,17 @@ class UserRepository extends GetxController {
   }
 
   // Fetch user logs
-  Future<QuerySnapshot> fetchAllUserLogs() async {
-    QuerySnapshot result = await _db
+  Stream<QuerySnapshot> fetchAllUserLogs() {
+    Stream<QuerySnapshot> result =  _db
         .collection("Logs")
         // select logs where UID matches user ID
         .where('UID', isEqualTo: _auth.currentUser!.uid)
-        .get();
+        .snapshots();
     return result;
+  }
+
+  // Delete user logs
+  Future<void> deleteUserLog(String docID) {
+    return _db.collection("Logs").doc(docID).delete();
   }
 }
