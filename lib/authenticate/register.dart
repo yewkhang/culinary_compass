@@ -101,12 +101,15 @@ class _RegisterState extends State<Register> {
                             style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color?>(CCColors.primaryColor)),
                             child: const Text("Register", style: TextStyle(color: Colors.black)),
                             onPressed: () async {
+                              setState(() {
+                                error = "";
+                              });
                               if (_formKey.currentState!.validate()) { // uses validator properties above
                                 setState(() => isLoading = true); // to show loading screen
                                 dynamic result = await _auth.registerUserEmail(email, password);
                                 if (result == null) {
                                   setState(() {
-                                    error = "Please enter a valid email";
+                                    error = "Please enter a valid email.\nOtherwise, this email might already be used!";
                                     isLoading = false; // if credentials are wrong, then show sign in page
                                   });
                                 }
@@ -120,7 +123,8 @@ class _RegisterState extends State<Register> {
                         const SizedBox(height: 10.0),
                         Text(
                           error,
-                          style: const TextStyle(color: Colors.red, fontSize: 14.0)
+                          style: const TextStyle(color: Colors.red, fontSize: 14.0),
+                          textAlign: TextAlign.center,
                         ),
 
                         // Loading animation

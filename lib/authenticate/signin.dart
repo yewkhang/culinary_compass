@@ -118,6 +118,9 @@ class _SignInState extends State<SignIn> {
                             style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color?>(CCColors.primaryColor)),
                             child: const Text("Sign In", style: TextStyle(color: Colors.black)),
                             onPressed: () async {
+                              setState(() {
+                                error = "";
+                              });
                               if (_formKey.currentState!.validate()) { // uses validator properties above
                                 setState(() => isLoading = true); // to show loading screen
                                 dynamic result = await _auth.signInUserEmail(email, password);
@@ -136,7 +139,8 @@ class _SignInState extends State<SignIn> {
                         const SizedBox(height: 10.0),
                         Text(
                           error,
-                          style: const TextStyle(color: Colors.red, fontSize: 14.0)
+                          style: const TextStyle(color: Colors.red, fontSize: 14.0),
+                          textAlign: TextAlign.center,
                         ),
 
                         // Loading animation
