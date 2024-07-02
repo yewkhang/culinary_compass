@@ -11,9 +11,13 @@ class UserRepository extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Save user logs
-  Future<void> saveUserLog(String selectedImagePath, String name,
-      String location, double rating, String description, List<String> tags) async {
-
+  Future<void> saveUserLog(
+      String selectedImagePath,
+      String name,
+      String location,
+      double rating,
+      String description,
+      List<String> tags) async {
     // --- Upload image to Firebase storage --- //
     String fileName = DateTime.now()
         .millisecondsSinceEpoch
@@ -30,7 +34,7 @@ class UserRepository extends GetxController {
     } catch (error) {
       'An error';
     }
-    
+
     // --- Upload Log to Firestore --- //
     final newLog = LoggingModel(
         uid: uid,
@@ -49,7 +53,7 @@ class UserRepository extends GetxController {
 
   // Fetch user logs
   Stream<QuerySnapshot> fetchAllUserLogs() {
-    Stream<QuerySnapshot> result =  _db
+    Stream<QuerySnapshot> result = _db
         .collection("Logs")
         // select logs where UID matches user ID
         .where('UID', isEqualTo: _auth.currentUser!.uid)
@@ -61,4 +65,27 @@ class UserRepository extends GetxController {
   Future<void> deleteUserLog(String docID) {
     return _db.collection("Logs").doc(docID).delete();
   }
+
+  // Update user logs
+  Future<void> updateUserLog(
+      String docID,
+      String selectedImagePathFirestore,
+      String name,
+      String location,
+      double rating,
+      String description,
+      List<String> tags) {
+    String uid = _auth.currentUser!.uid; // Current user uid
+
+    final updatedLog = LoggingModel(
+        uid: uid,
+        pictureURL: selectedImagePathFirestore,
+        name: name,
+        location: location,
+        rating: rating,
+        description: description,
+        tags: tags);
+    return _db.collection("Logs").doc(docID).update(updatedLog.toJson());
+  }
+  // Update picture and remove old picture
 }
