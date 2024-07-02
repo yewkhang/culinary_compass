@@ -62,27 +62,32 @@ class LoggingPage extends StatelessWidget {
         Stack(children: [
           // spot for image to show
           SizedBox(
-            width: 450,
-            height: 390,
-            child: 
-            Obx(() {
-              // if image is from Firebase storage
-              if (imageController.selectedImagePath.value.startsWith('http')) {
-                return Image.network(imageController.selectedImagePath.value, fit: BoxFit.cover,);
-              } else if (imageController.selectedImagePath.value == '') {
-                return Container(
-                        color: Colors.grey,
-                        child: const Center(
-                          child: Text('Select an image'),
-                        ),
-                      );
-              } else {
-                return Image.file(
-                        File(imageController.selectedImagePath.value),
-                        fit: BoxFit.cover,
-                      );
-              }
-            })),
+              width: 450,
+              height: 390,
+              child: Obx(() {
+                // if routed from search page, image path is Firebase URL
+                if (imageController.selectedImagePath.value
+                    .startsWith('http')) {
+                  return Image.network(
+                    imageController.selectedImagePath.value,
+                    fit: BoxFit.cover,
+                  );
+                } 
+                // if routed from navigation menu, image value is empty
+                else if (imageController.selectedImagePath.value == '') {
+                  return Container(
+                    color: Colors.grey,
+                    child: const Center(
+                      child: Text('Select an image'),
+                    ),
+                  );
+                } else { // image from camera/gallery
+                  return Image.file(
+                    File(imageController.selectedImagePath.value),
+                    fit: BoxFit.cover,
+                  );
+                }
+              })),
           // gallery image picker
           Positioned(
             top: 300,

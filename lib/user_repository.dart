@@ -79,7 +79,9 @@ class UserRepository extends GetxController {
       double rating,
       String description,
       List<String> tags) async {
+        
     String uid = _auth.currentUser!.uid; // Current user uid
+
     // original image is the same as the new image, dont change on Firebase
     if (originalPictureURL == newSelectedImagePath) {
       // update logs without updating picture

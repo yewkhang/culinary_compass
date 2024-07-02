@@ -23,7 +23,7 @@ class SearchFieldController extends GetxController {
   // --- METHODS --- //
 
   Widget buildSearchResults(
-      String search, List cuisineFiltersFromUser) {
+      String search, List<String> cuisineFiltersFromUser) {
     return StreamBuilder<QuerySnapshot>(
       stream: userRepository.fetchAllUserLogs(),
       builder: (context, snapshot) {

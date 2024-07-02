@@ -18,7 +18,7 @@ class NavigationMenu extends StatelessWidget {
         () => NavigationBar(
           height: 70, // height of navigation bar
           elevation: 0,
-          indicatorColor: Colors.amber,
+          indicatorColor: CCColors.primaryColor,
           selectedIndex:
               controller.selectedIndex.value, //access int wrapped in Rx context
           onDestinationSelected: (index) =>
@@ -53,7 +53,7 @@ class NavigationController extends GetxController {
       location: '',
       description: '',
       originalPictureURL: '',
-      tags: List.empty(growable: true),
+      tags: List<String>.empty(growable: true),
       rating: 0,
     ),
     Container(color: Colors.orange),
