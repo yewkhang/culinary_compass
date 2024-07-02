@@ -73,15 +73,33 @@ class UserRepository extends GetxController {
   Future<void> updateUserLog(
       String docID,
       String originalPictureURL,
-      String newPictureURL,
+      String newSelectedImagePath,
       String name,
       String location,
       double rating,
       String description,
-      List<String> tags) {
+      List<String> tags) async {
+
     String uid = _auth.currentUser!.uid; // Current user uid
     // Delete previous image
-    _storage.refFromURL(originalPictureURL).delete();
+    if (originalPictureURL.isNotEmpty) {
+      _storage.refFromURL(originalPictureURL).delete();
+    }
+    // --- Upload image to Firebase storage --- //
+    String fileName = DateTime.now()
+        .millisecondsSinceEpoch
+        .toString(); // Save file as under this name
+    String newPictureURL = ''; // Firebase URL to access image in the future
+    final path =
+        '$uid/images/$fileName'; // folder directory images are saved in
+    final file = File(newSelectedImagePath);
+    final ref = _storage.ref().child(path);
+    try {
+      await ref.putFile(file);
+      newPictureURL = await ref.getDownloadURL();
+    } catch (error) {
+      'An error';
+    }
 
     final updatedLog = LoggingModel(
         uid: uid,
@@ -93,5 +111,4 @@ class UserRepository extends GetxController {
         tags: tags);
     return _db.collection("Logs").doc(docID).update(updatedLog.toJson());
   }
-  // Update picture and remove old picture
 }
