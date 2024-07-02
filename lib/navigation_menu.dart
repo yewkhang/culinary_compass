@@ -19,15 +19,18 @@ class NavigationMenu extends StatelessWidget {
           height: 70, // height of navigation bar
           elevation: 0,
           indicatorColor: Colors.amber,
-          selectedIndex: controller.selectedIndex.value, //access int wrapped in Rx context
-          onDestinationSelected: (index) => controller.selectedIndex.value = index,
-          
+          selectedIndex:
+              controller.selectedIndex.value, //access int wrapped in Rx context
+          onDestinationSelected: (index) =>
+              controller.selectedIndex.value = index,
+
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
             NavigationDestination(icon: Icon(Icons.book), label: 'Past Logs'),
             NavigationDestination(icon: Icon(Icons.camera_alt), label: 'Log'),
             NavigationDestination(icon: Icon(Icons.people), label: 'Groups'),
-            NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
+            NavigationDestination(
+                icon: Icon(Icons.settings), label: 'Settings'),
           ],
         ),
       ),
@@ -44,7 +47,15 @@ class NavigationController extends GetxController {
   final screens = [
     const HomePage(),
     const YourlogsPage(),
-    const LoggingPage(),
+    LoggingPage(
+      docID: '',
+      name: '',
+      location: '',
+      description: '',
+      pictureURL: '',
+      tags: List.empty(growable: true),
+      rating: 0,
+    ),
     Container(color: Colors.orange),
     SettingsPage()
   ];

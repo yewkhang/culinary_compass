@@ -16,8 +16,22 @@ import 'package:culinary_compass/utils/controllers/image_controller.dart';
 import 'package:culinary_compass/utils/controllers/textfield_controllers.dart';
 import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 
+// ignore: must_be_immutable
 class LoggingPage extends StatelessWidget {
-  const LoggingPage({super.key});
+  String name, location, description, pictureURL, docID;
+  double rating;
+  List<String> tags;
+  late bool fromYourLogsPage;
+  LoggingPage(
+      {super.key,
+      this.fromYourLogsPage = false,
+      required this.docID,
+      required this.name,
+      required this.pictureURL,
+      required this.location,
+      required this.description,
+      required this.tags,
+      required this.rating});
 
   @override
   Widget build(BuildContext context) {
@@ -33,26 +47,42 @@ class LoggingPage extends StatelessWidget {
     final ratingBarController = Get.put(RatingBarController());
     final userRepository = Get.put(UserRepository());
 
+    //initial values
+    textFieldControllers.nameTextField.text = name;
+    textFieldControllers.descriptionTextField.text = description;
+    locationController.locationSearch.text = location;
+    ratingBarController.currentRating.value = rating;
+    tagsController.selectedTags.value = tags;
+
     return Scaffold(
       body: ListView(children: <Widget>[
         // ----- IMAGE SELECTION ----- //
         Stack(children: [
           // spot for image to show
-          Obx(() => imageController.selectedImagePath.value == ''
-              ? Container(
-                  width: 450,
-                  height: 390,
-                  color: Colors.grey,
-                  child: const Center(
-                    child: Text('Select an image'),
-                  ),
-                )
-              : Image.file(
-                  File(imageController.selectedImagePath.value),
-                  fit: BoxFit.cover,
-                  width: 450,
-                  height: 390,
-                )),
+          Container(
+            width: 450,
+            height: 390,
+            child: fromYourLogsPage
+                ? Image.network(
+                    pictureURL,
+                    fit: BoxFit.cover,
+                  )
+                : Obx(() => imageController.selectedImagePath.value == ''
+                    ? Container(
+                        width: 450,
+                        height: 390,
+                        color: Colors.grey,
+                        child: const Center(
+                          child: Text('Select an image'),
+                        ),
+                      )
+                    : Image.file(
+                        File(imageController.selectedImagePath.value),
+                        fit: BoxFit.cover,
+                        width: 450,
+                        height: 390,
+                      )),
+          ),
           // gallery image picker
           Positioned(
             top: 300,
@@ -74,6 +104,18 @@ class LoggingPage extends StatelessWidget {
               },
               child: const Icon(Icons.camera_alt),
             ),
+          ),
+          Positioned(
+            top: 10,
+            right: 20,
+            child: fromYourLogsPage
+                ? IconButton(
+                    onPressed: () => Get.back(),
+                    icon: const Icon(Icons.cancel_rounded),
+                    color: Colors.grey,
+                    iconSize: 40,
+                  )
+                : const SizedBox(),
           )
         ]),
 
@@ -239,7 +281,7 @@ class LoggingPage extends StatelessWidget {
             alignment: Alignment.center,
             child: Obx(() => ratingBarController
                 .buildRating(ratingBarController.currentRating.value))),
-        // ----- SAVE LOG BUTTON ----- //
+        // ----- SAVE/UPDATE LOG BUTTON ----- //
         ElevatedButton(
             onPressed: () async {
               // Check if any of the fields are empty
@@ -294,13 +336,22 @@ class LoggingPage extends StatelessWidget {
                       );
                     });
                 // Save user log to Firestore
-                await userRepository.saveUserLog(
-                    imageController.selectedImagePath.value,
-                    textFieldControllers.nameTextField.text,
-                    locationController.locationSearch.text,
-                    ratingBarController.currentRating.value,
-                    textFieldControllers.descriptionTextField.text,
-                    tagsController.selectedTags);
+                fromYourLogsPage
+                    ? await userRepository.updateUserLog(
+                        docID,
+                        imageController.selectedImagePath.value,
+                        textFieldControllers.nameTextField.text,
+                        locationController.locationSearch.text,
+                        ratingBarController.currentRating.value,
+                        textFieldControllers.descriptionTextField.text,
+                        tagsController.selectedTags)
+                    : await userRepository.saveUserLog(
+                        imageController.selectedImagePath.value,
+                        textFieldControllers.nameTextField.text,
+                        locationController.locationSearch.text,
+                        ratingBarController.currentRating.value,
+                        textFieldControllers.descriptionTextField.text,
+                        tagsController.selectedTags);
                 // Saved log snackbar to tell user log has been saved
                 if (context.mounted) {
                   Navigator.of(context)
@@ -343,9 +394,14 @@ class LoggingPage extends StatelessWidget {
                 ratingBarController.currentRating.value = 0;
                 tagsController.selectedTags.clear();
                 textFieldControllers.tagsTextField.clear();
+
+                if (fromYourLogsPage) {
+                  Get.back();
+                }
               }
             },
-            child: const Text('Save')),
+            child:
+                fromYourLogsPage ? const Text('Update') : const Text('Save')),
       ]),
     );
   }
