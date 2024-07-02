@@ -18,7 +18,7 @@ import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 
 // ignore: must_be_immutable
 class LoggingPage extends StatelessWidget {
-  String name, location, description, pictureURL, docID;
+  String name, location, description, originalPictureURL, docID;
   double rating;
   List<String> tags;
   late bool fromYourLogsPage;
@@ -27,7 +27,7 @@ class LoggingPage extends StatelessWidget {
       this.fromYourLogsPage = false,
       required this.docID,
       required this.name,
-      required this.pictureURL,
+      required this.originalPictureURL,
       required this.location,
       required this.description,
       required this.tags,
@@ -64,7 +64,7 @@ class LoggingPage extends StatelessWidget {
             height: 390,
             child: fromYourLogsPage
                 ? Image.network(
-                    pictureURL,
+                    originalPictureURL,
                     fit: BoxFit.cover,
                   )
                 : Obx(() => imageController.selectedImagePath.value == ''
@@ -339,6 +339,7 @@ class LoggingPage extends StatelessWidget {
                 fromYourLogsPage
                     ? await userRepository.updateUserLog(
                         docID,
+                        originalPictureURL,
                         imageController.selectedImagePath.value,
                         textFieldControllers.nameTextField.text,
                         locationController.locationSearch.text,

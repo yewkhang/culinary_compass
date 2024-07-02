@@ -66,7 +66,7 @@ class SearchFieldController extends GetxController {
                                           'Are you sure you want to delete this log?',
                                       confirm: ElevatedButton(
                                           onPressed: () {
-                                            userRepository.deleteUserLog(docID);
+                                            userRepository.deleteUserLog(docID, data['Picture']);
                                             Get.back();
                                           },
                                           child: const Text('Delete Log')),
@@ -101,7 +101,7 @@ class SearchFieldController extends GetxController {
                           Get.to(LoggingPage(
                             fromYourLogsPage: true,
                             docID: docID,
-                            pictureURL: data['Picture'],
+                            originalPictureURL: data['Picture'],
                             name: data['Name'],
                             location: data['Location'],
                             description: data['Description'],

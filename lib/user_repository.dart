@@ -8,6 +8,7 @@ import 'dart:io';
 class UserRepository extends GetxController {
   static UserRepository get instance => Get.find();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Save user logs
@@ -27,7 +28,7 @@ class UserRepository extends GetxController {
     final path =
         '$uid/images/$fileName'; // folder directory images are saved in
     final file = File(selectedImagePath);
-    final ref = FirebaseStorage.instance.ref().child(path);
+    final ref = _storage.ref().child(path);
     try {
       await ref.putFile(file);
       savedImageURL = await ref.getDownloadURL();
@@ -62,24 +63,29 @@ class UserRepository extends GetxController {
   }
 
   // Delete user logs
-  Future<void> deleteUserLog(String docID) {
+  Future<void> deleteUserLog(String docID, String originalPictureURL) {
+    // Delete image
+    _storage.refFromURL(originalPictureURL).delete();
     return _db.collection("Logs").doc(docID).delete();
   }
 
   // Update user logs
   Future<void> updateUserLog(
       String docID,
-      String selectedImagePathFirestore,
+      String originalPictureURL,
+      String newPictureURL,
       String name,
       String location,
       double rating,
       String description,
       List<String> tags) {
     String uid = _auth.currentUser!.uid; // Current user uid
+    // Delete previous image
+    _storage.refFromURL(originalPictureURL).delete();
 
     final updatedLog = LoggingModel(
         uid: uid,
-        pictureURL: selectedImagePathFirestore,
+        pictureURL: newPictureURL,
         name: name,
         location: location,
         rating: rating,

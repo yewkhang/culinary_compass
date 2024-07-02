@@ -52,7 +52,7 @@ class NavigationController extends GetxController {
       name: '',
       location: '',
       description: '',
-      pictureURL: '',
+      originalPictureURL: '',
       tags: List.empty(growable: true),
       rating: 0,
     ),
