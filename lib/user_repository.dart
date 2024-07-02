@@ -11,7 +11,7 @@ class UserRepository extends GetxController {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Save user logs
+  // --- SAVE USER LOGS --- //
   Future<void> saveUserLog(
       String selectedImagePath,
       String name,
@@ -19,7 +19,7 @@ class UserRepository extends GetxController {
       double rating,
       String description,
       List<String> tags) async {
-    // --- Upload image to Firebase storage --- //
+    // Upload image to Firebase storage
     String fileName = DateTime.now()
         .millisecondsSinceEpoch
         .toString(); // Save file as under this name
@@ -36,7 +36,7 @@ class UserRepository extends GetxController {
       'An error';
     }
 
-    // --- Upload Log to Firestore --- //
+    // Upload Log to Firestore
     final newLog = LoggingModel(
         uid: uid,
         pictureURL: savedImageURL,
@@ -52,7 +52,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Fetch user logs
+  // --- FETCH USER LOGS --- //
   Stream<QuerySnapshot> fetchAllUserLogs() {
     Stream<QuerySnapshot> result = _db
         .collection("Logs")
@@ -62,14 +62,14 @@ class UserRepository extends GetxController {
     return result;
   }
 
-  // Delete user logs
+  // --- DELETE USER LOGS --- //
   Future<void> deleteUserLog(String docID, String originalPictureURL) {
     // Delete image
     _storage.refFromURL(originalPictureURL).delete();
     return _db.collection("Logs").doc(docID).delete();
   }
 
-  // Update user logs
+  // --- UPDATE USER LOGS --- //
   Future<void> updateUserLog(
       String docID,
       String originalPictureURL,
@@ -79,36 +79,47 @@ class UserRepository extends GetxController {
       double rating,
       String description,
       List<String> tags) async {
-
     String uid = _auth.currentUser!.uid; // Current user uid
-    // Delete previous image
-    if (originalPictureURL.isNotEmpty) {
-      _storage.refFromURL(originalPictureURL).delete();
+    // original image is the same as the new image, dont change on Firebase
+    if (originalPictureURL == newSelectedImagePath) {
+      // update logs without updating picture
+      return _db.collection("Logs").doc(docID).update({
+        'Name': name,
+        'Location': location,
+        'Description': description,
+        'Rating': rating,
+        'Tags': tags,
+        'UID': uid
+      });
+    } else { // a new picture is uploaded
+      // Delete previous image
+      if (originalPictureURL.isNotEmpty) {
+        _storage.refFromURL(originalPictureURL).delete();
+      }
+      // Upload NEW image to Firebase storage
+      String fileName = DateTime.now()
+          .millisecondsSinceEpoch
+          .toString(); // Save file as under this name
+      String newPictureURL = ''; // Firebase URL to access image in the future
+      final path =
+          '$uid/images/$fileName'; // folder directory images are saved in
+      final file = File(newSelectedImagePath);
+      final ref = _storage.ref().child(path);
+      try {
+        await ref.putFile(file);
+        newPictureURL = await ref.getDownloadURL();
+      } catch (error) {
+        'An error';
+      }
+      final updatedLog = LoggingModel(
+          uid: uid,
+          pictureURL: newPictureURL,
+          name: name,
+          location: location,
+          rating: rating,
+          description: description,
+          tags: tags);
+      return _db.collection("Logs").doc(docID).update(updatedLog.toJson());
     }
-    // --- Upload image to Firebase storage --- //
-    String fileName = DateTime.now()
-        .millisecondsSinceEpoch
-        .toString(); // Save file as under this name
-    String newPictureURL = ''; // Firebase URL to access image in the future
-    final path =
-        '$uid/images/$fileName'; // folder directory images are saved in
-    final file = File(newSelectedImagePath);
-    final ref = _storage.ref().child(path);
-    try {
-      await ref.putFile(file);
-      newPictureURL = await ref.getDownloadURL();
-    } catch (error) {
-      'An error';
-    }
-
-    final updatedLog = LoggingModel(
-        uid: uid,
-        pictureURL: newPictureURL,
-        name: name,
-        location: location,
-        rating: rating,
-        description: description,
-        tags: tags);
-    return _db.collection("Logs").doc(docID).update(updatedLog.toJson());
   }
 }

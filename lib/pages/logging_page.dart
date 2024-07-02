@@ -22,6 +22,7 @@ class LoggingPage extends StatelessWidget {
   double rating;
   List<String> tags;
   late bool fromYourLogsPage;
+
   LoggingPage(
       {super.key,
       this.fromYourLogsPage = false,
@@ -49,6 +50,7 @@ class LoggingPage extends StatelessWidget {
 
     //initial values
     textFieldControllers.nameTextField.text = name;
+    imageController.selectedImagePath.value = originalPictureURL;
     textFieldControllers.descriptionTextField.text = description;
     locationController.locationSearch.text = location;
     ratingBarController.currentRating.value = rating;
@@ -59,30 +61,28 @@ class LoggingPage extends StatelessWidget {
         // ----- IMAGE SELECTION ----- //
         Stack(children: [
           // spot for image to show
-          Container(
+          SizedBox(
             width: 450,
             height: 390,
-            child: fromYourLogsPage
-                ? Image.network(
-                    originalPictureURL,
-                    fit: BoxFit.cover,
-                  )
-                : Obx(() => imageController.selectedImagePath.value == ''
-                    ? Container(
-                        width: 450,
-                        height: 390,
+            child: 
+            Obx(() {
+              // if image is from Firebase storage
+              if (imageController.selectedImagePath.value.startsWith('http')) {
+                return Image.network(imageController.selectedImagePath.value, fit: BoxFit.cover,);
+              } else if (imageController.selectedImagePath.value == '') {
+                return Container(
                         color: Colors.grey,
                         child: const Center(
                           child: Text('Select an image'),
                         ),
-                      )
-                    : Image.file(
+                      );
+              } else {
+                return Image.file(
                         File(imageController.selectedImagePath.value),
                         fit: BoxFit.cover,
-                        width: 450,
-                        height: 390,
-                      )),
-          ),
+                      );
+              }
+            })),
           // gallery image picker
           Positioned(
             top: 300,
@@ -335,7 +335,7 @@ class LoggingPage extends StatelessWidget {
                         ),
                       );
                     });
-                // Save user log to Firestore
+                // Save/Update user log to Firestore
                 fromYourLogsPage
                     ? await userRepository.updateUserLog(
                         docID,
