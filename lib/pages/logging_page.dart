@@ -146,6 +146,8 @@ class LoggingPage extends StatelessWidget {
             onChanged: (String value) {
               if (value.isNotEmpty) {
                 locationController.selectedAddress.value = value;
+              } else {
+                locationController.selectedAddress.value = '';
               }
             },
             decoration: const InputDecoration(
