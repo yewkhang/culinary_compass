@@ -8,13 +8,18 @@ import 'dart:io';
 class UserRepository extends GetxController {
   static UserRepository get instance => Get.find();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Save user logs
-  Future<void> saveUserLog(String selectedImagePath, String name,
-      String location, double rating, String description, List<String> tags) async {
-
-    // --- Upload image to Firebase storage --- //
+  // --- SAVE USER LOGS --- //
+  Future<void> saveUserLog(
+      String selectedImagePath,
+      String name,
+      String location,
+      double rating,
+      String description,
+      List<String> tags) async {
+    // Upload image to Firebase storage
     String fileName = DateTime.now()
         .millisecondsSinceEpoch
         .toString(); // Save file as under this name
@@ -23,15 +28,15 @@ class UserRepository extends GetxController {
     final path =
         '$uid/images/$fileName'; // folder directory images are saved in
     final file = File(selectedImagePath);
-    final ref = FirebaseStorage.instance.ref().child(path);
+    final ref = _storage.ref().child(path);
     try {
       await ref.putFile(file);
       savedImageURL = await ref.getDownloadURL();
     } catch (error) {
       'An error';
     }
-    
-    // --- Upload Log to Firestore --- //
+
+    // Upload Log to Firestore
     final newLog = LoggingModel(
         uid: uid,
         pictureURL: savedImageURL,
@@ -47,9 +52,9 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Fetch user logs
+  // --- FETCH USER LOGS --- //
   Stream<QuerySnapshot> fetchAllUserLogs() {
-    Stream<QuerySnapshot> result =  _db
+    Stream<QuerySnapshot> result = _db
         .collection("Logs")
         // select logs where UID matches user ID
         .where('UID', isEqualTo: _auth.currentUser!.uid)
@@ -57,8 +62,66 @@ class UserRepository extends GetxController {
     return result;
   }
 
-  // Delete user logs
-  Future<void> deleteUserLog(String docID) {
+  // --- DELETE USER LOGS --- //
+  Future<void> deleteUserLog(String docID, String originalPictureURL) {
+    // Delete image
+    _storage.refFromURL(originalPictureURL).delete();
     return _db.collection("Logs").doc(docID).delete();
+  }
+
+  // --- UPDATE USER LOGS --- //
+  Future<void> updateUserLog(
+      String docID,
+      String originalPictureURL,
+      String newSelectedImagePath,
+      String name,
+      String location,
+      double rating,
+      String description,
+      List<String> tags) async {
+        
+    String uid = _auth.currentUser!.uid; // Current user uid
+
+    // original image is the same as the new image, dont change on Firebase
+    if (originalPictureURL == newSelectedImagePath) {
+      // update logs without updating picture
+      return _db.collection("Logs").doc(docID).update({
+        'Name': name,
+        'Location': location,
+        'Description': description,
+        'Rating': rating,
+        'Tags': tags,
+        'UID': uid
+      });
+    } else { // a new picture is uploaded
+      // Delete previous image
+      if (originalPictureURL.isNotEmpty) {
+        _storage.refFromURL(originalPictureURL).delete();
+      }
+      // Upload NEW image to Firebase storage
+      String fileName = DateTime.now()
+          .millisecondsSinceEpoch
+          .toString(); // Save file as under this name
+      String newPictureURL = ''; // Firebase URL to access image in the future
+      final path =
+          '$uid/images/$fileName'; // folder directory images are saved in
+      final file = File(newSelectedImagePath);
+      final ref = _storage.ref().child(path);
+      try {
+        await ref.putFile(file);
+        newPictureURL = await ref.getDownloadURL();
+      } catch (error) {
+        'An error';
+      }
+      final updatedLog = LoggingModel(
+          uid: uid,
+          pictureURL: newPictureURL,
+          name: name,
+          location: location,
+          rating: rating,
+          description: description,
+          tags: tags);
+      return _db.collection("Logs").doc(docID).update(updatedLog.toJson());
+    }
   }
 }

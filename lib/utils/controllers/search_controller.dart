@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culinary_compass/pages/logging_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -65,7 +66,7 @@ class SearchFieldController extends GetxController {
                                           'Are you sure you want to delete this log?',
                                       confirm: ElevatedButton(
                                           onPressed: () {
-                                            userRepository.deleteUserLog(docID);
+                                            userRepository.deleteUserLog(docID, data['Picture']);
                                             Get.back();
                                           },
                                           child: const Text('Delete Log')),
@@ -96,7 +97,17 @@ class SearchFieldController extends GetxController {
                           style: const TextStyle(fontSize: 16),
                         ),
                         onTap: () {
-                          // Redirect to edit/delete log
+                          // Redirect to edit log
+                          Get.to(LoggingPage(
+                            fromYourLogsPage: true,
+                            docID: docID,
+                            originalPictureURL: data['Picture'],
+                            name: data['Name'],
+                            location: data['Location'],
+                            description: data['Description'],
+                            rating: data['Rating'],
+                            tags: data['Tags'].whereType<String>().toList(),
+                          ));
                         },
                       ),
                     );
