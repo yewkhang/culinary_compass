@@ -1,13 +1,25 @@
+import 'package:culinary_compass/pages/places_page.dart';
 import 'package:culinary_compass/utils/constants/curved_edges.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    void showAddPlaces() {
+      showModalBottomSheet(
+          context: context,
+          isDismissible: false,
+          builder: (context) {
+            return PlacesPage();
+          });
+    }
+
     return Scaffold(
         body: SingleChildScrollView(
       child: Column(
@@ -50,9 +62,9 @@ class HomePage extends StatelessWidget {
                   width: MediaQuery.sizeOf(context).width,
                   padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: const Row(
                     children: [
                       Icon(
@@ -67,17 +79,31 @@ class HomePage extends StatelessWidget {
               )
             ],
           )),
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
-              child: Text(
-                'Places to try',
-                style: TextStyle(
-                  fontSize: 25,
+          Row(
+            children: [
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+                  child: Text(
+                    'Places to try',
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 50),
+              ElevatedButton(
+                onPressed: () => showAddPlaces(),
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(2),
+                  foregroundColor: CCColors.primaryColor, // <-- Splash color
+                ),
+                child: const Icon(Icons.add),
+              )
+            ],
           ),
         ],
       ),
