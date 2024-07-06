@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PlacesPage extends StatelessWidget {
-  const PlacesPage({super.key});
+  const PlacesPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +145,19 @@ class PlacesPage extends StatelessWidget {
                   locationController.locationSearch.text = '';
                   placesController.descriptionTextField.text = '';
                   Get.back(); // get back to home page
+                  Get.snackbar('', '',
+                      titleText: const Text(
+                        'Place Saved!',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      messageText: const SizedBox(),
+                      icon: const Icon(
+                        Icons.check_circle_outline_outlined,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.green,
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20));
                 },
                 child: const Text('Add place'))
           ],
