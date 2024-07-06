@@ -1,7 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/models/myuser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
@@ -10,11 +9,15 @@ class AuthService {
   // for accessing any auth methods or properties, use this instance _auth
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
-  // create user object based on Firebase's User
+  // to create a user object based on Firebase's User (this invocation is initially for verification)
   MyUser? _myUserFromFirebaseUser(User user) {
-    return MyUser(uid: user.uid);
-  //  return user != null ? MyUser(uid: user.uid) : null; (old code?)
+    return MyUser(
+      username: user.email!.split("@")[0],
+      uid: user.uid,
+      bio: "No Bio",
+      profileImageURL: "",
+      friends: List.empty()
+    );
   }
 
 
@@ -22,10 +25,10 @@ class AuthService {
   Stream<MyUser?> get user {
     return _auth
       .authStateChanges() // gets Firebase's User
-      .map((User? user) => _myUserFromFirebaseUser(user!)); // map to our simplified MyUser
+      .map((User? user) => _myUserFromFirebaseUser(user!)); // map to MyUser class
   }
 
-
+/*
   // method for signing in (anonymously)
   Future signInAnon() async {
     // might have error
@@ -38,6 +41,7 @@ class AuthService {
       return null;
     }
   }
+*/
 
   // method for signing in (email and password)
   Future signInUserEmail(String email, String password) async {
@@ -56,7 +60,8 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
-      return _myUserFromFirebaseUser(user!);
+      createInitialFirestoreCollection(email, user!.uid);
+      return _myUserFromFirebaseUser(user);
     } catch(e) {
       print(e.toString());
       return null;
@@ -90,6 +95,15 @@ class AuthService {
         idToken: googleAuth.idToken
       );
 
+      UserCredential result = await _auth.signInWithCredential(credential);
+      User? user = result.user;
+
+      // logic for dealing with previous google sign-ins, to create firebase user collection
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance.collection('Users').doc(user!.email!).get();
+      if (!documentSnapshot.exists) {
+        createInitialFirestoreCollection(user.email!, user.uid);
+      }
+
       // sign in
       return await _auth.signInWithCredential(credential);
 
@@ -114,6 +128,25 @@ class AuthService {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
+      print(e.toString());
+      throw Exception("Exception");
+    }
+  }
+
+  // method for creating user Firestore collection containing auth details
+  Future<void> createInitialFirestoreCollection(String email, String uid) async {
+    try {
+      await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(email)
+        .set({
+          "Username": email.split("@")[0],
+          "Bio": "No Bio",
+          "UID": uid,
+          "Profile Image": "",
+          "Friends": List.empty(growable: true)
+        });
+    } catch (e) {
       print(e.toString());
       throw Exception("Exception");
     }
