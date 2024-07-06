@@ -1,4 +1,5 @@
 import 'package:culinary_compass/models/logging_model.dart';
+import 'package:culinary_compass/models/myuser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -123,5 +124,37 @@ class UserRepository extends GetxController {
           tags: tags);
       return _db.collection("Logs").doc(docID).update(updatedLog.toJson());
     }
+  }
+  // Uploads user profile image
+  Future<void> uploadUserProfileImage(String selectedImagePath, String email) async {
+
+    String imageURL = "";
+
+    // --- Upload image to Firebase storage --- //
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString(); // creates file name
+    String uid = _auth.currentUser!.uid; // gets uid for path on firestore database
+
+    Reference refRoot = _storage.ref();
+    Reference refDirectoryImages = refRoot.child("Profile Images");
+    Reference refDirectoryUID = refDirectoryImages.child(uid);
+    Reference profileImageToUpload = refDirectoryUID.child(fileName); // creates references for file path
+    
+    final file = File(selectedImagePath);
+    try {
+      await profileImageToUpload.putFile(file);
+      imageURL = await profileImageToUpload.getDownloadURL();
+    } catch (e) {
+      throw FirebaseException(plugin: 'Please try again');
+    }
+
+    // --- Upload ProfileImage to Firestore --- //
+    final profileImage = MyUser(profileImageURL: imageURL); // other fields are null
+
+    try {
+      await _db.collection("Users").doc(email).update(profileImage.toJsonProfileImage());
+    } on FirebaseException catch (e) {
+      throw FirebaseException(plugin: 'Please try again');
+    }
+
   }
 }
