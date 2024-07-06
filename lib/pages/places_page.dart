@@ -1,3 +1,4 @@
+import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
@@ -12,10 +13,12 @@ class PlacesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final placesController = Get.put(PlacesController());
     final locationController = Get.put(LocationController());
+    final userRepository = Get.put(UserRepository());
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add a place'),
+        backgroundColor: CCColors.primaryColor,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -119,7 +122,29 @@ class PlacesPage extends StatelessWidget {
                     )),
               ),
             ),
-            ElevatedButton(onPressed: () {}, child: const Text('Add place'))
+            ElevatedButton(
+                onPressed: () async {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: CCColors.primaryColor,
+                          ),
+                        );
+                      });
+                  await userRepository.savePlacesToTry(
+                      placesController.nameTextField.text,
+                      locationController.locationSearch.text,
+                      placesController.descriptionTextField.text);
+                  Get.back(); // remove circular progress indicator
+                  // Reset values
+                  placesController.nameTextField.text = '';
+                  locationController.locationSearch.text = '';
+                  placesController.descriptionTextField.text = '';
+                  Get.back(); // get back to home page
+                },
+                child: const Text('Add place'))
           ],
         ),
       ),
