@@ -361,39 +361,20 @@ class LoggingPage extends StatelessWidget {
                         textFieldControllers.descriptionTextField.text,
                         tagsController.selectedTags);
                 // Saved log snackbar to tell user log has been saved
-                if (context.mounted) {
-                  Navigator.of(context)
-                      .pop(); // remove circular progress indicator
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Container(
-                      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
-                      height: 60,
-                      decoration: const BoxDecoration(
-                          color: CCColors.secondaryColor,
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: const Row(
-                        children: [
-                          Icon(
-                            Icons.check_circle_outline_outlined,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                          SizedBox(width: CCSizes.spaceBtwItems),
-                          Text(
-                            'Log Saved!',
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                overflow: TextOverflow.ellipsis),
-                          ),
-                        ],
+                Get.back(); // remove circular progress indicator
+                Get.snackbar('', '',
+                      titleText: const Text(
+                        'Place Saved!',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
-                    ),
-                    behavior: SnackBarBehavior.floating,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                  ));
-                }
+                      messageText: const SizedBox(),
+                      icon: const Icon(
+                        Icons.check_circle_outline_outlined,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.green,
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20));
                 // Reset fields upon saving
                 imageController.selectedImagePath.value = '';
                 textFieldControllers.nameTextField.text = '';
