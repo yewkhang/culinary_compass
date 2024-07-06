@@ -1,3 +1,5 @@
+import 'package:culinary_compass/utils/constants/curved_edges.dart';
+import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 
@@ -10,34 +12,127 @@ class HomePage extends StatelessWidget {
         body: SingleChildScrollView(
       child: Column(
         children: [
-          Container(
-            color: CCColors.primaryColor,
-            padding: const EdgeInsets.all(0),
-            child: SizedBox(
-              height: 400,
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: -150,
-                    right: -250,
-                    child: CircularContainer(
-                      backgroundColor: Colors.white.withOpacity(0.2),
+          PrimaryHeaderContainer(
+              child: Column(
+            children: [
+              const SizedBox(
+                height: 150,
+              ),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+                  child: Text(
+                    'Welcome back',
+                    style: TextStyle(
+                      fontSize: 40,
                     ),
                   ),
-                  Positioned(
-                      top: 100,
-                      right: -300,
-                      child: CircularContainer(
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                      ))
-                  
-                ],
+                ),
+              ),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+                  child: Text(
+                    'User',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                // horizontal padding
+                padding: const EdgeInsets.all(CCSizes.defaultSpace),
+                child: Container(
+                  width: MediaQuery.sizeOf(context).width,
+                  padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey)),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(width: CCSizes.spaceBtwItems),
+                      Text('What would you like to eat today?')
+                    ],
+                  ),
+                ),
+              )
+            ],
+          )),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+              child: Text(
+                'Places to try',
+                style: TextStyle(
+                  fontSize: 25,
+                ),
               ),
             ),
-          )
+          ),
         ],
       ),
     ));
+  }
+}
+
+class PrimaryHeaderContainer extends StatelessWidget {
+  const PrimaryHeaderContainer({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return CurvedEdgesWidget(
+      child: Container(
+        color: CCColors.primaryColor,
+        padding: const EdgeInsets.all(0),
+        child: SizedBox(
+          height: 400,
+          child: Stack(
+            children: [
+              Positioned(
+                top: -150,
+                right: -250,
+                child: CircularContainer(
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                ),
+              ),
+              Positioned(
+                  top: 100,
+                  right: -300,
+                  child: CircularContainer(
+                    backgroundColor: Colors.white.withOpacity(0.2),
+                  )),
+              child,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CurvedEdgesWidget extends StatelessWidget {
+  const CurvedEdgesWidget({super.key, this.child});
+
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipPath(
+      clipper: CustomCurvedEdges(),
+      child: child,
+    );
   }
 }
 
