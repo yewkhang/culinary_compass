@@ -155,6 +155,18 @@ class UserRepository extends GetxController {
     } on FirebaseException catch (e) {
       throw FirebaseException(plugin: 'Please try again');
     }
+  }
 
+  // Fetch all logs from user and friends
+  Future<QuerySnapshot> fetchAllFriendLogs(List friends) async {
+    final documentSnapshot = await _db.collection("Users").doc('qRfseKaBi8gM9ivhohRLld0EzW52').get();
+    List friends = documentSnapshot.data()?['Friends'].toList();
+    friends.add(_auth.currentUser!.uid); // add user's logs into query
+    Future<QuerySnapshot> result = _db
+        .collection("Logs")
+        // select logs where UID matches user ID
+        .where('UID', whereIn: friends) // list contains the users friends and themselves
+        .get();
+    return result;
   }
 }
