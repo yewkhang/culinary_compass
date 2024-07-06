@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
           context: context,
           isDismissible: false,
           builder: (context) {
-            return PlacesPage();
+            return const PlacesPage();
           });
     }
 
@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
           PrimaryHeaderContainer(
               child: Column(
             children: [
-              const SizedBox(
+              const SizedBox( // Empty space at top
                 height: 150,
               ),
               const Align(
@@ -96,7 +96,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 50),
+              const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
                   showAddPlaces();
@@ -114,7 +114,6 @@ class HomePage extends StatelessWidget {
           StreamBuilder(
               stream: userRepository.fetchPlacesToTry(),
               builder: (context, snapshot) {
-                print('fetched');
                 return (snapshot.connectionState == ConnectionState.waiting)
                     ? const Center(
                         // Retrieving from Firestore
@@ -159,30 +158,42 @@ class HomePage extends StatelessWidget {
                                           ))
                                 ]),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              // between cards and screen
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Card(
                                 child: ExpansionTile(
                                   title: Text(
                                     data['Name'],
-                                    style: const TextStyle(fontSize: 18),
+                                    style: const TextStyle(fontSize: 20),
                                   ),
                                   subtitle: Row(children: [
                                     const Icon(
                                       Icons.location_on_sharp,
                                       color: CCColors.primaryColor,
                                     ),
+                                    const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 2)),
                                     Expanded(child: Text(data['Location']))
                                   ]),
-                                  childrenPadding: const EdgeInsets.all(10),
+                                  shape: const RoundedRectangleBorder(),
+                                  // padding for the expanded text
+                                  childrenPadding: const EdgeInsets.only(
+                                      top: 10, bottom: 10, left: 25),
                                   expandedAlignment: Alignment.topLeft,
-                                  children: [Text(data['Description'])],
+                                  children: [
+                                    Text(
+                                      data['Description'],
+                                      style: const TextStyle(fontSize: 16),
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
                           );
-                          ;
                         });
-              })
+              }),
         ],
       ),
     ));
