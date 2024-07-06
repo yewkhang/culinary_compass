@@ -195,4 +195,19 @@ class UserRepository extends GetxController {
       throw FirebaseException(plugin: 'Please try again');
     }
   }
+
+  // --- DELETE USER LOGS --- //
+  Future<void> deletePlacesToTry(String docID) {
+    return _db.collection("Places").doc(docID).delete();
+  }
+
+  // --- FETCH USER PLACES TO TRY --- //
+  Stream<QuerySnapshot> fetchPlacesToTry() {
+    Stream<QuerySnapshot> result = _db
+        .collection("Places")
+        // select logs where UID matches user ID
+        .where('UID', isEqualTo: _auth.currentUser!.uid)
+        .snapshots();
+    return result;
+  }
 }

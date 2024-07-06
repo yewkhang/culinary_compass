@@ -1,8 +1,10 @@
 import 'package:culinary_compass/pages/places_page.dart';
+import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/curved_edges.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
@@ -10,6 +12,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userRepository = Get.put(UserRepository());
 
     void showAddPlaces() {
       showModalBottomSheet(
@@ -95,9 +98,12 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(width: 50),
               ElevatedButton(
-                onPressed: () => showAddPlaces(),
+                onPressed: () {
+                  showAddPlaces();
+                },
                 style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
+                  elevation: 0,
                   padding: const EdgeInsets.all(2),
                   foregroundColor: CCColors.primaryColor, // <-- Splash color
                 ),
@@ -105,6 +111,78 @@ class HomePage extends StatelessWidget {
               )
             ],
           ),
+          StreamBuilder(
+              stream: userRepository.fetchPlacesToTry(),
+              builder: (context, snapshot) {
+                print('fetched');
+                return (snapshot.connectionState == ConnectionState.waiting)
+                    ? const Center(
+                        // Retrieving from Firestore
+                        child: CircularProgressIndicator(
+                          color: CCColors.primaryColor,
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          // ID of each document
+                          String docID = snapshot.data!.docs[index].id;
+                          // data contains ALL logs from user
+                          var data = snapshot.data!.docs[index].data()
+                              as Map<String, dynamic>;
+                          return Slidable(
+                            // Slide to left to delete log
+                            endActionPane: ActionPane(
+                                motion: const ScrollMotion(),
+                                extentRatio: 0.25,
+                                children: [
+                                  SlidableAction(
+                                      backgroundColor: Colors.red,
+                                      icon: Icons.delete,
+                                      onPressed: (context) => Get.defaultDialog(
+                                            title: 'Delete Place',
+                                            middleText:
+                                                'Are you sure you want to delete this place?',
+                                            confirm: ElevatedButton(
+                                                onPressed: () {
+                                                  userRepository
+                                                      .deletePlacesToTry(docID);
+                                                  Get.back();
+                                                },
+                                                child:
+                                                    const Text('Delete Place')),
+                                            cancel: ElevatedButton(
+                                                onPressed: () => Get.back(),
+                                                child: const Text('Cancel')),
+                                          ))
+                                ]),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Card(
+                                child: ExpansionTile(
+                                  title: Text(
+                                    data['Name'],
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  subtitle: Row(children: [
+                                    const Icon(
+                                      Icons.location_on_sharp,
+                                      color: CCColors.primaryColor,
+                                    ),
+                                    Expanded(child: Text(data['Location']))
+                                  ]),
+                                  childrenPadding: const EdgeInsets.all(10),
+                                  expandedAlignment: Alignment.topLeft,
+                                  children: [Text(data['Description'])],
+                                ),
+                              ),
+                            ),
+                          );
+                          ;
+                        });
+              })
         ],
       ),
     ));
@@ -123,7 +201,7 @@ class PrimaryHeaderContainer extends StatelessWidget {
         color: CCColors.primaryColor,
         padding: const EdgeInsets.all(0),
         child: SizedBox(
-          height: 400,
+          height: 450,
           child: Stack(
             children: [
               Positioned(
