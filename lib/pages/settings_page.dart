@@ -1,7 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culinary_compass/pages/profile_page.dart';
 import 'package:culinary_compass/services/auth.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
+import 'package:culinary_compass/utils/constants/misc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class SettingsPage extends StatelessWidget {
 
@@ -12,24 +14,67 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Culinary Compass'),
+        centerTitle: true,
+        title: const Text(
+          'Culinary Compass',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
+          textAlign: TextAlign.center,
+        ),
         backgroundColor: CCColors.primaryColor,
         elevation: 0.0,
-        actions: <Widget>[
-          TextButton.icon(
-            icon: const Icon(Icons.person),
-            style: ButtonStyle(
-              iconColor: WidgetStateProperty.all(Colors.black),
-              backgroundColor: WidgetStateProperty.all(Colors.white),
-              foregroundColor: null,
-            ),
-            label: const Text('Log Out', style: TextStyle(color: Colors.black)),
-            onPressed: () async {
-              await _auth.signOut();
-            },
-          )
-        ], // appears on top right of AppBar
       ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          child: Column(
+            children: [
+
+              const SizedBox(height: 25.0),
+
+              // Settings Text
+              const Text(
+                "Settings",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25.0
+                )
+              ),
+
+              const SizedBox(height: 40.0),
+
+              SettingsRow(
+                name: "Profile",
+                icon: Icons.person,
+                color: CCColors.secondaryColor,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const ProfilePage();
+                      }
+                    )
+                  );
+                }
+              ),
+
+              const SizedBox(height: 50.0),
+
+              SettingsRow(
+                name: "Log Out",
+                icon: Icons.logout,
+                color: Colors.red,
+                onTap: () async {
+                  await _auth.signOut();
+                }
+              )
+            ],
+          ),
+        ),
+      )
     );
   }
 }
