@@ -3,8 +3,6 @@ import 'package:culinary_compass/services/auth.dart';
 import 'package:culinary_compass/wrapper.dart';
 import 'package:culinary_compass/models/myuser.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
       catchError: (_, __) {},
       initialData: null, // self-explanatory, set initial to nothing (null)
       value: AuthService().user, // to access the MyUser Stream
-      child: GetMaterialApp(
+      child: const GetMaterialApp(
         home: Wrapper(),
       ),
     );
