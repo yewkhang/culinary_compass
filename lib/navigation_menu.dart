@@ -14,11 +14,11 @@ class NavigationMenu extends StatelessWidget {
     final controller = Get.put(NavigationController());
 
     return Scaffold(
-      backgroundColor: Colors.white,
       bottomNavigationBar: Obx(
         () => NavigationBar(
           height: 70, // height of navigation bar
           elevation: 0,
+          backgroundColor: Colors.grey.shade100,
           indicatorColor: CCColors.primaryColor,
           selectedIndex:
               controller.selectedIndex.value, //access int wrapped in Rx context

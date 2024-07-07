@@ -48,6 +48,8 @@ class FiltersPage extends StatelessWidget {
                           // padding between tags
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: FilterChip(
+                            backgroundColor: Colors.white,
+                            selectedColor: CCColors.primaryColor,
                               label: Text(element),
                               // boolean of whether a tag is selected
                               selected: filtersController.selectedCuisineFilters

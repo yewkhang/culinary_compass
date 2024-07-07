@@ -58,9 +58,9 @@ class LoggingPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Your Logs",
-          style: TextStyle(color: Colors.black, fontSize: 24),
+        title: Text(
+          fromYourLogsPage ? "Edit Log" : "Create Log",
+          style: const TextStyle(color: Colors.black, fontSize: 24),
         ),
         backgroundColor: CCColors.primaryColor,
       ),
@@ -120,18 +120,6 @@ class LoggingPage extends StatelessWidget {
               child: const Icon(Icons.camera_alt),
             ),
           ),
-          Positioned(
-            top: 10,
-            right: 20,
-            child: fromYourLogsPage
-                ? IconButton(
-                    onPressed: () => Get.back(),
-                    icon: const Icon(Icons.cancel_rounded),
-                    color: Colors.grey,
-                    iconSize: 40,
-                  )
-                : const SizedBox(),
-          )
         ]),
         // ----- NAME TEXTFIELD ----- //
         Padding(
@@ -269,6 +257,7 @@ class LoggingPage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Chip(
                               label: Text(element),
+                              backgroundColor: Colors.white,
                               deleteIcon: const Icon(Icons.clear),
                               onDeleted: () =>
                                   tagsController.selectedTags.remove(element),
@@ -298,89 +287,92 @@ class LoggingPage extends StatelessWidget {
             child: Obx(() => ratingBarController
                 .buildRating(ratingBarController.currentRating.value))),
         // ----- SAVE/UPDATE LOG BUTTON ----- //
-        ElevatedButton(
-            onPressed: () async {
-              // Check if any of the fields are empty
-              if (imageController.selectedImagePath.value.isEmpty ||
-                  textFieldControllers.nameTextField.text.isEmpty ||
-                  locationController.locationSearch.text.isEmpty ||
-                  ratingBarController.currentRating.value.isEqual(0) ||
-                  textFieldControllers.descriptionTextField.text.isEmpty ||
-                  tagsController.selectedTags.isEmpty) {
-                Get.snackbar('', '',
-                    titleText: const Text(
-                      'Please enter a value for all fields!!',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    messageText: const SizedBox(),
-                    icon: const Icon(
-                      Icons.cancel_outlined,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.red,
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20));
-              }
-              // All input fields are filled, proceed to save log
-              else {
-                // Circular progress indicator for saving user logs
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: CCColors.primaryColor,
-                        ),
-                      );
-                    });
-                // Save/Update user log to Firestore
-                fromYourLogsPage
-                    ? await userRepository.updateUserLog(
-                        docID,
-                        originalPictureURL,
-                        imageController.selectedImagePath.value,
-                        textFieldControllers.nameTextField.text,
-                        locationController.locationSearch.text,
-                        ratingBarController.currentRating.value,
-                        textFieldControllers.descriptionTextField.text,
-                        tagsController.selectedTags)
-                    : await userRepository.saveUserLog(
-                        imageController.selectedImagePath.value,
-                        textFieldControllers.nameTextField.text,
-                        locationController.locationSearch.text,
-                        ratingBarController.currentRating.value,
-                        textFieldControllers.descriptionTextField.text,
-                        tagsController.selectedTags);
-                // Saved log snackbar to tell user log has been saved
-                Get.back(); // remove circular progress indicator
-                if (fromYourLogsPage) {
-                  Get.back();
+        Padding(
+          padding: const EdgeInsets.only(bottom: CCSizes.defaultSpace, left: 10, right: 10),
+          child: ElevatedButton(
+              onPressed: () async {
+                // Check if any of the fields are empty
+                if (imageController.selectedImagePath.value.isEmpty ||
+                    textFieldControllers.nameTextField.text.isEmpty ||
+                    locationController.locationSearch.text.isEmpty ||
+                    ratingBarController.currentRating.value.isEqual(0) ||
+                    textFieldControllers.descriptionTextField.text.isEmpty ||
+                    tagsController.selectedTags.isEmpty) {
+                  Get.snackbar('', '',
+                      titleText: const Text(
+                        'Please enter a value for all fields!!',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      messageText: const SizedBox(),
+                      icon: const Icon(
+                        Icons.cancel_outlined,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.red,
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20));
                 }
-                Get.snackbar('', '',
-                    titleText: const Text(
-                      'Log Saved!',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    messageText: const SizedBox(),
-                    icon: const Icon(
-                      Icons.check_circle_outline_outlined,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.green,
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20));
-                // Reset fields upon saving
-                imageController.selectedImagePath.value = '';
-                textFieldControllers.nameTextField.text = '';
-                locationController.locationSearch.text = '';
-                textFieldControllers.descriptionTextField.text = '';
-                ratingBarController.currentRating.value = 0;
-                tagsController.selectedTags.clear();
-                textFieldControllers.tagsTextField.clear();
-              }
-            },
-            child:
-                fromYourLogsPage ? const Text('Update') : const Text('Save')),
+                // All input fields are filled, proceed to save log
+                else {
+                  // Circular progress indicator for saving user logs
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: CCColors.primaryColor,
+                          ),
+                        );
+                      });
+                  // Save/Update user log to Firestore
+                  fromYourLogsPage
+                      ? await userRepository.updateUserLog(
+                          docID,
+                          originalPictureURL,
+                          imageController.selectedImagePath.value,
+                          textFieldControllers.nameTextField.text,
+                          locationController.locationSearch.text,
+                          ratingBarController.currentRating.value,
+                          textFieldControllers.descriptionTextField.text,
+                          tagsController.selectedTags)
+                      : await userRepository.saveUserLog(
+                          imageController.selectedImagePath.value,
+                          textFieldControllers.nameTextField.text,
+                          locationController.locationSearch.text,
+                          ratingBarController.currentRating.value,
+                          textFieldControllers.descriptionTextField.text,
+                          tagsController.selectedTags);
+                  // Saved log snackbar to tell user log has been saved
+                  Get.back(); // remove circular progress indicator
+                  if (fromYourLogsPage) {
+                    Get.back();
+                  }
+                  Get.snackbar('', '',
+                      titleText: const Text(
+                        'Log Saved!',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      messageText: const SizedBox(),
+                      icon: const Icon(
+                        Icons.check_circle_outline_outlined,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.green,
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20));
+                  // Reset fields upon saving
+                  imageController.selectedImagePath.value = '';
+                  textFieldControllers.nameTextField.text = '';
+                  locationController.locationSearch.text = '';
+                  textFieldControllers.descriptionTextField.text = '';
+                  ratingBarController.currentRating.value = 0;
+                  tagsController.selectedTags.clear();
+                  textFieldControllers.tagsTextField.clear();
+                }
+              },
+              child:
+                  fromYourLogsPage ? const Text('Update') : const Text('Save')),
+        ),
       ]),
     );
   }
