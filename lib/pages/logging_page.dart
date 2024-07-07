@@ -298,37 +298,19 @@ class LoggingPage extends StatelessWidget {
                   ratingBarController.currentRating.value.isEqual(0) ||
                   textFieldControllers.descriptionTextField.text.isEmpty ||
                   tagsController.selectedTags.isEmpty) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Container(
-                      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
-                      height: 60,
-                      decoration: const BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: const Row(
-                        children: [
-                          Icon(
-                            Icons.cancel_outlined,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                          SizedBox(width: CCSizes.spaceBtwItems),
-                          Text(
-                            'Please enter a value for all fields!',
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                overflow: TextOverflow.ellipsis),
-                          ),
-                        ],
+                Get.snackbar('', '',
+                      titleText: const Text(
+                        'Please enter a value for all fields!!',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
-                    ),
-                    behavior: SnackBarBehavior.floating,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                  ));
-                }
+                      messageText: const SizedBox(),
+                      icon: const Icon(
+                        Icons.cancel_outlined,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.red,
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20));
               }
               // All input fields are filled, proceed to save log
               else {
@@ -362,9 +344,12 @@ class LoggingPage extends StatelessWidget {
                         tagsController.selectedTags);
                 // Saved log snackbar to tell user log has been saved
                 Get.back(); // remove circular progress indicator
+                if (fromYourLogsPage) {
+                  Get.back();
+                }
                 Get.snackbar('', '',
                       titleText: const Text(
-                        'Place Saved!',
+                        'Log Saved!',
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       messageText: const SizedBox(),
@@ -383,10 +368,6 @@ class LoggingPage extends StatelessWidget {
                 ratingBarController.currentRating.value = 0;
                 tagsController.selectedTags.clear();
                 textFieldControllers.tagsTextField.clear();
-
-                if (fromYourLogsPage) {
-                  Get.back();
-                }
               }
             },
             child:
