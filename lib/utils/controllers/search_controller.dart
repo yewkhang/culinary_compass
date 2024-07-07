@@ -53,7 +53,8 @@ class SearchFieldController extends GetxController {
                               .any((e) => data['Tags'].toList().contains(e)))) {
                     return Slidable(
                       // Slide to left to delete log
-                      endActionPane: ActionPane(
+                      // if fromHomePage, dont allow sliding
+                      endActionPane: fromHomePage ? null : ActionPane(
                           motion: const ScrollMotion(),
                           extentRatio: 0.25,
                           children: [
