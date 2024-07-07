@@ -67,7 +67,8 @@ class HomePage extends StatelessWidget {
                     // horizontal padding
                     padding: const EdgeInsets.all(CCSizes.defaultSpace),
                     child: SearchContainer(
-                      onPressed: () => Get.to(YourlogsPage(fromHomePage: true)),
+                      onPressed: () => Get.to(YourlogsPage(fromHomePage: true),
+                          transition: Transition.rightToLeftWithFade),
                     ),
                   )
                 ],
