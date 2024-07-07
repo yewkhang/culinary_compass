@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class YourlogsPage extends StatelessWidget {
-  const YourlogsPage({super.key});
+  bool fromHomePage;
+  YourlogsPage({super.key, this.fromHomePage = false});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,7 @@ class YourlogsPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
             ),
             child: TextField(
+              autofocus: fromHomePage,
               onChanged: (value) {
                 searchController.query.value = value;
               },
@@ -55,7 +57,7 @@ class YourlogsPage extends StatelessWidget {
             () =>
                 searchController // add a toList() to access the value List<String> instead of RxList<String>
                     .buildSearchResults(searchController.query.value,
-                        searchController.finalCuisineFilters.toList()),
+                        searchController.finalCuisineFilters.toList(), fromHomePage),
           ),
         ));
   }

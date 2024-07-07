@@ -1,4 +1,5 @@
 import 'package:culinary_compass/pages/places_page.dart';
+import 'package:culinary_compass/pages/yourlogs_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/curved_edges.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
@@ -32,8 +33,8 @@ class HomePage extends StatelessWidget {
               PrimaryHeaderContainer(
                   child: Column(
                 children: [
+                  // Empty space at top
                   const SizedBox(
-                    // Empty space at top
                     height: 150,
                   ),
                   const Align(
@@ -61,30 +62,12 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Search bar
                   Padding(
                     // horizontal padding
                     padding: const EdgeInsets.all(CCSizes.defaultSpace),
-                    child: Container(
-                      width: MediaQuery.sizeOf(context).width,
-                      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(
-                            Icons.search,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(width: CCSizes.spaceBtwItems),
-                          Text(
-                            'What would you like to eat today?',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black54),
-                          )
-                        ],
-                      ),
+                    child: SearchContainer(
+                      onPressed: () => Get.to(YourlogsPage(fromHomePage: true)),
                     ),
                   )
                 ],
@@ -209,6 +192,43 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ));
+  }
+}
+
+class SearchContainer extends StatelessWidget {
+  const SearchContainer({
+    super.key,
+    required this.onPressed,
+  });
+
+  final void Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        width: MediaQuery.sizeOf(context).width,
+        padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Row(
+          children: [
+            Icon(
+              Icons.person_search_outlined,
+              color: Colors.grey,
+            ),
+            SizedBox(width: CCSizes.spaceBtwItems),
+            Text(
+              'What would you like to eat today?',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 

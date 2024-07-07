@@ -23,9 +23,9 @@ class SearchFieldController extends GetxController {
   // --- METHODS --- //
 
   Widget buildSearchResults(
-      String search, List<String> cuisineFiltersFromUser) {
+      String search, List<String> cuisineFiltersFromUser, bool fromHomePage) {
     return StreamBuilder<QuerySnapshot>(
-      stream: userRepository.fetchAllUserLogs(),
+      stream: fromHomePage ? Stream.fromFuture(userRepository.fetchAllFriendLogs()) : userRepository.fetchAllUserLogs(),
       builder: (context, snapshot) {
         return (snapshot.connectionState == ConnectionState.waiting)
             ? const Center(

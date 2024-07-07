@@ -167,7 +167,7 @@ class UserRepository extends GetxController {
   }
 
   // Fetch all logs from user and friends
-  Future<QuerySnapshot> fetchAllFriendLogs(List friends) async {
+  Future<QuerySnapshot> fetchAllFriendLogs() async {
     final documentSnapshot =
         await _db.collection("Users").doc('qRfseKaBi8gM9ivhohRLld0EzW52').get();
     List friends = documentSnapshot.data()?['Friends'].toList();
@@ -196,7 +196,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // --- DELETE USER LOGS --- //
+  // --- DELETE USER PLACES --- //
   Future<void> deletePlacesToTry(String docID) {
     return _db.collection("Places").doc(docID).delete();
   }
