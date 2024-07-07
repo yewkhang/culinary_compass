@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/pages/logging_page.dart';
+import 'package:culinary_compass/pages/viewlogs_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -101,7 +102,7 @@ class SearchFieldController extends GetxController {
                         onTap: () {
                           // Redirect to edit log
                           Get.to(
-                              LoggingPage(
+                              fromHomePage ? ViewlogsPage(document: data) : LoggingPage(
                                 fromYourLogsPage: true,
                                 docID: docID,
                                 originalPictureURL: data['Picture'],
