@@ -47,7 +47,7 @@ class NavigationController extends GetxController {
   // Change when screens are created
   final screens = [
     const HomePage(),
-    const YourlogsPage(),
+    YourlogsPage(),
     LoggingPage(
       docID: '',
       name: '',
