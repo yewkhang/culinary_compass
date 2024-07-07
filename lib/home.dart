@@ -157,7 +157,7 @@ class HomePage extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0),
                                   child: Card(
-                                    color: Colors.grey.shade100,
+                                    color: Colors.white,
                                     child: ExpansionTile(
                                       title: Text(
                                         data['Name'],
@@ -245,7 +245,7 @@ class PrimaryHeaderContainer extends StatelessWidget {
         color: CCColors.primaryColor,
         padding: const EdgeInsets.all(0),
         child: SizedBox(
-          height: 450,
+          height: 400,
           child: Stack(
             children: [
               Positioned(

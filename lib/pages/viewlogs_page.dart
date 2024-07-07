@@ -31,9 +31,9 @@ class ViewlogsPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(
-                  top: CCSizes.defaultSpace,
-                  right: CCSizes.defaultSpace,
-                  left: CCSizes.defaultSpace),
+                  top: CCSizes.spaceBtwItems,
+                  right: CCSizes.spaceBtwItems,
+                  left: CCSizes.spaceBtwItems),
               child: CardContainer(
                 child: Row(
                   children: [
@@ -71,8 +71,8 @@ class ViewlogsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(
                   top: 10,
-                  right: CCSizes.defaultSpace,
-                  left: CCSizes.defaultSpace),
+                  right: CCSizes.spaceBtwItems,
+                  left: CCSizes.spaceBtwItems),
               child: CardContainer(
                 child: Row(
                   children: [
@@ -95,8 +95,8 @@ class ViewlogsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(
                   top: 10,
-                  right: CCSizes.defaultSpace,
-                  left: CCSizes.defaultSpace),
+                  right: CCSizes.spaceBtwItems,
+                  left: CCSizes.spaceBtwItems),
               child: CardContainer(
                 child: Row(
                   children: [
@@ -132,8 +132,8 @@ class ViewlogsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(
                   top: 10,
-                  left: CCSizes.defaultSpace,
-                  right: CCSizes.defaultSpace),
+                  left: CCSizes.spaceBtwItems,
+                  right: CCSizes.spaceBtwItems),
               child: CardContainer(
                 child: Row(
                   children: [
@@ -154,7 +154,7 @@ class ViewlogsPage extends StatelessWidget {
               ),
             ),
             const Padding(
-                padding: const EdgeInsets.all(CCSizes.defaultSpace),
+                padding: EdgeInsets.all(CCSizes.defaultSpace),
                 child: Text('Created by: username')),
           ]),
         ));
@@ -172,7 +172,12 @@ class CardContainer extends StatelessWidget {
         width: MediaQuery.sizeOf(context).width,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          boxShadow: [
+            BoxShadow(
+                offset: Offset.fromDirection(1.5, 2),
+                color: Colors.grey.shade300)
+          ],
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
         child: child);

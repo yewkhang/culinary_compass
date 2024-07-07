@@ -106,7 +106,7 @@ class PlacesPage extends StatelessWidget {
                                   locationController.selectedAddress.value = '';
                                   locationController.data.clear();
                                 },
-                                tileColor: Colors.grey.withOpacity(0.3),
+                                tileColor: Colors.grey.shade100,
                               );
                             })
                     : const SizedBox(); // When there are no results from location search

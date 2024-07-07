@@ -49,6 +49,7 @@ class FiltersPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: FilterChip(
                             backgroundColor: Colors.white,
+                            padding: const EdgeInsets.all(2),
                             selectedColor: CCColors.primaryColor,
                               label: Text(element),
                               // boolean of whether a tag is selected

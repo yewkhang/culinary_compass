@@ -201,7 +201,7 @@ class LoggingPage extends StatelessWidget {
                               locationController.selectedAddress.value = '';
                               locationController.data.clear();
                             },
-                            tileColor: Colors.grey.withOpacity(0.3),
+                            tileColor: Colors.grey.shade100,
                           );
                         })
                 : const SizedBox(); // When there are no results from location search
@@ -254,9 +254,11 @@ class LoggingPage extends StatelessWidget {
               : Wrap(
                   children: tagsController.selectedTags
                       .map((element) => Padding(
+                        // padding between tags
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Chip(
                               label: Text(element),
+                              padding: const EdgeInsets.all(2),
                               backgroundColor: Colors.white,
                               deleteIcon: const Icon(Icons.clear),
                               onDeleted: () =>
