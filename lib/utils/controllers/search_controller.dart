@@ -66,7 +66,8 @@ class SearchFieldController extends GetxController {
                                           'Are you sure you want to delete this log?',
                                       confirm: ElevatedButton(
                                           onPressed: () {
-                                            userRepository.deleteUserLog(docID, data['Picture']);
+                                            userRepository.deleteUserLog(
+                                                docID, data['Picture']);
                                             Get.back();
                                           },
                                           child: const Text('Delete Log')),
@@ -98,16 +99,18 @@ class SearchFieldController extends GetxController {
                         ),
                         onTap: () {
                           // Redirect to edit log
-                          Get.to(LoggingPage(
-                            fromYourLogsPage: true,
-                            docID: docID,
-                            originalPictureURL: data['Picture'],
-                            name: data['Name'],
-                            location: data['Location'],
-                            description: data['Description'],
-                            rating: data['Rating'],
-                            tags: data['Tags'].whereType<String>().toList(),
-                          ));
+                          Get.to(
+                              LoggingPage(
+                                fromYourLogsPage: true,
+                                docID: docID,
+                                originalPictureURL: data['Picture'],
+                                name: data['Name'],
+                                location: data['Location'],
+                                description: data['Description'],
+                                rating: data['Rating'],
+                                tags: data['Tags'].whereType<String>().toList(),
+                              ),
+                              transition: Transition.rightToLeftWithFade);
                         },
                       ),
                     );
