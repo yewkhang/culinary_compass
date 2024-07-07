@@ -169,7 +169,7 @@ class UserRepository extends GetxController {
   // Fetch all logs from user and friends
   Future<QuerySnapshot> fetchAllFriendLogs() async {
     final documentSnapshot =
-        await _db.collection("Users").doc('qRfseKaBi8gM9ivhohRLld0EzW52').get();
+        await _db.collection("Users").doc(_auth.currentUser!.email).get();
     List friends = documentSnapshot.data()?['Friends'].toList();
     friends.add(_auth.currentUser!.uid); // add user's logs into query
     Future<QuerySnapshot> result = _db
