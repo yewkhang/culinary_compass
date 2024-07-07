@@ -27,10 +27,12 @@ class HomePage extends StatelessWidget {
         body: SingleChildScrollView(
       child: Column(
         children: [
+          // Orange Container
           PrimaryHeaderContainer(
               child: Column(
             children: [
-              const SizedBox( // Empty space at top
+              const SizedBox(
+                // Empty space at top
                 height: 150,
               ),
               const Align(
@@ -40,7 +42,7 @@ class HomePage extends StatelessWidget {
                   child: Text(
                     'Welcome back',
                     style: TextStyle(
-                      fontSize: 40,
+                      fontSize: 45,
                     ),
                   ),
                 ),
@@ -50,9 +52,9 @@ class HomePage extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
                   child: Text(
-                    'User',
+                    'User', // To be replaced with username
                     style: TextStyle(
-                      fontSize: 25,
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -75,7 +77,10 @@ class HomePage extends StatelessWidget {
                         color: Colors.grey,
                       ),
                       SizedBox(width: CCSizes.spaceBtwItems),
-                      Text('What would you like to eat today?')
+                      Text(
+                        'What would you like to eat today?',
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      )
                     ],
                   ),
                 ),
@@ -91,7 +96,7 @@ class HomePage extends StatelessWidget {
                   child: Text(
                     'Places to try',
                     style: TextStyle(
-                      fontSize: 25,
+                      fontSize: 30,
                     ),
                   ),
                 ),
@@ -111,6 +116,7 @@ class HomePage extends StatelessWidget {
               )
             ],
           ),
+          // List of user's places to try
           StreamBuilder(
               stream: userRepository.fetchPlacesToTry(),
               builder: (context, snapshot) {
@@ -122,6 +128,7 @@ class HomePage extends StatelessWidget {
                         ),
                       )
                     : ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 0),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: snapshot.data!.docs.length,
