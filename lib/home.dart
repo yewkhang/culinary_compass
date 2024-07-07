@@ -113,7 +113,7 @@ class HomePage extends StatelessWidget {
                             ),
                           )
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            padding: const EdgeInsets.only(top: 0, bottom: CCSizes.spaceBtwItems),
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: snapshot.data!.docs.length,
