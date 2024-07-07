@@ -14,6 +14,7 @@ class NavigationMenu extends StatelessWidget {
     final controller = Get.put(NavigationController());
 
     return Scaffold(
+      backgroundColor: Colors.white,
       bottomNavigationBar: Obx(
         () => NavigationBar(
           height: 70, // height of navigation bar
@@ -26,7 +27,7 @@ class NavigationMenu extends StatelessWidget {
 
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.book), label: 'Past Logs'),
+            NavigationDestination(icon: Icon(Icons.book), label: 'Your Logs'),
             NavigationDestination(icon: Icon(Icons.camera_alt), label: 'Log'),
             NavigationDestination(icon: Icon(Icons.people), label: 'Groups'),
             NavigationDestination(

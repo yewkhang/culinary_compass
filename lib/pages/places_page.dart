@@ -22,6 +22,7 @@ class PlacesPage extends StatelessWidget {
         title: const Text('Add a place'),
         backgroundColor: CCColors.primaryColor,
       ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [

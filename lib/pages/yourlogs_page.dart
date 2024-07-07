@@ -48,6 +48,7 @@ class YourlogsPage extends StatelessWidget {
           ],
           backgroundColor: CCColors.primaryColor,
         ),
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
           // rebuild widget based on changes in search query and finalCuisineFilters
           child: Obx(

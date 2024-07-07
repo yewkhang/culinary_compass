@@ -24,186 +24,191 @@ class HomePage extends StatelessWidget {
     }
 
     return Scaffold(
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
-      child: Column(
-        children: [
-          // Orange Container
-          PrimaryHeaderContainer(
-              child: Column(
+          child: Column(
             children: [
-              const SizedBox(
-                // Empty space at top
-                height: 150,
-              ),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
-                  child: Text(
-                    'Welcome back',
-                    style: TextStyle(
-                      fontSize: 45,
-                    ),
+              // Orange Container
+              PrimaryHeaderContainer(
+                  child: Column(
+                children: [
+                  const SizedBox(
+                    // Empty space at top
+                    height: 150,
                   ),
-                ),
-              ),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
-                  child: Text(
-                    'User', // To be replaced with username
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                // horizontal padding
-                padding: const EdgeInsets.all(CCSizes.defaultSpace),
-                child: Container(
-                  width: MediaQuery.sizeOf(context).width,
-                  padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.search,
-                        color: Colors.grey,
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+                      child: Text(
+                        'Welcome back',
+                        style: TextStyle(
+                          fontSize: 45,
+                        ),
                       ),
-                      SizedBox(width: CCSizes.spaceBtwItems),
-                      Text(
-                        'What would you like to eat today?',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            ],
-          )),
-          Row(
-            children: [
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
-                  child: Text(
-                    'Places to try',
-                    style: TextStyle(
-                      fontSize: 30,
                     ),
                   ),
-                ),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+                      child: Text(
+                        'User', // To be replaced with username
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    // horizontal padding
+                    padding: const EdgeInsets.all(CCSizes.defaultSpace),
+                    child: Container(
+                      width: MediaQuery.sizeOf(context).width,
+                      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.search,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(width: CCSizes.spaceBtwItems),
+                          Text(
+                            'What would you like to eat today?',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              )),
+              Row(
+                children: [
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+                      child: Text(
+                        'Places to try',
+                        style: TextStyle(
+                          fontSize: 30,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      showAddPlaces();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        elevation: 0,
+                        foregroundColor: CCColors.primaryColor,
+                        backgroundColor: Colors.grey.shade100),
+                    child: const Icon(Icons.add),
+                  )
+                ],
               ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  showAddPlaces();
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  elevation: 0,
-                  padding: const EdgeInsets.all(2),
-                  foregroundColor: CCColors.primaryColor, // <-- Splash color
-                ),
-                child: const Icon(Icons.add),
-              )
+              // List of user's places to try
+              StreamBuilder(
+                  stream: userRepository.fetchPlacesToTry(),
+                  builder: (context, snapshot) {
+                    return (snapshot.connectionState == ConnectionState.waiting)
+                        ? const Center(
+                            // Retrieving from Firestore
+                            child: CircularProgressIndicator(
+                              color: CCColors.primaryColor,
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              // ID of each document
+                              String docID = snapshot.data!.docs[index].id;
+                              // data contains ALL logs from user
+                              var data = snapshot.data!.docs[index].data()
+                                  as Map<String, dynamic>;
+                              return Slidable(
+                                // Slide to left to delete log
+                                endActionPane: ActionPane(
+                                    motion: const ScrollMotion(),
+                                    extentRatio: 0.25,
+                                    children: [
+                                      SlidableAction(
+                                          backgroundColor: Colors.red,
+                                          icon: Icons.delete,
+                                          onPressed: (context) =>
+                                              Get.defaultDialog(
+                                                title: 'Delete Place',
+                                                middleText:
+                                                    'Are you sure you want to delete this place?',
+                                                confirm: ElevatedButton(
+                                                    onPressed: () {
+                                                      userRepository
+                                                          .deletePlacesToTry(
+                                                              docID);
+                                                      Get.back();
+                                                    },
+                                                    child: const Text(
+                                                        'Delete Place')),
+                                                cancel: ElevatedButton(
+                                                    onPressed: () => Get.back(),
+                                                    child:
+                                                        const Text('Cancel')),
+                                              ))
+                                    ]),
+                                child: Padding(
+                                  // between cards and screen
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Card(
+                                    color: Colors.grey.shade100,
+                                    child: ExpansionTile(
+                                      title: Text(
+                                        data['Name'],
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                      subtitle: Row(children: [
+                                        const Icon(
+                                          Icons.location_on_sharp,
+                                          color: CCColors.primaryColor,
+                                        ),
+                                        const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 2)),
+                                        Expanded(child: Text(data['Location']))
+                                      ]),
+                                      shape: const RoundedRectangleBorder(),
+                                      // padding for the expanded text
+                                      childrenPadding: const EdgeInsets.only(
+                                          top: 10, bottom: 10, left: 25),
+                                      expandedAlignment: Alignment.topLeft,
+                                      children: [
+                                        Text(
+                                          data['Description'],
+                                          style: const TextStyle(fontSize: 16),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            });
+                  }),
             ],
           ),
-          // List of user's places to try
-          StreamBuilder(
-              stream: userRepository.fetchPlacesToTry(),
-              builder: (context, snapshot) {
-                return (snapshot.connectionState == ConnectionState.waiting)
-                    ? const Center(
-                        // Retrieving from Firestore
-                        child: CircularProgressIndicator(
-                          color: CCColors.primaryColor,
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 0),
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          // ID of each document
-                          String docID = snapshot.data!.docs[index].id;
-                          // data contains ALL logs from user
-                          var data = snapshot.data!.docs[index].data()
-                              as Map<String, dynamic>;
-                          return Slidable(
-                            // Slide to left to delete log
-                            endActionPane: ActionPane(
-                                motion: const ScrollMotion(),
-                                extentRatio: 0.25,
-                                children: [
-                                  SlidableAction(
-                                      backgroundColor: Colors.red,
-                                      icon: Icons.delete,
-                                      onPressed: (context) => Get.defaultDialog(
-                                            title: 'Delete Place',
-                                            middleText:
-                                                'Are you sure you want to delete this place?',
-                                            confirm: ElevatedButton(
-                                                onPressed: () {
-                                                  userRepository
-                                                      .deletePlacesToTry(docID);
-                                                  Get.back();
-                                                },
-                                                child:
-                                                    const Text('Delete Place')),
-                                            cancel: ElevatedButton(
-                                                onPressed: () => Get.back(),
-                                                child: const Text('Cancel')),
-                                          ))
-                                ]),
-                            child: Padding(
-                              // between cards and screen
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Card(
-                                child: ExpansionTile(
-                                  title: Text(
-                                    data['Name'],
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                  subtitle: Row(children: [
-                                    const Icon(
-                                      Icons.location_on_sharp,
-                                      color: CCColors.primaryColor,
-                                    ),
-                                    const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 2)),
-                                    Expanded(child: Text(data['Location']))
-                                  ]),
-                                  shape: const RoundedRectangleBorder(),
-                                  // padding for the expanded text
-                                  childrenPadding: const EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 25),
-                                  expandedAlignment: Alignment.topLeft,
-                                  children: [
-                                    Text(
-                                      data['Description'],
-                                      style: const TextStyle(fontSize: 16),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        });
-              }),
-        ],
-      ),
-    ));
+        ));
   }
 }
 

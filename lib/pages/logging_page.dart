@@ -57,6 +57,14 @@ class LoggingPage extends StatelessWidget {
     tagsController.selectedTags.value = tags;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Your Logs",
+          style: TextStyle(color: Colors.black, fontSize: 24),
+        ),
+        backgroundColor: CCColors.primaryColor,
+      ),
+      backgroundColor: Colors.white,
       body: ListView(children: <Widget>[
         // ----- IMAGE SELECTION ----- //
         Stack(children: [
@@ -72,16 +80,17 @@ class LoggingPage extends StatelessWidget {
                     imageController.selectedImagePath.value,
                     fit: BoxFit.cover,
                   );
-                } 
+                }
                 // if routed from navigation menu, image value is empty
                 else if (imageController.selectedImagePath.value == '') {
                   return Container(
-                    color: Colors.grey,
+                    color: Colors.grey.shade300,
                     child: const Center(
                       child: Text('Select an image'),
                     ),
                   );
-                } else { // image from camera/gallery
+                } else {
+                  // image from camera/gallery
                   return Image.file(
                     File(imageController.selectedImagePath.value),
                     fit: BoxFit.cover,
@@ -107,6 +116,7 @@ class LoggingPage extends StatelessWidget {
               onPressed: () {
                 imageController.getImage(ImageSource.camera);
               },
+              backgroundColor: CCColors.primaryColor,
               child: const Icon(Icons.camera_alt),
             ),
           ),
@@ -123,7 +133,6 @@ class LoggingPage extends StatelessWidget {
                 : const SizedBox(),
           )
         ]),
-
         // ----- NAME TEXTFIELD ----- //
         Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
@@ -299,18 +308,18 @@ class LoggingPage extends StatelessWidget {
                   textFieldControllers.descriptionTextField.text.isEmpty ||
                   tagsController.selectedTags.isEmpty) {
                 Get.snackbar('', '',
-                      titleText: const Text(
-                        'Please enter a value for all fields!!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.cancel_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.red,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                    titleText: const Text(
+                      'Please enter a value for all fields!!',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    messageText: const SizedBox(),
+                    icon: const Icon(
+                      Icons.cancel_outlined,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: Colors.red,
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(20));
               }
               // All input fields are filled, proceed to save log
               else {
@@ -348,18 +357,18 @@ class LoggingPage extends StatelessWidget {
                   Get.back();
                 }
                 Get.snackbar('', '',
-                      titleText: const Text(
-                        'Log Saved!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.check_circle_outline_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.green,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                    titleText: const Text(
+                      'Log Saved!',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    messageText: const SizedBox(),
+                    icon: const Icon(
+                      Icons.check_circle_outline_outlined,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: Colors.green,
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(20));
                 // Reset fields upon saving
                 imageController.selectedImagePath.value = '';
                 textFieldControllers.nameTextField.text = '';
