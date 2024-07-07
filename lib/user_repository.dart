@@ -1,5 +1,6 @@
 import 'package:culinary_compass/models/logging_model.dart';
 import 'package:culinary_compass/models/myuser.dart';
+import 'package:culinary_compass/models/places_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -80,7 +81,6 @@ class UserRepository extends GetxController {
       double rating,
       String description,
       List<String> tags) async {
-        
     String uid = _auth.currentUser!.uid; // Current user uid
 
     // original image is the same as the new image, dont change on Firebase
@@ -94,7 +94,8 @@ class UserRepository extends GetxController {
         'Tags': tags,
         'UID': uid
       });
-    } else { // a new picture is uploaded
+    } else {
+      // a new picture is uploaded
       // Delete previous image
       if (originalPictureURL.isNotEmpty) {
         _storage.refFromURL(originalPictureURL).delete();
@@ -125,20 +126,24 @@ class UserRepository extends GetxController {
       return _db.collection("Logs").doc(docID).update(updatedLog.toJson());
     }
   }
-  // Uploads user profile image
-  Future<void> uploadUserProfileImage(String selectedImagePath, String email) async {
 
+  // Uploads user profile image
+  Future<void> uploadUserProfileImage(
+      String selectedImagePath, String email) async {
     String imageURL = "";
 
     // --- Upload image to Firebase storage --- //
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString(); // creates file name
-    String uid = _auth.currentUser!.uid; // gets uid for path on firestore database
+    String fileName =
+        DateTime.now().millisecondsSinceEpoch.toString(); // creates file name
+    String uid =
+        _auth.currentUser!.uid; // gets uid for path on firestore database
 
     Reference refRoot = _storage.ref();
     Reference refDirectoryImages = refRoot.child("Profile Images");
     Reference refDirectoryUID = refDirectoryImages.child(uid);
-    Reference profileImageToUpload = refDirectoryUID.child(fileName); // creates references for file path
-    
+    Reference profileImageToUpload =
+        refDirectoryUID.child(fileName); // creates references for file path
+
     final file = File(selectedImagePath);
     try {
       await profileImageToUpload.putFile(file);
@@ -148,13 +153,61 @@ class UserRepository extends GetxController {
     }
 
     // --- Upload ProfileImage to Firestore --- //
-    final profileImage = MyUser(profileImageURL: imageURL); // other fields are null
+    final profileImage =
+        MyUser(profileImageURL: imageURL); // other fields are null
 
     try {
-      await _db.collection("Users").doc(email).update(profileImage.toJsonProfileImage());
+      await _db
+          .collection("Users")
+          .doc(email)
+          .update(profileImage.toJsonProfileImage());
     } on FirebaseException catch (e) {
       throw FirebaseException(plugin: 'Please try again');
     }
+  }
 
+  // Fetch all logs from user and friends
+  Future<QuerySnapshot> fetchAllFriendLogs() async {
+    final documentSnapshot =
+        await _db.collection("Users").doc(_auth.currentUser!.email).get();
+    List friends = documentSnapshot.data()?['Friends'].toList();
+    friends.add(_auth.currentUser!.uid); // add user's logs into query
+    Future<QuerySnapshot> result = _db
+        .collection("Logs")
+        // select logs where UID matches user ID
+        .where('UID',
+            whereIn: friends) // list contains the users friends and themselves
+        .get();
+    return result;
+  }
+
+  // --- SAVE PLACES TO TRY --- //
+  Future<void> savePlacesToTry(
+      String name, String location, String comments) async {
+    final newPlace = PlacesModel(
+        uid: _auth.currentUser!.uid,
+        name: name,
+        location: location,
+        description: comments);
+    try {
+      await _db.collection("Places").doc().set(newPlace.toJson());
+    } on FirebaseException catch (e) {
+      throw FirebaseException(plugin: 'Please try again');
+    }
+  }
+
+  // --- DELETE USER PLACES --- //
+  Future<void> deletePlacesToTry(String docID) {
+    return _db.collection("Places").doc(docID).delete();
+  }
+
+  // --- FETCH USER PLACES TO TRY --- //
+  Stream<QuerySnapshot> fetchPlacesToTry() {
+    Stream<QuerySnapshot> result = _db
+        .collection("Places")
+        // select logs where UID matches user ID
+        .where('UID', isEqualTo: _auth.currentUser!.uid)
+        .snapshots();
+    return result;
   }
 }

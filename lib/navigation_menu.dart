@@ -18,6 +18,7 @@ class NavigationMenu extends StatelessWidget {
         () => NavigationBar(
           height: 70, // height of navigation bar
           elevation: 0,
+          backgroundColor: Colors.grey.shade100,
           indicatorColor: CCColors.primaryColor,
           selectedIndex:
               controller.selectedIndex.value, //access int wrapped in Rx context
@@ -26,7 +27,7 @@ class NavigationMenu extends StatelessWidget {
 
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.book), label: 'Past Logs'),
+            NavigationDestination(icon: Icon(Icons.book), label: 'Your Logs'),
             NavigationDestination(icon: Icon(Icons.camera_alt), label: 'Log'),
             NavigationDestination(icon: Icon(Icons.people), label: 'Groups'),
             NavigationDestination(
@@ -46,7 +47,7 @@ class NavigationController extends GetxController {
   // Change when screens are created
   final screens = [
     const HomePage(),
-    const YourlogsPage(),
+    YourlogsPage(),
     LoggingPage(
       docID: '',
       name: '',

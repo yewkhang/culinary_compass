@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/pages/logging_page.dart';
+import 'package:culinary_compass/pages/viewlogs_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -23,9 +24,9 @@ class SearchFieldController extends GetxController {
   // --- METHODS --- //
 
   Widget buildSearchResults(
-      String search, List<String> cuisineFiltersFromUser) {
+      String search, List<String> cuisineFiltersFromUser, bool fromHomePage) {
     return StreamBuilder<QuerySnapshot>(
-      stream: userRepository.fetchAllUserLogs(),
+      stream: fromHomePage ? Stream.fromFuture(userRepository.fetchAllFriendLogs()) : userRepository.fetchAllUserLogs(),
       builder: (context, snapshot) {
         return (snapshot.connectionState == ConnectionState.waiting)
             ? const Center(
@@ -53,7 +54,8 @@ class SearchFieldController extends GetxController {
                               .any((e) => data['Tags'].toList().contains(e)))) {
                     return Slidable(
                       // Slide to left to delete log
-                      endActionPane: ActionPane(
+                      // if fromHomePage, dont allow sliding
+                      endActionPane: fromHomePage ? null : ActionPane(
                           motion: const ScrollMotion(),
                           extentRatio: 0.25,
                           children: [
@@ -66,7 +68,8 @@ class SearchFieldController extends GetxController {
                                           'Are you sure you want to delete this log?',
                                       confirm: ElevatedButton(
                                           onPressed: () {
-                                            userRepository.deleteUserLog(docID, data['Picture']);
+                                            userRepository.deleteUserLog(
+                                                docID, data['Picture']);
                                             Get.back();
                                           },
                                           child: const Text('Delete Log')),
@@ -98,16 +101,18 @@ class SearchFieldController extends GetxController {
                         ),
                         onTap: () {
                           // Redirect to edit log
-                          Get.to(LoggingPage(
-                            fromYourLogsPage: true,
-                            docID: docID,
-                            originalPictureURL: data['Picture'],
-                            name: data['Name'],
-                            location: data['Location'],
-                            description: data['Description'],
-                            rating: data['Rating'],
-                            tags: data['Tags'].whereType<String>().toList(),
-                          ));
+                          Get.to(
+                              fromHomePage ? ViewlogsPage(document: data) : LoggingPage(
+                                fromYourLogsPage: true,
+                                docID: docID,
+                                originalPictureURL: data['Picture'],
+                                name: data['Name'],
+                                location: data['Location'],
+                                description: data['Description'],
+                                rating: data['Rating'],
+                                tags: data['Tags'].whereType<String>().toList(),
+                              ),
+                              transition: Transition.rightToLeftWithFade);
                         },
                       ),
                     );

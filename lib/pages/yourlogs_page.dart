@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class YourlogsPage extends StatelessWidget {
-  const YourlogsPage({super.key});
+  bool fromHomePage;
+  YourlogsPage({super.key, this.fromHomePage = false});
 
   @override
   Widget build(BuildContext context) {
@@ -22,29 +23,41 @@ class YourlogsPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: Card(
+          title: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
             child: TextField(
+              autofocus: fromHomePage,
               onChanged: (value) {
                 searchController.query.value = value;
               },
               decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                focusColor: Colors.transparent,
-                hintText: 'Search logs',
-              ),
+                  prefixIcon: Icon(Icons.search),
+                  focusColor: Colors.transparent,
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  hintText: 'Search logs',
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: BorderSide.strokeAlignCenter)),
             ),
           ),
           actions: [
-            IconButton( // can use Get.to()
-                onPressed: () => showFilters(), icon: const Icon(Icons.filter_alt))
+            IconButton(
+                // can use Get.to()
+                onPressed: () => showFilters(),
+                icon: const Icon(Icons.filter_alt))
           ],
           backgroundColor: CCColors.primaryColor,
         ),
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
           // rebuild widget based on changes in search query and finalCuisineFilters
           child: Obx(
-            () => searchController // add a toList() to access the value List<String> instead of RxList<String>
-                .buildSearchResults(searchController.query.value, searchController.finalCuisineFilters.toList()),
+            () =>
+                searchController // add a toList() to access the value List<String> instead of RxList<String>
+                    .buildSearchResults(searchController.query.value,
+                        searchController.finalCuisineFilters.toList(), fromHomePage),
           ),
         ));
   }

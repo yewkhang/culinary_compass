@@ -1,3 +1,4 @@
+import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,7 +13,9 @@ class FiltersPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Filter by:"),
+        backgroundColor: CCColors.primaryColor,
       ),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           // --- cuisine title + clear tags button --- //
@@ -45,6 +48,9 @@ class FiltersPage extends StatelessWidget {
                           // padding between tags
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: FilterChip(
+                            backgroundColor: Colors.white,
+                            padding: const EdgeInsets.all(2),
+                            selectedColor: CCColors.primaryColor,
                               label: Text(element),
                               // boolean of whether a tag is selected
                               selected: filtersController.selectedCuisineFilters
