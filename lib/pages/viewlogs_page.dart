@@ -1,4 +1,5 @@
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -161,25 +162,3 @@ class ViewlogsPage extends StatelessWidget {
   }
 }
 
-class CardContainer extends StatelessWidget {
-  const CardContainer({super.key, this.child});
-
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        width: MediaQuery.sizeOf(context).width,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-                offset: Offset.fromDirection(1.5, 2),
-                color: Colors.grey.shade300)
-          ],
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: child);
-  }
-}
