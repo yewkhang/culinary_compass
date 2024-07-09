@@ -147,3 +147,30 @@ class CardContainer extends StatelessWidget {
   }
 }
 
+// used to contain all Tags
+class CCTagsContainer extends StatelessWidget {
+  final Widget label;
+  final void Function()? onDeleted;
+  final Widget? deleteIcon;
+
+  const CCTagsContainer({
+    super.key,
+    required this.label,
+    this.onDeleted,
+    this.deleteIcon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding( // padding between tags
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Chip(
+        label: label,
+        backgroundColor: Colors.white,
+        padding: const EdgeInsets.all(1),
+        deleteIcon: deleteIcon,
+        onDeleted: onDeleted,
+      ),
+    );
+  }
+}

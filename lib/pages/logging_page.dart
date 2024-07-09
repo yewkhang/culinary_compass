@@ -1,5 +1,6 @@
 // Dependencies
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
@@ -217,6 +218,7 @@ class LoggingPage extends StatelessWidget {
               itemBuilder: (BuildContext context, String itemData) {
                 return ListTile(
                   title: Text(itemData),
+                  tileColor: Colors.white,
                 );
               },
               onSelected: (String suggestion) {
@@ -241,18 +243,11 @@ class LoggingPage extends StatelessWidget {
                 )
               : Wrap(
                   children: tagsController.selectedTags
-                      .map((element) => Padding(
-                            // padding between tags
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Chip(
-                              label: Text(element),
-                              padding: const EdgeInsets.all(2),
-                              backgroundColor: Colors.white,
-                              deleteIcon: const Icon(Icons.clear),
-                              onDeleted: () =>
-                                  tagsController.selectedTags.remove(element),
-                            ),
-                          ))
+                      .map((element) => CCTagsContainer(
+                          label: Text(element),
+                          deleteIcon: const Icon(Icons.clear),
+                          onDeleted: () =>
+                              tagsController.selectedTags.remove(element)))
                       .toList(),
                 )),
         ),

@@ -22,6 +22,7 @@ class ViewlogsPage extends StatelessWidget {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(children: [
+            // Image
             SizedBox(
               width: 450,
               height: 390,
@@ -30,6 +31,7 @@ class ViewlogsPage extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
+            // Rating + Name
             Padding(
               padding: const EdgeInsets.only(
                   top: CCSizes.spaceBtwItems,
@@ -69,6 +71,7 @@ class ViewlogsPage extends StatelessWidget {
                 ),
               ),
             ),
+            // Location
             Padding(
               padding: const EdgeInsets.only(
                   top: 10,
@@ -93,6 +96,7 @@ class ViewlogsPage extends StatelessWidget {
                 ),
               ),
             ),
+            // Tags
             Padding(
               padding: const EdgeInsets.only(
                   top: 10,
@@ -111,18 +115,8 @@ class ViewlogsPage extends StatelessWidget {
                         runSpacing: 0,
                         children: document["Tags"]
                             .toList()
-                            .map<Widget>(
-                              (element) => Padding(
-                                // padding between tags
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                child: Chip(
-                                  backgroundColor: Colors.white,
-                                  padding: const EdgeInsets.all(0),
-                                  label: Text(element),
-                                ),
-                              ),
-                            )
+                            .map<Widget>((element) =>
+                                CCTagsContainer(label: Text(element)))
                             .toList(),
                       ),
                     ),
@@ -161,4 +155,3 @@ class ViewlogsPage extends StatelessWidget {
         ));
   }
 }
-
