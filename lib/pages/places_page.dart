@@ -4,6 +4,7 @@ import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
 import 'package:culinary_compass/utils/controllers/places_controller.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,15 +31,9 @@ class PlacesPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(CCSizes.defaultSpace),
               child: TextField(
-                controller: placesController.nameTextField,
-                decoration: const InputDecoration(
-                    hintText: 'Place Name',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(
-                      Icons.local_dining,
-                      color: CCColors.primaryColor,
-                    )),
-              ),
+                  controller: placesController.nameTextField,
+                  decoration: textFieldInputDecoration(
+                      hintText: 'Name', prefixIcon: Icons.local_dining)),
             ),
             // ----- LOCATION TEXTFIELD ----- //
             Padding(
@@ -52,14 +47,8 @@ class PlacesPage extends StatelessWidget {
                     locationController.selectedAddress.value = '';
                   }
                 },
-                decoration: const InputDecoration(
-                  hintText: 'Location',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(
-                    Icons.location_on,
-                    color: CCColors.primaryColor,
-                  ),
-                ),
+                decoration: textFieldInputDecoration(
+                    hintText: 'Location', prefixIcon: Icons.location_on),
                 maxLines: null,
               ),
             ),
@@ -116,15 +105,9 @@ class PlacesPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(CCSizes.defaultSpace),
               child: TextField(
-                controller: placesController.descriptionTextField,
-                decoration: const InputDecoration(
-                    hintText: 'Comments',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(
-                      Icons.notes,
-                      color: CCColors.primaryColor,
-                    )),
-              ),
+                  controller: placesController.descriptionTextField,
+                  decoration: textFieldInputDecoration(
+                      hintText: 'Comments', prefixIcon: Icons.notes)),
             ),
             ElevatedButton(
                 style: CCElevatedTextButtonTheme.lightInputButtonStyle,

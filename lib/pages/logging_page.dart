@@ -1,6 +1,7 @@
 // Dependencies
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
@@ -131,15 +132,9 @@ class LoggingPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
-            controller: textFieldControllers.nameTextField,
-            decoration: const InputDecoration(
-                hintText: 'Dish Name',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(
-                  Icons.local_dining,
-                  color: CCColors.primaryColor,
-                )),
-          ),
+              controller: textFieldControllers.nameTextField,
+              decoration: textFieldInputDecoration(
+                  hintText: 'Dish Name', prefixIcon: Icons.local_dining)),
         ),
         // ----- LOCATION TEXTFIELD ----- //
         Padding(
@@ -153,14 +148,8 @@ class LoggingPage extends StatelessWidget {
                 locationController.selectedAddress.value = '';
               }
             },
-            decoration: const InputDecoration(
-              hintText: 'Location',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(
-                Icons.location_on,
-                color: CCColors.primaryColor,
-              ),
-            ),
+            decoration: textFieldInputDecoration(
+                hintText: 'Location', prefixIcon: Icons.location_on),
             maxLines: null,
           ),
         ),
@@ -220,17 +209,10 @@ class LoggingPage extends StatelessWidget {
               controller: textFieldControllers.tagsTextField,
               builder: (context, controller, focusNode) {
                 return TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  decoration: const InputDecoration(
-                    hintText: 'Tags',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(
-                      Icons.tag,
-                      color: CCColors.primaryColor,
-                    ),
-                  ),
-                );
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: textFieldInputDecoration(
+                        hintText: 'Tags', prefixIcon: Icons.tag));
               },
               itemBuilder: (BuildContext context, String itemData) {
                 return ListTile(
@@ -278,15 +260,9 @@ class LoggingPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
-            controller: textFieldControllers.descriptionTextField,
-            decoration: const InputDecoration(
-                hintText: 'Description',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(
-                  Icons.notes,
-                  color: CCColors.primaryColor,
-                )),
-          ),
+              controller: textFieldControllers.descriptionTextField,
+              decoration: textFieldInputDecoration(
+                  hintText: 'Description', prefixIcon: Icons.notes)),
         ),
         // ----- RATING BAR ----- //
         Container(
@@ -382,7 +358,8 @@ class LoggingPage extends StatelessWidget {
               },
               child: Text(
                 fromYourLogsPage ? 'Update' : 'Save',
-                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.w500),
               )),
         ),
       ]),
