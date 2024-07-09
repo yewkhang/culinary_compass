@@ -11,6 +11,8 @@ class YourlogsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final searchController = Get.put(SearchFieldController());
+    // initial values 
+    searchController.query.value = '';
 
     // Show filter bottom sheet
     void showFilters() {
