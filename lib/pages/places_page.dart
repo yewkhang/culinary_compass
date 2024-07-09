@@ -3,6 +3,7 @@ import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
 import 'package:culinary_compass/utils/controllers/places_controller.dart';
+import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -126,6 +127,7 @@ class PlacesPage extends StatelessWidget {
               ),
             ),
             ElevatedButton(
+                style: CCElevatedTextButtonTheme.lightInputButtonStyle,
                 onPressed: () async {
                   showDialog(
                       context: context,
@@ -160,7 +162,10 @@ class PlacesPage extends StatelessWidget {
                       snackPosition: SnackPosition.BOTTOM,
                       margin: const EdgeInsets.all(20));
                 },
-                child: const Text('Add place'))
+                child: const Text(
+                  'Add place',
+                  style: TextStyle(color: Colors.black),
+                ))
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:culinary_compass/pages/yourlogs_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/curved_edges.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -92,11 +93,7 @@ class HomePage extends StatelessWidget {
                     onPressed: () {
                       showAddPlaces();
                     },
-                    style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        elevation: 0,
-                        foregroundColor: CCColors.primaryColor,
-                        backgroundColor: Colors.grey.shade100),
+                    style: CCCircularElevatedButtonTheme.lightInputButtonStyle,
                     child: const Icon(Icons.add),
                   )
                 ],

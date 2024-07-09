@@ -1,5 +1,6 @@
 // Dependencies
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
@@ -100,23 +101,29 @@ class LoggingPage extends StatelessWidget {
           Positioned(
             top: 300,
             right: 20,
-            child: FloatingActionButton(
+            child: ElevatedButton(
                 onPressed: () {
                   imageController.getImage(ImageSource.gallery);
                 },
-                backgroundColor: CCColors.primaryColor,
-                child: const Icon(Icons.photo)),
+                style: CCElevatedIconButtonTheme.lightInputButtonStyle,
+                child: const Icon(
+                  Icons.photo,
+                  color: Colors.black,
+                )),
           ),
           // camera image picker
           Positioned(
             top: 230,
             right: 20,
-            child: FloatingActionButton(
+            child: ElevatedButton(
               onPressed: () {
                 imageController.getImage(ImageSource.camera);
               },
-              backgroundColor: CCColors.primaryColor,
-              child: const Icon(Icons.camera_alt),
+              style: CCElevatedIconButtonTheme.lightInputButtonStyle,
+              child: const Icon(
+                Icons.camera_alt,
+                color: Colors.black,
+              ),
             ),
           ),
         ]),
@@ -253,7 +260,7 @@ class LoggingPage extends StatelessWidget {
               : Wrap(
                   children: tagsController.selectedTags
                       .map((element) => Padding(
-                        // padding between tags
+                            // padding between tags
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Chip(
                               label: Text(element),
@@ -289,8 +296,10 @@ class LoggingPage extends StatelessWidget {
                 .buildRating(ratingBarController.currentRating.value))),
         // ----- SAVE/UPDATE LOG BUTTON ----- //
         Padding(
-          padding: const EdgeInsets.only(bottom: CCSizes.defaultSpace, left: 10, right: 10),
+          padding: const EdgeInsets.only(
+              bottom: CCSizes.defaultSpace, left: 10, right: 10),
           child: ElevatedButton(
+              style: CCElevatedTextButtonTheme.lightInputButtonStyle,
               onPressed: () async {
                 // Check if any of the fields are empty
                 if (imageController.selectedImagePath.value.isEmpty ||
@@ -371,8 +380,10 @@ class LoggingPage extends StatelessWidget {
                   textFieldControllers.tagsTextField.clear();
                 }
               },
-              child:
-                  fromYourLogsPage ? const Text('Update') : const Text('Save')),
+              child: Text(
+                fromYourLogsPage ? 'Update' : 'Save',
+                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+              )),
         ),
       ]),
     );
