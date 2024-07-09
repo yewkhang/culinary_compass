@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class YourlogsPage extends StatelessWidget {
-  bool fromHomePage;
-  YourlogsPage({super.key, this.fromHomePage = false});
+  final bool fromHomePage;
+  const YourlogsPage({super.key, this.fromHomePage = false});
 
   @override
   Widget build(BuildContext context) {

@@ -16,14 +16,13 @@ import 'package:culinary_compass/utils/controllers/image_controller.dart';
 import 'package:culinary_compass/utils/controllers/textfield_controllers.dart';
 import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 
-// ignore: must_be_immutable
 class LoggingPage extends StatelessWidget {
-  String name, location, description, originalPictureURL, docID;
-  double rating;
-  List<String> tags;
-  late bool fromYourLogsPage;
+  final String name, location, description, originalPictureURL, docID;
+  final double rating;
+  final List<String> tags;
+  final bool fromYourLogsPage;
 
-  LoggingPage(
+  const LoggingPage(
       {super.key,
       this.fromYourLogsPage = false,
       required this.docID,
