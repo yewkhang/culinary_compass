@@ -256,6 +256,7 @@ class LoggingPage extends StatelessWidget {
           padding: const EdgeInsets.all(CCSizes.defaultSpace),
           child: TextField(
               controller: textFieldControllers.descriptionTextField,
+              maxLines: null,
               decoration: textFieldInputDecoration(
                   hintText: 'Description', prefixIcon: Icons.notes)),
         ),
@@ -277,11 +278,11 @@ class LoggingPage extends StatelessWidget {
                     textFieldControllers.nameTextField.text.isEmpty ||
                     locationController.locationSearch.text.isEmpty ||
                     ratingBarController.currentRating.value.isEqual(0) ||
-                    textFieldControllers.descriptionTextField.text.isEmpty ||
                     tagsController.selectedTags.isEmpty) {
                   Get.snackbar('', '',
                       titleText: const Text(
-                        'Please enter a value for all fields!!',
+                        'Please enter a value for all fields!',
+                        maxLines: null,
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       messageText: const SizedBox(),
@@ -329,9 +330,9 @@ class LoggingPage extends StatelessWidget {
                     Get.back();
                   }
                   Get.snackbar('', '',
-                      titleText: const Text(
-                        'Log Saved!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      titleText: Text(fromYourLogsPage ? 
+                        'Log Updated!' : 'Log Saved!',
+                        style: const TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       messageText: const SizedBox(),
                       icon: const Icon(
