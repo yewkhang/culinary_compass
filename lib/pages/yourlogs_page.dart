@@ -30,7 +30,7 @@ class YourlogsPage extends StatelessWidget {
             ),
             child: TextField(
               autofocus: fromHomePage,
-              onChanged: (value) {
+              onSubmitted: (value) {
                 searchController.query.value = value;
               },
               decoration: const InputDecoration(
