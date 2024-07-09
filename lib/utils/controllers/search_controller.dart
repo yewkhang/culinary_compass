@@ -94,7 +94,7 @@ class SearchFieldController extends GetxController {
                           data['Name'],
                           style: const TextStyle(fontSize: 18),
                         ),
-                        subtitle: Text(data['Location']),
+                        subtitle: Text(data['Location'], maxLines: 2, overflow: TextOverflow.ellipsis,),
                         trailing: Text(
                           '${data['Rating']}⭐',
                           style: const TextStyle(fontSize: 16),
