@@ -1,4 +1,5 @@
 import "package:culinary_compass/utils/constants/colors.dart";
+import "package:culinary_compass/utils/constants/sizes.dart";
 import "package:flutter/material.dart";
 
 class CCTextFieldTheme {
@@ -41,5 +42,10 @@ InputDecoration textFieldInputDecoration({
         prefixIcon,
         color: CCColors.primaryColor,
       ),
-      border: const OutlineInputBorder());
+      contentPadding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+      focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide:
+              const BorderSide(color: CCColors.primaryColor, width: 2)));
 }
