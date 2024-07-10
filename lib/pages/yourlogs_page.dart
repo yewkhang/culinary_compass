@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class YourlogsPage extends StatelessWidget {
-  bool fromHomePage;
-  YourlogsPage({super.key, this.fromHomePage = false});
+  final bool fromHomePage;
+  const YourlogsPage({super.key, this.fromHomePage = false});
 
   @override
   Widget build(BuildContext context) {
     final searchController = Get.put(SearchFieldController());
+    // initial values 
+    searchController.query.value = '';
 
     // Show filter bottom sheet
     void showFilters() {
@@ -26,7 +28,7 @@ class YourlogsPage extends StatelessWidget {
           title: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: TextField(
               autofocus: fromHomePage,

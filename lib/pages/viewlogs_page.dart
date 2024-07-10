@@ -1,4 +1,5 @@
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -21,6 +22,7 @@ class ViewlogsPage extends StatelessWidget {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(children: [
+            // Image
             SizedBox(
               width: 450,
               height: 390,
@@ -29,6 +31,7 @@ class ViewlogsPage extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
+            // Rating + Name
             Padding(
               padding: const EdgeInsets.only(
                   top: CCSizes.spaceBtwItems,
@@ -68,6 +71,7 @@ class ViewlogsPage extends StatelessWidget {
                 ),
               ),
             ),
+            // Location
             Padding(
               padding: const EdgeInsets.only(
                   top: 10,
@@ -92,6 +96,7 @@ class ViewlogsPage extends StatelessWidget {
                 ),
               ),
             ),
+            // Tags
             Padding(
               padding: const EdgeInsets.only(
                   top: 10,
@@ -110,18 +115,8 @@ class ViewlogsPage extends StatelessWidget {
                         runSpacing: 0,
                         children: document["Tags"]
                             .toList()
-                            .map<Widget>(
-                              (element) => Padding(
-                                // padding between tags
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                child: Chip(
-                                  backgroundColor: Colors.white,
-                                  padding: const EdgeInsets.all(0),
-                                  label: Text(element),
-                                ),
-                              ),
-                            )
+                            .map<Widget>((element) =>
+                                CCTagsContainer(label: Text(element)))
                             .toList(),
                       ),
                     ),
@@ -158,28 +153,5 @@ class ViewlogsPage extends StatelessWidget {
                 child: Text('Created by: username')),
           ]),
         ));
-  }
-}
-
-class CardContainer extends StatelessWidget {
-  const CardContainer({super.key, this.child});
-
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        width: MediaQuery.sizeOf(context).width,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-                offset: Offset.fromDirection(1.5, 2),
-                color: Colors.grey.shade300)
-          ],
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: child);
   }
 }

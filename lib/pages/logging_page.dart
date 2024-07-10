@@ -1,5 +1,8 @@
 // Dependencies
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/custom_widgets.dart';
+import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
@@ -16,14 +19,13 @@ import 'package:culinary_compass/utils/controllers/image_controller.dart';
 import 'package:culinary_compass/utils/controllers/textfield_controllers.dart';
 import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 
-// ignore: must_be_immutable
 class LoggingPage extends StatelessWidget {
-  String name, location, description, originalPictureURL, docID;
-  double rating;
-  List<String> tags;
-  late bool fromYourLogsPage;
+  final String name, location, description, originalPictureURL, docID;
+  final double rating;
+  final List<String> tags;
+  final bool fromYourLogsPage;
 
-  LoggingPage(
+  const LoggingPage(
       {super.key,
       this.fromYourLogsPage = false,
       required this.docID,
@@ -101,43 +103,49 @@ class LoggingPage extends StatelessWidget {
           Positioned(
             top: 300,
             right: 20,
-            child: FloatingActionButton(
+            child: ElevatedButton(
                 onPressed: () {
                   imageController.getImage(ImageSource.gallery);
                 },
-                backgroundColor: CCColors.primaryColor,
-                child: const Icon(Icons.photo)),
+                style: CCElevatedIconButtonTheme.lightInputButtonStyle,
+                child: const Icon(
+                  Icons.photo,
+                  color: Colors.black,
+                )),
           ),
           // camera image picker
           Positioned(
             top: 230,
             right: 20,
-            child: FloatingActionButton(
+            child: ElevatedButton(
               onPressed: () {
                 imageController.getImage(ImageSource.camera);
               },
-              backgroundColor: CCColors.primaryColor,
-              child: const Icon(Icons.camera_alt),
+              style: CCElevatedIconButtonTheme.lightInputButtonStyle,
+              child: const Icon(
+                Icons.camera_alt,
+                color: Colors.black,
+              ),
             ),
           ),
         ]),
         // ----- NAME TEXTFIELD ----- //
         Padding(
-          padding: const EdgeInsets.all(CCSizes.defaultSpace),
+          padding: const EdgeInsets.only(
+              top: CCSizes.defaultSpace,
+              left: CCSizes.defaultSpace,
+              right: CCSizes.defaultSpace),
           child: TextField(
-            controller: textFieldControllers.nameTextField,
-            decoration: const InputDecoration(
-                hintText: 'Dish Name',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(
-                  Icons.local_dining,
-                  color: CCColors.primaryColor,
-                )),
-          ),
+              controller: textFieldControllers.nameTextField,
+              decoration: textFieldInputDecoration(
+                  hintText: 'Dish Name', prefixIcon: Icons.local_dining)),
         ),
         // ----- LOCATION TEXTFIELD ----- //
         Padding(
-          padding: const EdgeInsets.all(CCSizes.defaultSpace),
+          padding: const EdgeInsets.only(
+              top: CCSizes.defaultSpace,
+              left: CCSizes.defaultSpace,
+              right: CCSizes.defaultSpace),
           child: TextField(
             controller: locationController.locationSearch,
             onChanged: (String value) {
@@ -147,14 +155,8 @@ class LoggingPage extends StatelessWidget {
                 locationController.selectedAddress.value = '';
               }
             },
-            decoration: const InputDecoration(
-              hintText: 'Location',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(
-                Icons.location_on,
-                color: CCColors.primaryColor,
-              ),
-            ),
+            decoration: textFieldInputDecoration(
+                hintText: 'Location', prefixIcon: Icons.location_on),
             maxLines: null,
           ),
         ),
@@ -214,21 +216,15 @@ class LoggingPage extends StatelessWidget {
               controller: textFieldControllers.tagsTextField,
               builder: (context, controller, focusNode) {
                 return TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  decoration: const InputDecoration(
-                    hintText: 'Tags',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(
-                      Icons.tag,
-                      color: CCColors.primaryColor,
-                    ),
-                  ),
-                );
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: textFieldInputDecoration(
+                        hintText: 'Tags', prefixIcon: Icons.tag));
               },
               itemBuilder: (BuildContext context, String itemData) {
                 return ListTile(
                   title: Text(itemData),
+                  tileColor: Colors.white,
                 );
               },
               onSelected: (String suggestion) {
@@ -253,34 +249,25 @@ class LoggingPage extends StatelessWidget {
                 )
               : Wrap(
                   children: tagsController.selectedTags
-                      .map((element) => Padding(
-                        // padding between tags
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Chip(
-                              label: Text(element),
-                              padding: const EdgeInsets.all(2),
-                              backgroundColor: Colors.white,
-                              deleteIcon: const Icon(Icons.clear),
-                              onDeleted: () =>
-                                  tagsController.selectedTags.remove(element),
-                            ),
-                          ))
+                      .map((element) => CCTagsContainer(
+                          label: Text(element),
+                          deleteIcon: const Icon(Icons.clear),
+                          onDeleted: () =>
+                              tagsController.selectedTags.remove(element)))
                       .toList(),
                 )),
         ),
         // ----- DESCRIPTION TEXTFIELD ----- //
         Padding(
-          padding: const EdgeInsets.all(CCSizes.defaultSpace),
+          padding: const EdgeInsets.only(
+              top: CCSizes.defaultSpace,
+              left: CCSizes.defaultSpace,
+              right: CCSizes.defaultSpace),
           child: TextField(
-            controller: textFieldControllers.descriptionTextField,
-            decoration: const InputDecoration(
-                hintText: 'Description',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(
-                  Icons.notes,
-                  color: CCColors.primaryColor,
-                )),
-          ),
+              controller: textFieldControllers.descriptionTextField,
+              maxLines: null,
+              decoration: textFieldInputDecoration(
+                  hintText: 'Description', prefixIcon: Icons.notes)),
         ),
         // ----- RATING BAR ----- //
         Container(
@@ -290,19 +277,21 @@ class LoggingPage extends StatelessWidget {
                 .buildRating(ratingBarController.currentRating.value))),
         // ----- SAVE/UPDATE LOG BUTTON ----- //
         Padding(
-          padding: const EdgeInsets.only(bottom: CCSizes.defaultSpace, left: 10, right: 10),
+          padding: const EdgeInsets.only(
+              bottom: CCSizes.defaultSpace, left: 10, right: 10),
           child: ElevatedButton(
+              style: CCElevatedTextButtonTheme.lightInputButtonStyle,
               onPressed: () async {
                 // Check if any of the fields are empty
                 if (imageController.selectedImagePath.value.isEmpty ||
                     textFieldControllers.nameTextField.text.isEmpty ||
                     locationController.locationSearch.text.isEmpty ||
                     ratingBarController.currentRating.value.isEqual(0) ||
-                    textFieldControllers.descriptionTextField.text.isEmpty ||
                     tagsController.selectedTags.isEmpty) {
                   Get.snackbar('', '',
                       titleText: const Text(
-                        'Please enter a value for all fields!!',
+                        'Please enter a value for all fields!',
+                        maxLines: null,
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       messageText: const SizedBox(),
@@ -350,9 +339,10 @@ class LoggingPage extends StatelessWidget {
                     Get.back();
                   }
                   Get.snackbar('', '',
-                      titleText: const Text(
-                        'Log Saved!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      titleText: Text(
+                        fromYourLogsPage ? 'Log Updated!' : 'Log Saved!',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       messageText: const SizedBox(),
                       icon: const Icon(
@@ -372,8 +362,11 @@ class LoggingPage extends StatelessWidget {
                   textFieldControllers.tagsTextField.clear();
                 }
               },
-              child:
-                  fromYourLogsPage ? const Text('Update') : const Text('Save')),
+              child: Text(
+                fromYourLogsPage ? 'Update' : 'Save',
+                style: const TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.w500),
+              )),
         ),
       ]),
     );

@@ -1,5 +1,6 @@
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/search_controller.dart';
+import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -79,7 +80,8 @@ class FiltersPage extends StatelessWidget {
                     .addAll(filtersController.selectedCuisineFilters);
                 Get.back(); // back to search page
               },
-              child: const Text('Done'))
+              style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+              child: const Text('Done', style: TextStyle(color: Colors.black),))
         ],
       ),
     );
