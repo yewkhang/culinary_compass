@@ -29,7 +29,10 @@ class PlacesPage extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(CCSizes.defaultSpace),
+              padding: const EdgeInsets.only(
+                  top: CCSizes.defaultSpace,
+                  left: CCSizes.defaultSpace,
+                  right: CCSizes.defaultSpace),
               child: TextField(
                   controller: placesController.nameTextField,
                   decoration: textFieldInputDecoration(
@@ -37,7 +40,10 @@ class PlacesPage extends StatelessWidget {
             ),
             // ----- LOCATION TEXTFIELD ----- //
             Padding(
-              padding: const EdgeInsets.all(CCSizes.defaultSpace),
+              padding: const EdgeInsets.only(
+                  top: CCSizes.defaultSpace,
+                  left: CCSizes.defaultSpace,
+                  right: CCSizes.defaultSpace),
               child: TextField(
                 controller: locationController.locationSearch,
                 onChanged: (String value) {

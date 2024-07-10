@@ -131,7 +131,10 @@ class LoggingPage extends StatelessWidget {
         ]),
         // ----- NAME TEXTFIELD ----- //
         Padding(
-          padding: const EdgeInsets.all(CCSizes.defaultSpace),
+          padding: const EdgeInsets.only(
+              top: CCSizes.defaultSpace,
+              left: CCSizes.defaultSpace,
+              right: CCSizes.defaultSpace),
           child: TextField(
               controller: textFieldControllers.nameTextField,
               decoration: textFieldInputDecoration(
@@ -139,7 +142,10 @@ class LoggingPage extends StatelessWidget {
         ),
         // ----- LOCATION TEXTFIELD ----- //
         Padding(
-          padding: const EdgeInsets.all(CCSizes.defaultSpace),
+          padding: const EdgeInsets.only(
+              top: CCSizes.defaultSpace,
+              left: CCSizes.defaultSpace,
+              right: CCSizes.defaultSpace),
           child: TextField(
             controller: locationController.locationSearch,
             onChanged: (String value) {
@@ -253,7 +259,10 @@ class LoggingPage extends StatelessWidget {
         ),
         // ----- DESCRIPTION TEXTFIELD ----- //
         Padding(
-          padding: const EdgeInsets.all(CCSizes.defaultSpace),
+          padding: const EdgeInsets.only(
+              top: CCSizes.defaultSpace,
+              left: CCSizes.defaultSpace,
+              right: CCSizes.defaultSpace),
           child: TextField(
               controller: textFieldControllers.descriptionTextField,
               maxLines: null,
@@ -330,9 +339,10 @@ class LoggingPage extends StatelessWidget {
                     Get.back();
                   }
                   Get.snackbar('', '',
-                      titleText: Text(fromYourLogsPage ? 
-                        'Log Updated!' : 'Log Saved!',
-                        style: const TextStyle(color: Colors.white, fontSize: 18),
+                      titleText: Text(
+                        fromYourLogsPage ? 'Log Updated!' : 'Log Saved!',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       messageText: const SizedBox(),
                       icon: const Icon(
