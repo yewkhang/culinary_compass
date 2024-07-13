@@ -166,7 +166,7 @@ class GroupsList extends StatelessWidget {
                     return ListTile(
                       title: Text(data['Name']),
                       onTap: () {
-                        Get.to(GroupsPage(document: data));
+                        Get.to(GroupsPage(document: data, groupID: groupID,));
                       },
                     );
                   });

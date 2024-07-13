@@ -162,7 +162,8 @@ class CCTagsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding( // padding between tags
+    return Padding(
+      // padding between tags
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Chip(
         label: label,
@@ -172,5 +173,28 @@ class CCTagsContainer extends StatelessWidget {
         onDeleted: onDeleted,
       ),
     );
+  }
+}
+
+class GroupNameContainer extends StatelessWidget {
+  final String groupName;
+
+  const GroupNameContainer({
+    super.key,
+    required this.groupName,
+    required this.onPressed,
+  });
+
+  final void Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: onPressed,
+        child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+            ),
+            child: Text(groupName)));
   }
 }
