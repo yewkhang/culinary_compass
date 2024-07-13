@@ -16,7 +16,8 @@ class AuthService {
       uid: user.uid,
       bio: "No Bio",
       profileImageURL: "",
-      friends: List.empty()
+      friendsUID: List<String>.empty(growable: true),
+      friendsUsername: List<String>.empty(growable: true)
     );
   }
 
@@ -144,7 +145,8 @@ class AuthService {
           "Bio": "No Bio",
           "UID": uid,
           "Profile Image": "",
-          "Friends": List.empty(growable: true)
+          "FriendsUID": List.empty(growable: true),
+          "FriendsUsername": List.empty(growable: true)
         });
     } catch (e) {
       print(e.toString());
