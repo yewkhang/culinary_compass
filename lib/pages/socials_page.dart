@@ -302,6 +302,8 @@ class CreateGroupDialog extends StatelessWidget {
             onPressed: () async {
               await groupsController.createGroup(groupNameController.text,
                   ['members UID'], nameTagsController.selectedFriendsNames);
+              // clear values
+              nameTagsController.selectedFriendsNames.clear();
               Get.back();
             },
             child: const Text("Create Group"),
