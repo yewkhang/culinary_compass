@@ -216,9 +216,20 @@ class AddFriendsDialog extends StatelessWidget {
                     friendsDialogController.uidExists.value) {
                   await profileController.addFriendToList(
                       friendsDialogController.friendUIDTextField.text);
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Friend's UID successfully added!")));
+                  Get.back();
+                  Get.snackbar('', '',
+                    titleText: const Text(
+                      'Friend Added!',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    messageText: const SizedBox(),
+                    icon: const Icon(
+                      Icons.check_circle_outline_outlined,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: Colors.green,
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(20));
                 }
                 friendsDialogController.friendUIDTextField.text =
                     ""; // clear controller
@@ -334,8 +345,19 @@ class CreateGroupDialog extends StatelessWidget {
                 // clear values
                 nameTagsController.selectedFriendsNames.clear();
                 Get.back();
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Friend's UID successfully added!")));
+                Get.snackbar('', '',
+                    titleText: const Text(
+                      'Group Created!',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    messageText: const SizedBox(),
+                    icon: const Icon(
+                      Icons.check_circle_outline_outlined,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: Colors.green,
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(20));
               }
             },
             child: const Text(
