@@ -14,7 +14,7 @@ class GroupsController extends GetxController {
   // --------------------- VARIABLES --------------------- //
   // User Repo for methods
   final UserRepository userRepository = Get.put(UserRepository());
-  final ProfileController profileController = Get.find();
+  final ProfileController profileController = ProfileController.instance;
 
   // --------------------- OBS VARIABLES --------------------- //
   Rx<Groups> selectedGroup = Groups.empty().obs;
@@ -28,8 +28,9 @@ class GroupsController extends GetxController {
   Stream<QuerySnapshot> fetchAllUserGroups() {
     Stream<QuerySnapshot> result = _db
         .collection("Groups")
-        // select logs where UID matches user ID
-        .where('MembersUID', arrayContains: _auth.currentUser!.uid)
+        // select logs where list of MembersUsername matches user username
+        .where('MembersUsername',
+            arrayContains: profileController.user.value.username)
         .snapshots();
     return result;
   }
@@ -45,19 +46,21 @@ class GroupsController extends GetxController {
     }
   }
 
-  Future<void> createGroup(
-      String name, List<String> membersUID, List<String> membersUsername) async {
+  Future<void> createGroup(String name, List<String> membersUID,
+      List<String> membersUsername) async {
     // create a document reference in Firestore
     DocumentReference ref = _db.collection('Groups').doc();
     // get the ID of the new document reference. This will be the group's ID
     String groupID = ref.id;
+    // add UID and Name of user making the group
     membersUID.add(_auth.currentUser!.uid);
+    List<String> finalGroupMembersUsername = List.from(membersUsername)
+      ..add(profileController.user.value.username);
     // Create Groups Model for new group
     final newGroup = Groups(
       name: name,
       groupid: groupID,
-      membersUID: membersUID,
-      membersUsername: membersUsername,
+      membersUsername: finalGroupMembersUsername,
     );
 
     try {
@@ -65,5 +68,13 @@ class GroupsController extends GetxController {
     } on FirebaseException catch (e) {
       throw FirebaseException(plugin: 'Please try again');
     }
+  }
+
+  // get a list of friends that matches the query (for creating groups)
+  List<String> getFriendSuggestions(String query, List<String> friendsList) {
+    List<String> matches = [];
+    matches.addAll(friendsList);
+    matches.retainWhere((c) => c.toLowerCase().contains(query.toLowerCase()));
+    return matches;
   }
 }
