@@ -158,6 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: const Text("Save", style: TextStyle(color: Colors.white)),
             onPressed: () async {
               await profileController.updateTextField(field, newValue);
+              await profileController.fetchUserDetails();
               Navigator.pop(context);
             },
           )
