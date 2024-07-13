@@ -44,13 +44,15 @@ class SocialsPage extends StatelessWidget {
               GroupsList(),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: ElevatedButton(
               onPressed: () {
                 Get.dialog(AddFriendsCreateGroupsDialog());
               },
-              backgroundColor: Colors.purple[200],
-              child: const Icon(Icons.person_add)),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+              style: CCElevatedIconButtonTheme.lightInputButtonStyle,
+              child: const Icon(
+                Icons.person_add_alt_1,
+                color: Colors.black,
+              )),
         ));
   }
 }
@@ -182,7 +184,7 @@ class AddFriendsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
       child: Form(
         key: _formKey,
         child: Column(
@@ -192,7 +194,8 @@ class AddFriendsDialog extends StatelessWidget {
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
             TextFormField(
               controller: friendsDialogController.friendUIDTextField,
-              decoration: const InputDecoration(hintText: "Enter UID here"),
+              decoration: textFieldInputDecoration(
+                  hintText: "Enter UID here", prefixIcon: Icons.person),
               validator: (text) {
                 if (text == null || text.trim().isEmpty) {
                   return "Friend's UID cannot be blank";
@@ -207,6 +210,7 @@ class AddFriendsDialog extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             ElevatedButton(
+              style: CCElevatedTextButtonTheme.lightInputButtonStyle,
               onPressed: () async {
                 if (_formKey.currentState!.validate() &&
                     friendsDialogController.uidExists.value) {
@@ -219,7 +223,10 @@ class AddFriendsDialog extends StatelessWidget {
                 friendsDialogController.friendUIDTextField.text =
                     ""; // clear controller
               },
-              child: const Text("Add Friend"),
+              child: const Text(
+                "Add Friend",
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         ),
@@ -239,6 +246,7 @@ class CreateGroupDialog extends StatelessWidget {
   final TextEditingController userSearchController = TextEditingController();
   final GroupsController groupsController = GroupsController.instance;
   final TagsController nameTagsController = Get.put(TagsController());
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -249,9 +257,19 @@ class CreateGroupDialog extends StatelessWidget {
         children: [
           const Text("Create Group",
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-          TextField(
-            controller: groupNameController,
-            decoration: const InputDecoration(hintText: "Group Name"),
+          Form(
+            key: _formKey,
+            child: TextFormField(
+              controller: groupNameController,
+              decoration: textFieldInputDecoration(
+                  hintText: 'Group Name', prefixIcon: Icons.people_alt),
+              validator: (text) {
+                if (text == null || text.trim().isEmpty) {
+                  return "Group's Name cannot be blank";
+                }
+                return null;
+              },
+            ),
           ),
           const SizedBox(height: 20.0),
           // ----- SELECTED FRIENDS DISPLAY ----- //
@@ -273,54 +291,57 @@ class CreateGroupDialog extends StatelessWidget {
                         .toList(),
                   )),
           ),
-          Padding(
-            padding: const EdgeInsets.all(CCSizes.defaultSpace),
-            child: TypeAheadField(
-                controller: userSearchController,
-                builder: (context, controller, focusNode) {
-                  return TextField(
-                      controller: controller,
-                      focusNode: focusNode,
-                      decoration: textFieldInputDecoration(
-                          hintText: 'Enter username',
-                          prefixIcon: Icons.people_alt));
-                },
-                itemBuilder: (BuildContext context, String itemData) {
-                  return ListTile(
-                    title: Text(itemData),
-                    tileColor: Colors.white,
-                  );
-                },
-                onSelected: (String suggestion) {
-                  // add friends only if selected friends doesn't contain 'suggestion'
-                  if (nameTagsController.selectedFriendsNames
-                          .contains(suggestion) ==
-                      false) {
-                    nameTagsController.selectedFriendsNames.add(suggestion);
-                    // clear text field upon selection of a friend
-                    userSearchController.clear();
-                  }
-                },
-                suggestionsCallback: (String query) {
-                  // list of user's friends to select from
-                  return groupsController.getFriendSuggestions(
-                      query, profileController.user.value.friendsUsername);
-                }),
-          ),
+          TypeAheadField(
+              controller: userSearchController,
+              builder: (context, controller, focusNode) {
+                return TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: textFieldInputDecoration(
+                        hintText: 'Enter username', prefixIcon: Icons.person));
+              },
+              itemBuilder: (BuildContext context, String itemData) {
+                return ListTile(
+                  title: Text(itemData),
+                  tileColor: Colors.white,
+                );
+              },
+              onSelected: (String suggestion) {
+                // add friends only if selected friends doesn't contain 'suggestion'
+                if (nameTagsController.selectedFriendsNames
+                        .contains(suggestion) ==
+                    false) {
+                  nameTagsController.selectedFriendsNames.add(suggestion);
+                  // clear text field upon selection of a friend
+                  userSearchController.clear();
+                }
+              },
+              suggestionsCallback: (String query) {
+                // list of user's friends to select from
+                return groupsController.getFriendSuggestions(
+                    query, profileController.user.value.friendsUsername);
+              }),
           const SizedBox(height: 20.0),
           ElevatedButton(
             style: CCElevatedTextButtonTheme.lightInputButtonStyle,
             onPressed: () async {
-              List<String> UIDsToAdd =
-                  await groupsController.getListOfFriendUidFromUsername(
-                      nameTagsController.selectedFriendsNames);
-              await groupsController.createGroup(groupNameController.text,
-                  UIDsToAdd, nameTagsController.selectedFriendsNames);
-              // clear values
-              nameTagsController.selectedFriendsNames.clear();
-              Get.back();
+              if (_formKey.currentState!.validate()) {
+                List<String> UIDsToAdd =
+                    await groupsController.getListOfFriendUidFromUsername(
+                        nameTagsController.selectedFriendsNames);
+                await groupsController.createGroup(groupNameController.text,
+                    UIDsToAdd, nameTagsController.selectedFriendsNames);
+                // clear values
+                nameTagsController.selectedFriendsNames.clear();
+                Get.back();
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Friend's UID successfully added!")));
+              }
             },
-            child: const Text("Create Group"),
+            child: const Text(
+              "Create Group",
+              style: TextStyle(color: Colors.black),
+            ),
           ),
         ],
       ),
