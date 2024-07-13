@@ -311,8 +311,11 @@ class CreateGroupDialog extends StatelessWidget {
           ElevatedButton(
             style: CCElevatedTextButtonTheme.lightInputButtonStyle,
             onPressed: () async {
+              List<String> UIDsToAdd =
+                  await groupsController.getListOfFriendUidFromUsername(
+                      nameTagsController.selectedFriendsNames);
               await groupsController.createGroup(groupNameController.text,
-                  ['members UID'], nameTagsController.selectedFriendsNames);
+                  UIDsToAdd, nameTagsController.selectedFriendsNames);
               // clear values
               nameTagsController.selectedFriendsNames.clear();
               Get.back();

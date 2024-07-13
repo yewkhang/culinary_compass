@@ -19,6 +19,9 @@ class GroupsController extends GetxController {
   // --------------------- OBS VARIABLES --------------------- //
   Rx<Groups> selectedGroup = Groups.empty().obs;
 
+  // --------------------- GETTERS --------------------- //
+  static GroupsController get instance => Get.find();
+
   // to clear the controller
   void reset() {
     selectedGroup(Groups.empty());
@@ -28,9 +31,8 @@ class GroupsController extends GetxController {
   Stream<QuerySnapshot> fetchAllUserGroups() {
     Stream<QuerySnapshot> result = _db
         .collection("Groups")
-        // select logs where list of MembersUsername matches user username
-        .where('MembersUsername',
-            arrayContains: profileController.user.value.username)
+        // select logs where list of MembersUID contains user UID
+        .where('MembersUID', arrayContains: _auth.currentUser!.uid)
         .snapshots();
     return result;
   }
@@ -60,6 +62,7 @@ class GroupsController extends GetxController {
     final newGroup = Groups(
       name: name,
       groupid: groupID,
+      membersUID: membersUID,
       membersUsername: finalGroupMembersUsername,
     );
 
@@ -76,5 +79,15 @@ class GroupsController extends GetxController {
     matches.addAll(friendsList);
     matches.retainWhere((c) => c.toLowerCase().contains(query.toLowerCase()));
     return matches;
+  }
+
+  // from a list of usernames, return a list of the UIDs of those users
+  Future<List<String>> getListOfFriendUidFromUsername(List<String> usernames) async {
+    // get all Users documents where friend is to be added
+    final friendSnapshot = await _db
+        .collection("Users")
+        .where("Username", whereIn: usernames)
+        .get();
+    return friendSnapshot.docs.map((snapshot) => snapshot.data()['UID'].toString()).toList();
   }
 }
