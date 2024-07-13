@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culinary_compass/pages/groups_page.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/friendsdialog_controller.dart';
@@ -17,6 +18,7 @@ class SocialsPage extends StatelessWidget {
   SocialsPage({super.key});
 
   final ProfileController profileController = Get.put(ProfileController());
+  final GroupsController groupsController = Get.put(GroupsController());
   final FriendsDialogController friendsDialogController =
       Get.put(FriendsDialogController());
 
@@ -131,7 +133,7 @@ class FriendsList extends StatelessWidget {
 class GroupsList extends StatelessWidget {
   GroupsList({super.key});
 
-  final GroupsController groupsController = Get.put(GroupsController());
+  final GroupsController groupsController = GroupsController.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +157,13 @@ class GroupsList extends StatelessWidget {
                         as Map<String, dynamic>;
                     return ListTile(
                       title: Text(data['Name']),
+                      onTap: () {
+                        Get.to(GroupsPage(
+                            groupName: data['Name'],
+                            groupMembers: data['MembersUsername']
+                                .whereType<String>()
+                                .toList()));
+                      },
                     );
                   });
         });
@@ -228,7 +237,7 @@ class CreateGroupDialog extends StatelessWidget {
   final ProfileController profileController = ProfileController.instance;
   final TextEditingController groupNameController = TextEditingController();
   final TextEditingController userSearchController = TextEditingController();
-  final GroupsController groupsController = Get.put(GroupsController());
+  final GroupsController groupsController = GroupsController.instance;
   final TagsController nameTagsController = Get.put(TagsController());
 
   @override
@@ -258,7 +267,8 @@ class CreateGroupDialog extends StatelessWidget {
                         .map((element) => CCTagsContainer(
                             label: Text(element),
                             deleteIcon: const Icon(Icons.clear),
-                            onDeleted: () => nameTagsController.selectedFriendsNames
+                            onDeleted: () => nameTagsController
+                                .selectedFriendsNames
                                 .remove(element)))
                         .toList(),
                   )),
@@ -283,7 +293,8 @@ class CreateGroupDialog extends StatelessWidget {
                 },
                 onSelected: (String suggestion) {
                   // add friends only if selected friends doesn't contain 'suggestion'
-                  if (nameTagsController.selectedFriendsNames.contains(suggestion) ==
+                  if (nameTagsController.selectedFriendsNames
+                          .contains(suggestion) ==
                       false) {
                     nameTagsController.selectedFriendsNames.add(suggestion);
                     // clear text field upon selection of a friend
