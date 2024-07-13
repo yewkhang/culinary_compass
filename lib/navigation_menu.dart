@@ -1,6 +1,7 @@
 import 'package:culinary_compass/home.dart';
 import 'package:culinary_compass/pages/logging_page.dart';
 import 'package:culinary_compass/pages/settings_page.dart';
+import 'package:culinary_compass/pages/socials_page.dart';
 import 'package:culinary_compass/pages/yourlogs_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,7 +58,7 @@ class NavigationController extends GetxController {
       tags: List<String>.empty(growable: true),
       rating: 0,
     ),
-    Container(color: Colors.orange),
+    SocialsPage(),
     SettingsPage()
   ];
 }
