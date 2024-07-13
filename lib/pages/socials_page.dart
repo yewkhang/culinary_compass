@@ -32,6 +32,9 @@ class SocialsPage extends StatelessWidget {
             title: const Text("Social",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0)),
             bottom: const TabBar(
+              labelColor: CCColors.primaryColor,
+              indicatorColor: CCColors.primaryColor,
+              overlayColor: WidgetStateColor.transparent,
               tabs: [
                 Tab(text: "Friends"),
                 Tab(text: "Groups"),
@@ -74,6 +77,9 @@ class AddFriendsCreateGroupsDialog extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.normal, fontSize: 22.0)),
                   bottom: const TabBar(
+                    labelColor: CCColors.primaryColor,
+                    indicatorColor: CCColors.primaryColor,
+                    overlayColor: WidgetStateColor.transparent,
                     tabs: [
                       Tab(text: "Add Friends"),
                       Tab(text: "Create Groups"),
@@ -160,11 +166,7 @@ class GroupsList extends StatelessWidget {
                     return ListTile(
                       title: Text(data['Name']),
                       onTap: () {
-                        Get.to(GroupsPage(
-                            groupName: data['Name'],
-                            groupMembers: data['MembersUsername']
-                                .whereType<String>()
-                                .toList()));
+                        Get.to(GroupsPage(document: data));
                       },
                     );
                   });
@@ -218,18 +220,18 @@ class AddFriendsDialog extends StatelessWidget {
                       friendsDialogController.friendUIDTextField.text);
                   Get.back();
                   Get.snackbar('', '',
-                    titleText: const Text(
-                      'Friend Added!',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    messageText: const SizedBox(),
-                    icon: const Icon(
-                      Icons.check_circle_outline_outlined,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.green,
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20));
+                      titleText: const Text(
+                        'Friend Added!',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      messageText: const SizedBox(),
+                      icon: const Icon(
+                        Icons.check_circle_outline_outlined,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.green,
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20));
                 }
                 friendsDialogController.friendUIDTextField.text =
                     ""; // clear controller
