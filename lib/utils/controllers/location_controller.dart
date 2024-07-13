@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:culinary_compass/utils/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
