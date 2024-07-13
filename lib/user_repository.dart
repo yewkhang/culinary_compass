@@ -1,3 +1,4 @@
+import 'package:culinary_compass/models/groups_model.dart';
 import 'package:culinary_compass/models/logging_model.dart';
 import 'package:culinary_compass/models/myuser.dart';
 import 'package:culinary_compass/models/places_model.dart';
@@ -177,7 +178,7 @@ class UserRepository extends GetxController {
   Future<QuerySnapshot> fetchAllFriendLogs() async {
     final documentSnapshot =
         await _db.collection("Users").doc(_auth.currentUser!.email).get();
-    List friends = documentSnapshot.data()?['Friends'].toList();
+    List friends = documentSnapshot.data()?['FriendsUID'].toList();
     friends.add(_auth.currentUser!.uid); // add user's logs into query
     Future<QuerySnapshot> result = _db
         .collection("Logs")
@@ -218,7 +219,7 @@ class UserRepository extends GetxController {
     return result;
   }
 
-    // --- FETCH USER LOGS --- //
+    // --- FETCH USER DETAILS --- //
   Future<MyUser> fetchAllUserDetails() async {
     try {
       final result = await _db
@@ -234,4 +235,22 @@ class UserRepository extends GetxController {
       throw Exception("error in fetchAllUserDetails");
     }
   }
+
+    // --- FETCH GROUP DETAILS --- //
+  Future<Groups> fetchUserGroupDetails(String groupID) async {
+    try {
+      final result = await _db
+          .collection("Groups")
+          .doc(groupID)
+          .get();
+      if (result.exists) {
+        return Groups.fromSnapshot(result);
+      } else {
+        return Groups.empty();
+      }
+    } on Exception catch (e) {
+      throw Exception("error in fetchGroupDetails");
+    }
+  }
+
 }
