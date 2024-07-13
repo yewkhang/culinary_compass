@@ -154,7 +154,14 @@ class UserRepository extends GetxController {
 
     // --- Upload ProfileImage to Firestore --- //
     final profileImage =
-        MyUser(profileImageURL: imageURL); // other fields are null
+        MyUser(
+          username: "",
+          uid: "",
+          bio: "",
+          profileImageURL: imageURL,
+          friendsUID: List<String>.empty(growable: true),
+          friendsUsername: List<String>.empty(growable: true)
+          ); // other fields are null
 
     try {
       await _db
@@ -209,5 +216,22 @@ class UserRepository extends GetxController {
         .where('UID', isEqualTo: _auth.currentUser!.uid)
         .snapshots();
     return result;
+  }
+
+    // --- FETCH USER LOGS --- //
+  Future<MyUser> fetchAllUserDetails() async {
+    try {
+      final result = await _db
+          .collection("Users")
+          .doc(_auth.currentUser!.email)
+          .get();
+      if (result.exists) {
+        return MyUser.fromSnapshot(result);
+      } else {
+        return MyUser.empty();
+      }
+    } on Exception catch (e) {
+      throw Exception("error in fetchAllUserDetails");
+    }
   }
 }

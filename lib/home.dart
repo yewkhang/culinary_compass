@@ -2,6 +2,7 @@ import 'package:culinary_compass/pages/places_page.dart';
 import 'package:culinary_compass/pages/yourlogs_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userRepository = Get.put(UserRepository());
+    final profileController = Get.put(ProfileController());
 
     void showAddPlaces() {
       showModalBottomSheet(
@@ -50,15 +52,17 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: CCSizes.defaultSpace + 10),
-                      child: Text(
-                        'User', // To be replaced with username
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
+                  Obx(
+                    () => Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+                        child: Text(
+                          profileController.user.value.username, // To be replaced with username
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

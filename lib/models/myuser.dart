@@ -1,19 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyUser {
-  final String? username;
-  final String? uid;
-  final String? bio;
-  final String? profileImageURL;
-  final List<String>? friends;
+  final String username;
+  final String uid;
+  final String bio;
+  final String profileImageURL;
+  final List<String> friendsUID;
+  final List<String> friendsUsername;
 
   const MyUser({
-    this.username,
-    this.uid,
-    this.bio,
-    this.profileImageURL,
-    this.friends
+    required this.username,
+    required this.uid,
+    required this.bio,
+    required this.profileImageURL,
+    required this.friendsUID,
+    required this.friendsUsername
   });
+
+  static MyUser empty() {
+    return MyUser(
+      username: "",
+      uid: "",
+      bio: "",
+      profileImageURL: "",
+      friendsUID: List<String>.empty(growable: true),
+      friendsUsername: List<String>.empty(growable: true)
+    );
+  }
 
   Map<String, dynamic> toJsonNoNull() {
     return {
@@ -21,24 +34,26 @@ class MyUser {
       "UID": uid,
       "Bio": bio,
       "Profile Image": profileImageURL,
-      "Friends": friends
+      "FriendsUID": friendsUID,
+      "FriendsUsername": friendsUsername
     };
   }
 
-  factory MyUser.fromJsonNoNull(DocumentSnapshot snapshot) {
-    final userData = snapshot.data() as Map<String, dynamic>;
+  factory MyUser.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final userData = snapshot.data()!;
     return MyUser(
-        username: userData['username'] ?? '',
-        uid: userData['uid'] ?? '',
-        bio: userData['bio'] ?? '',
-        profileImageURL: userData['profileImageURL'] ?? '',
-        friends: userData['friends'] ?? ''
+        username: userData['Username'] ?? '',
+        uid: userData['UID'] ?? '',
+        bio: userData['Bio'] ?? '',
+        profileImageURL: userData['Profile Image'] ?? '',
+        friendsUID: List<String>.from(userData['FriendsUID'] ?? []),
+        friendsUsername: List<String>.from(userData['FriendsUsername'] ?? [])
       );
   }
 
   Map<String, String> toJsonProfileImage() {
     return {
-      "Profile Image": profileImageURL!
+      "Profile Image": profileImageURL
     };
   }
 }
