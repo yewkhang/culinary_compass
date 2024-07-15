@@ -55,7 +55,7 @@ class GroupsController extends GetxController {
     // get the ID of the new document reference. This will be the group's ID
     String groupID = ref.id;
     // add UID and Name of user making the group
-    membersUID.add(_auth.currentUser!.uid);
+    membersUID.add(profileController.user.value.uid);
     List<String> finalGroupMembersUsername = List.from(membersUsername)
       ..add(profileController.user.value.username);
     // Create Groups Model for new group
@@ -64,6 +64,8 @@ class GroupsController extends GetxController {
       groupid: groupID,
       membersUID: membersUID,
       membersUsername: finalGroupMembersUsername,
+      // creator of the grp is the admin
+      admins: List<String>.empty(growable: true)..add(profileController.user.value.uid)
     );
 
     try {

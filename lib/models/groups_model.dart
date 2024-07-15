@@ -5,12 +5,14 @@ class Groups {
   final String groupid;
   final List<String> membersUID;
   final List<String> membersUsername;
+  final List<String> admins;
 
   const Groups({
     required this.name,
     required this.groupid,
     required this.membersUID,
-    required this.membersUsername
+    required this.membersUsername,
+    required this.admins
   });
 
   static Groups empty() {
@@ -18,7 +20,8 @@ class Groups {
       name: "",
       groupid: "",
       membersUID: List<String>.empty(growable: true),
-      membersUsername: List<String>.empty(growable: true)
+      membersUsername: List<String>.empty(growable: true),
+      admins: List<String>.empty(growable: true)
     );
   }
 
@@ -27,7 +30,8 @@ class Groups {
       "Name": name,
       "GroupID": groupid,
       "MembersUID": membersUID,
-      "MembersUsername": membersUsername
+      "MembersUsername": membersUsername,
+      "Admins": admins
     };
   }
 
@@ -37,7 +41,8 @@ class Groups {
         name: groupData['Username'] ?? '',
         groupid: groupData['UID'] ?? '',
         membersUID: List<String>.from(groupData['FriendsUID'] ?? []),
-        membersUsername: List<String>.from(groupData['FriendsUsername'] ?? [])
+        membersUsername: List<String>.from(groupData['FriendsUsername'] ?? []),
+        admins: List<String>.from(groupData['FriendsUsername'] ?? [])
       );
   }
 }

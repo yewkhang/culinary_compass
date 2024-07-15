@@ -103,6 +103,7 @@ class GroupInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isAdmin = document['Admins'].whereType<String>().toList().contains(profileController.user.value.uid);
     return Scaffold(
       appBar: AppBar(
         title: const SizedBox(),
@@ -147,10 +148,12 @@ class GroupInfoPage extends StatelessWidget {
                     .toList()
                     .map<Widget>((element) => ListTile(
                           title: Text(element),
-                          trailing: IconButton(
+                          // show delete icon for users if admin
+                          trailing: isAdmin ? IconButton(
                             onPressed: () async {
                               Get.defaultDialog(
-                                title: 'Remove $element from group?',
+                                title: 'Remove Member',
+                                middleText: 'Remove $element from group?',
                                 confirm: ElevatedButton(
                                     onPressed: () async {
                                       await groupsController
@@ -172,7 +175,7 @@ class GroupInfoPage extends StatelessWidget {
                               );
                             },
                             icon: const Icon(Icons.delete),
-                          ),
+                          ) : const SizedBox(),
                         ))
                     .toList(),
               ),
