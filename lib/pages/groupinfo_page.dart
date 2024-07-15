@@ -163,9 +163,12 @@ class GroupInfoPage extends StatelessWidget {
                               ? IconButton(
                                   onPressed: () async {
                                     Get.defaultDialog(
+                                      backgroundColor: Colors.white,
                                       title: 'Remove Member',
                                       middleText: 'Remove $element from group?',
                                       confirm: ElevatedButton(
+                                          style: CCElevatedTextButtonTheme
+                                              .lightInputButtonStyle,
                                           onPressed: () async {
                                             await groupsController
                                                 .deleteMembersFromGroup(
@@ -179,10 +182,18 @@ class GroupInfoPage extends StatelessWidget {
                                                         .toList());
                                             Get.back();
                                           },
-                                          child: const Text('Remove user')),
+                                          child: const Text('Remove user',
+                                              style: TextStyle(
+                                                  color: Colors.black))),
                                       cancel: ElevatedButton(
+                                          style: CCElevatedTextButtonTheme
+                                              .unselectedButtonStyle,
                                           onPressed: () => Get.back(),
-                                          child: const Text('Cancel')),
+                                          child: const Text(
+                                            'Cancel',
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          )),
                                     );
                                   },
                                   icon: const Icon(Icons.delete),
@@ -192,26 +203,37 @@ class GroupInfoPage extends StatelessWidget {
                     .toList(),
               ),
             ),
-            isAdmin ? ElevatedButton(
-                style: CCElevatedTextButtonTheme.lightInputButtonStyle,
-                onPressed: () async {
-                  Get.defaultDialog(
-                    title: 'Delete Group',
-                    middleText:
-                        'Are you sure you want to delete the whole group?',
-                    confirm: ElevatedButton(
-                        onPressed: () async {
-                          await groupsController.deleteGroup(groupID);
-                          Get.back();
-                        },
-                        child: const Text('Delete Group')),
-                    cancel: ElevatedButton(
-                        onPressed: () => Get.back(),
-                        child: const Text('Cancel')),
-                  );
-                },
-                child: const Text('Delete Group', style: TextStyle(color: Colors.black),))
-              : const SizedBox()
+            isAdmin
+                ? ElevatedButton(
+                    style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                    onPressed: () async {
+                      Get.defaultDialog(
+                        backgroundColor: Colors.white,
+                        title: 'Delete Group',
+                        middleText:
+                            'Are you sure you want to delete the whole group?',
+                        confirm: ElevatedButton(
+                            style:
+                                CCElevatedTextButtonTheme.lightInputButtonStyle,
+                            onPressed: () async {
+                              await groupsController.deleteGroup(groupID);
+                              Get.back();
+                            },
+                            child: const Text('Delete Group',
+                                style: TextStyle(color: Colors.black))),
+                        cancel: ElevatedButton(
+                            style:
+                                CCElevatedTextButtonTheme.unselectedButtonStyle,
+                            onPressed: () => Get.back(),
+                            child: const Text('Cancel',
+                                style: TextStyle(color: Colors.black))),
+                      );
+                    },
+                    child: const Text(
+                      'Delete Group',
+                      style: TextStyle(color: Colors.black),
+                    ))
+                : const SizedBox()
           ],
         ),
       ),

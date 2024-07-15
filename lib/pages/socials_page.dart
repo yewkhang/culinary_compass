@@ -28,18 +28,25 @@ class SocialsPage extends StatelessWidget {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
+          //background color of main page
+          backgroundColor: Colors.white,
           appBar: AppBar(
-            titleSpacing: 20.0,
+            backgroundColor: CCColors.primaryColor,
             title: const Text("Social",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0)),
-            bottom: const TabBar(
-              labelColor: CCColors.primaryColor,
-              indicatorColor: CCColors.primaryColor,
-              overlayColor: WidgetStateColor.transparent,
-              tabs: [
-                Tab(text: "Friends"),
-                Tab(text: "Groups"),
-              ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(50),
+              child: Container(
+                color: Colors.white,
+                child: const TabBar(
+                  labelColor: CCColors.primaryColor,
+                  indicatorColor: CCColors.primaryColor,
+                  tabs: [
+                    Tab(text: "Friends"),
+                    Tab(text: "Groups"),
+                  ],
+                ),
+              ),
             ),
           ),
           body: TabBarView(
@@ -72,7 +79,9 @@ class AddFriendsCreateGroupsDialog extends StatelessWidget {
         child: DefaultTabController(
             length: 2,
             child: Scaffold(
+              backgroundColor: Colors.white,
                 appBar: AppBar(
+                  backgroundColor: Colors.white,
                   centerTitle: true,
                   title: const Text("Choose Action",
                       style: TextStyle(
@@ -111,7 +120,7 @@ class FriendsList extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             leading: CircleAvatar(
-              backgroundColor: Colors.purple[400],
+              backgroundColor: Colors.grey[400],
               child: GestureDetector(
                 onTap: () {
                   Get.dialog(AddFriendsDialog());
