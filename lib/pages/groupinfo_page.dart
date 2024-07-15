@@ -192,7 +192,7 @@ class GroupInfoPage extends StatelessWidget {
                     .toList(),
               ),
             ),
-            ElevatedButton(
+            isAdmin ? ElevatedButton(
                 style: CCElevatedTextButtonTheme.lightInputButtonStyle,
                 onPressed: () async {
                   Get.defaultDialog(
@@ -211,6 +211,7 @@ class GroupInfoPage extends StatelessWidget {
                   );
                 },
                 child: const Text('Delete Group', style: TextStyle(color: Colors.black),))
+              : const SizedBox()
           ],
         ),
       ),
