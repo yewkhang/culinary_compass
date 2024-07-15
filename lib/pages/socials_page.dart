@@ -174,7 +174,7 @@ class GroupsList extends StatelessWidget {
                                 backgroundColor: Colors.red,
                                 icon: Icons.delete,
                                 onPressed: (context) => Get.defaultDialog(
-                                      title: 'Delete Group',
+                                      title: 'Leave Group',
                                       middleText:
                                           'Are you sure you want to leave this group?',
                                       confirm: ElevatedButton(
@@ -193,7 +193,7 @@ class GroupsList extends StatelessWidget {
                                                         .toList());
                                             Get.back();
                                           },
-                                          child: const Text('Delete Group')),
+                                          child: const Text('Leave Group')),
                                       cancel: ElevatedButton(
                                           onPressed: () => Get.back(),
                                           child: const Text('Cancel')),
