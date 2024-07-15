@@ -75,6 +75,10 @@ class GroupsController extends GetxController {
     }
   }
 
+  Future<void> deleteGroup(String groupID) async {
+    await _db.collection("Groups").doc(groupID).delete();
+  }
+
   // get a list of friends that matches the query (for creating groups)
   List<String> getFriendSuggestions(String query, List<String> friendsList) {
     List<String> matches = [];

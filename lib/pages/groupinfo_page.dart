@@ -96,30 +96,38 @@ class GroupInfoPage extends StatelessWidget {
               nameTagsController.selectedFriendsNames.clear();
               Get.back();
             },
-            child: const Text('Add Members', style: TextStyle(color: Colors.black),),
+            child: const Text(
+              'Add Members',
+              style: TextStyle(color: Colors.black),
+            ),
           )
         ]));
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isAdmin = document['Admins'].whereType<String>().toList().contains(profileController.user.value.uid);
+    bool isAdmin = document['Admins']
+        .whereType<String>()
+        .toList()
+        .contains(profileController.user.value.uid);
     return Scaffold(
       appBar: AppBar(
         title: const SizedBox(),
-        actions: [Padding(
-          padding: const EdgeInsets.only(right: CCSizes.defaultSpace),
-          child: ElevatedButton(
-                  onPressed: () {
-                    // open dialog box to add user
-                    showGetxBottomSheet();
-                  },
-                  style: CCElevatedTextButtonTheme.lightInputButtonStyle,
-                  child: const Text(
-                    'Add Members',
-                    style: TextStyle(color: Colors.black),
-                  )),
-        ),],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: CCSizes.defaultSpace),
+            child: ElevatedButton(
+                onPressed: () {
+                  // open dialog box to add user
+                  showGetxBottomSheet();
+                },
+                style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                child: const Text(
+                  'Add Members',
+                  style: TextStyle(color: Colors.black),
+                )),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(CCSizes.defaultSpace),
@@ -148,38 +156,61 @@ class GroupInfoPage extends StatelessWidget {
                     .toList()
                     .map<Widget>((element) => ListTile(
                           title: Text(element),
-                          // show delete icon for users if admin
-                          trailing: isAdmin ? IconButton(
-                            onPressed: () async {
-                              Get.defaultDialog(
-                                title: 'Remove Member',
-                                middleText: 'Remove $element from group?',
-                                confirm: ElevatedButton(
-                                    onPressed: () async {
-                                      await groupsController
-                                          .deleteMembersFromGroup(
-                                              groupID,
-                                              element,
-                                              document['MembersUID']
-                                                  .whereType<String>()
-                                                  .toList(),
-                                              document['MembersUsername']
-                                                  .whereType<String>()
-                                                  .toList());
-                                      Get.back();
-                                    },
-                                    child: const Text('Remove user')),
-                                cancel: ElevatedButton(
-                                    onPressed: () => Get.back(),
-                                    child: const Text('Cancel')),
-                              );
-                            },
-                            icon: const Icon(Icons.delete),
-                          ) : const SizedBox(),
+                          // show delete icon for users if admin, don't show it for themselves
+                          trailing: isAdmin &&
+                                  element.toString() !=
+                                      profileController.user.value.username
+                              ? IconButton(
+                                  onPressed: () async {
+                                    Get.defaultDialog(
+                                      title: 'Remove Member',
+                                      middleText: 'Remove $element from group?',
+                                      confirm: ElevatedButton(
+                                          onPressed: () async {
+                                            await groupsController
+                                                .deleteMembersFromGroup(
+                                                    groupID,
+                                                    element,
+                                                    document['MembersUID']
+                                                        .whereType<String>()
+                                                        .toList(),
+                                                    document['MembersUsername']
+                                                        .whereType<String>()
+                                                        .toList());
+                                            Get.back();
+                                          },
+                                          child: const Text('Remove user')),
+                                      cancel: ElevatedButton(
+                                          onPressed: () => Get.back(),
+                                          child: const Text('Cancel')),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                )
+                              : const SizedBox(),
                         ))
                     .toList(),
               ),
             ),
+            ElevatedButton(
+                style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                onPressed: () async {
+                  Get.defaultDialog(
+                    title: 'Delete Group',
+                    middleText:
+                        'Are you sure you want to delete the whole group?',
+                    confirm: ElevatedButton(
+                        onPressed: () async {
+                          await groupsController.deleteGroup(groupID);
+                          Get.back();
+                        },
+                        child: const Text('Delete Group')),
+                    cancel: ElevatedButton(
+                        onPressed: () => Get.back(),
+                        child: const Text('Cancel')),
+                  );
+                },
+                child: const Text('Delete Group', style: TextStyle(color: Colors.black),))
           ],
         ),
       ),
