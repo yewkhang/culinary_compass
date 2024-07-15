@@ -29,7 +29,7 @@ class GroupInfoPage extends StatelessWidget {
           // ----- SELECTED FRIENDS DISPLAY ----- //
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: CCSizes.spaceBtwItems),
+                const EdgeInsets.all(CCSizes.spaceBtwItems),
             child: Obx(() => nameTagsController.selectedFriendsNames.isEmpty
                 ? const Center(
                     child: Text('Add friends'),
@@ -46,41 +46,44 @@ class GroupInfoPage extends StatelessWidget {
                   )),
           ),
           // FRIENDS SUGGESTIONS
-          TypeAheadField(
-              controller: userSearchController,
-              builder: (context, controller, focusNode) {
-                return TextField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    decoration: textFieldInputDecoration(
-                        hintText: 'Enter username', prefixIcon: Icons.person));
-              },
-              itemBuilder: (BuildContext context, String itemData) {
-                return ListTile(
-                  title: Text(itemData),
-                  tileColor: Colors.white,
-                );
-              },
-              onSelected: (String suggestion) {
-                // add friends only if selected friends doesn't contain 'suggestion'
-                // or is not already in the group
-                if (nameTagsController.selectedFriendsNames
-                            .contains(suggestion) ==
-                        false &&
-                    !document['MembersUsername']
-                        .whereType<String>()
-                        .toList()
-                        .contains(suggestion)) {
-                  nameTagsController.selectedFriendsNames.add(suggestion);
-                  // clear text field upon selection of a friend
-                  userSearchController.clear();
-                }
-              },
-              suggestionsCallback: (String query) {
-                // list of user's friends to select from
-                return groupsController.getFriendSuggestions(
-                    query, profileController.user.value.friendsUsername);
-              }),
+          Padding(
+            padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+            child: TypeAheadField(
+                controller: userSearchController,
+                builder: (context, controller, focusNode) {
+                  return TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      decoration: textFieldInputDecoration(
+                          hintText: 'Enter username', prefixIcon: Icons.person));
+                },
+                itemBuilder: (BuildContext context, String itemData) {
+                  return ListTile(
+                    title: Text(itemData),
+                    tileColor: Colors.white,
+                  );
+                },
+                onSelected: (String suggestion) {
+                  // add friends only if selected friends doesn't contain 'suggestion'
+                  // or is not already in the group
+                  if (nameTagsController.selectedFriendsNames
+                              .contains(suggestion) ==
+                          false &&
+                      !document['MembersUsername']
+                          .whereType<String>()
+                          .toList()
+                          .contains(suggestion)) {
+                    nameTagsController.selectedFriendsNames.add(suggestion);
+                    // clear text field upon selection of a friend
+                    userSearchController.clear();
+                  }
+                },
+                suggestionsCallback: (String query) {
+                  // list of user's friends to select from
+                  return groupsController.getFriendSuggestions(
+                      query, profileController.user.value.friendsUsername);
+                }),
+          ),
           ElevatedButton(
             style: CCElevatedTextButtonTheme.lightInputButtonStyle,
             onPressed: () async {
@@ -111,7 +114,9 @@ class GroupInfoPage extends StatelessWidget {
         .toList()
         .contains(profileController.user.value.uid);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const SizedBox(),
         actions: [
           Padding(
@@ -147,9 +152,7 @@ class GroupInfoPage extends StatelessWidget {
               'Members',
               style: TextStyle(fontSize: 20),
             ),
-            const SizedBox(
-              height: 5,
-            ),
+            const Divider(),
             Expanded(
               child: ListView(
                 children: document["MembersUsername"]
