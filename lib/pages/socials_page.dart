@@ -10,6 +10,7 @@ import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 
@@ -142,6 +143,7 @@ class GroupsList extends StatelessWidget {
   GroupsList({super.key});
 
   final GroupsController groupsController = GroupsController.instance;
+  final ProfileController profileController = ProfileController.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -163,11 +165,49 @@ class GroupsList extends StatelessWidget {
                     String groupID = snapshot.data!.docs[index].id;
                     var data = snapshot.data!.docs[index].data()
                         as Map<String, dynamic>;
-                    return ListTile(
-                      title: Text(data['Name']),
-                      onTap: () {
-                        Get.to(GroupsPage(document: data, groupID: groupID,));
-                      },
+                    return Slidable(
+                      endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: 0.25,
+                          children: [
+                            SlidableAction(
+                                backgroundColor: Colors.red,
+                                icon: Icons.delete,
+                                onPressed: (context) => Get.defaultDialog(
+                                      title: 'Delete Group',
+                                      middleText:
+                                          'Are you sure you want to leave this group?',
+                                      confirm: ElevatedButton(
+                                          onPressed: () async {
+                                            // assumes user does not change their username
+                                            await groupsController
+                                                .deleteMembersFromGroup(
+                                                    groupID,
+                                                    profileController
+                                                        .user.value.username,
+                                                    data['MembersUID']
+                                                        .whereType<String>()
+                                                        .toList(),
+                                                    data['MembersUsername']
+                                                        .whereType<String>()
+                                                        .toList());
+                                            Get.back();
+                                          },
+                                          child: const Text('Delete Group')),
+                                      cancel: ElevatedButton(
+                                          onPressed: () => Get.back(),
+                                          child: const Text('Cancel')),
+                                    ))
+                          ]),
+                      child: ListTile(
+                        title: Text(data['Name']),
+                        onTap: () {
+                          Get.to(GroupsPage(
+                            document: data,
+                            groupID: groupID,
+                          ));
+                        },
+                      ),
                     );
                   });
         });

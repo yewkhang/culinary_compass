@@ -29,7 +29,7 @@ class GroupInfoPage extends StatelessWidget {
           // ----- SELECTED FRIENDS DISPLAY ----- //
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: CCSizes.defaultSpace),
+                const EdgeInsets.symmetric(horizontal: CCSizes.spaceBtwItems),
             child: Obx(() => nameTagsController.selectedFriendsNames.isEmpty
                 ? const Center(
                     child: Text('Add friends'),
@@ -82,6 +82,7 @@ class GroupInfoPage extends StatelessWidget {
                     query, profileController.user.value.friendsUsername);
               }),
           ElevatedButton(
+            style: CCElevatedTextButtonTheme.lightInputButtonStyle,
             onPressed: () async {
               List<String> usernames =
                   await groupsController.getListOfFriendUidFromUsername(
@@ -95,7 +96,7 @@ class GroupInfoPage extends StatelessWidget {
               nameTagsController.selectedFriendsNames.clear();
               Get.back();
             },
-            child: const Text('Add Members'),
+            child: const Text('Add Members', style: TextStyle(color: Colors.black),),
           )
         ]));
   }
@@ -105,7 +106,19 @@ class GroupInfoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const SizedBox(),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.edit))],
+        actions: [Padding(
+          padding: const EdgeInsets.only(right: CCSizes.defaultSpace),
+          child: ElevatedButton(
+                  onPressed: () {
+                    // open dialog box to add user
+                    showGetxBottomSheet();
+                  },
+                  style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                  child: const Text(
+                    'Add Members',
+                    style: TextStyle(color: Colors.black),
+                  )),
+        ),],
       ),
       body: Padding(
         padding: const EdgeInsets.all(CCSizes.defaultSpace),
@@ -118,16 +131,6 @@ class GroupInfoPage extends StatelessWidget {
             ),
             Text('${document['MembersUID'].length} members'),
             const SizedBox(height: 30),
-            ElevatedButton(
-                onPressed: () {
-                  // open dialog box to add user
-                  showGetxBottomSheet();
-                },
-                style: CCElevatedTextButtonTheme.lightInputButtonStyle,
-                child: const Text(
-                  'Add Members',
-                  style: TextStyle(color: Colors.black),
-                )),
             const SizedBox(
               height: 30,
             ),
