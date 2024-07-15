@@ -82,12 +82,73 @@ class GroupsController extends GetxController {
   }
 
   // from a list of usernames, return a list of the UIDs of those users
-  Future<List<String>> getListOfFriendUidFromUsername(List<String> usernames) async {
+  Future<List<String>> getListOfFriendUidFromUsername(
+      List<String> usernames) async {
     // get all Users documents where friend is to be added
     final friendSnapshot = await _db
         .collection("Users")
         .where("Username", whereIn: usernames)
         .get();
-    return friendSnapshot.docs.map((snapshot) => snapshot.data()['UID'].toString()).toList();
+    return friendSnapshot.docs
+        .map((snapshot) => snapshot.data()['UID'].toString())
+        .toList();
+  }
+
+  Future<void> addMembersToGroup(String groupID, List<String> uidToAdd,
+      List<String> groupUIDList, List<String> groupUsernameList) async {
+    if (uidToAdd.isNotEmpty) {
+      List<String> newGroupUIDList = List<String>.from(groupUIDList);
+      List<String> newGroupUsernameList = List<String>.from(groupUsernameList);
+
+      // friends to be added
+      final friendSnapshot =
+          await _db.collection("Users").where("UID", whereIn: uidToAdd).get();
+      // add the new member UID if not inside
+      if (friendSnapshot.docs.isNotEmpty) {
+        // adds the uid to the new members UID list
+        newGroupUIDList.addAll(uidToAdd);
+
+        // adds the username to the new members Username list
+        String friendUsername = friendSnapshot.docs.first.data()["Username"];
+        newGroupUsernameList.add(friendUsername);
+      }
+
+      // update Firestore with the new lists
+      await _db.collection('Groups').doc(groupID).update(
+        {
+          "MembersUID": newGroupUIDList,
+          "MembersUsername": newGroupUsernameList
+        },
+      );
+    }
+  }
+
+  Future<void> deleteMembersFromGroup(String groupID, String usernameToRemove,
+      List<String> groupUIDList, List<String> groupUsernameList) async {
+    if (usernameToRemove.isNotEmpty) {
+      List<String> newGroupUIDList = List<String>.from(groupUIDList);
+      List<String> newGroupUsernameList = List<String>.from(groupUsernameList);
+
+      // friend to be removed
+      final friendSnapshot =
+          await _db.collection("Users").where("Username", isEqualTo: usernameToRemove).get();
+      // if user exists and is inside the group
+      if (friendSnapshot.docs.isNotEmpty && groupUsernameList.contains(usernameToRemove)) {
+        // remove the uid from the members UID list
+        String friendUID = friendSnapshot.docs.first.data()["UID"];
+        newGroupUIDList.remove(friendUID);
+
+        // remove the username from members Username list
+        newGroupUsernameList.remove(usernameToRemove);
+      }
+
+      // update Firestore with the new lists
+      await _db.collection('Groups').doc(groupID).update(
+        {
+          "MembersUID": newGroupUIDList,
+          "MembersUsername": newGroupUsernameList
+        },
+      );
+    }
   }
 }

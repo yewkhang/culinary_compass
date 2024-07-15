@@ -1,13 +1,104 @@
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/groups_controller.dart';
+import 'package:culinary_compass/utils/controllers/profile_controller.dart';
+import 'package:culinary_compass/utils/controllers/tags_controller.dart';
+import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:get/get.dart';
 
 class GroupInfoPage extends StatelessWidget {
   final Map<String, dynamic> document;
   final String groupID;
   GroupInfoPage({super.key, required this.document, required this.groupID});
   final GroupsController groupsController = GroupsController.instance;
+  final ProfileController profileController = ProfileController.instance;
+  final TextEditingController groupNameController = TextEditingController();
+  final TextEditingController userSearchController = TextEditingController();
+  final TagsController nameTagsController = Get.put(TagsController());
+
+  void showGetxBottomSheet() {
+    Get.bottomSheet(
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        Column(children: [
+          // ----- SELECTED FRIENDS DISPLAY ----- //
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: CCSizes.defaultSpace),
+            child: Obx(() => nameTagsController.selectedFriendsNames.isEmpty
+                ? const Center(
+                    child: Text('Add friends'),
+                  )
+                : Wrap(
+                    children: nameTagsController.selectedFriendsNames
+                        .map((element) => CCTagsContainer(
+                            label: Text(element),
+                            deleteIcon: const Icon(Icons.clear),
+                            onDeleted: () => nameTagsController
+                                .selectedFriendsNames
+                                .remove(element)))
+                        .toList(),
+                  )),
+          ),
+          // FRIENDS SUGGESTIONS
+          TypeAheadField(
+              controller: userSearchController,
+              builder: (context, controller, focusNode) {
+                return TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: textFieldInputDecoration(
+                        hintText: 'Enter username', prefixIcon: Icons.person));
+              },
+              itemBuilder: (BuildContext context, String itemData) {
+                return ListTile(
+                  title: Text(itemData),
+                  tileColor: Colors.white,
+                );
+              },
+              onSelected: (String suggestion) {
+                // add friends only if selected friends doesn't contain 'suggestion'
+                // or is not already in the group
+                if (nameTagsController.selectedFriendsNames
+                            .contains(suggestion) ==
+                        false &&
+                    !document['MembersUsername']
+                        .whereType<String>()
+                        .toList()
+                        .contains(suggestion)) {
+                  nameTagsController.selectedFriendsNames.add(suggestion);
+                  // clear text field upon selection of a friend
+                  userSearchController.clear();
+                }
+              },
+              suggestionsCallback: (String query) {
+                // list of user's friends to select from
+                return groupsController.getFriendSuggestions(
+                    query, profileController.user.value.friendsUsername);
+              }),
+          ElevatedButton(
+            onPressed: () async {
+              List<String> usernames =
+                  await groupsController.getListOfFriendUidFromUsername(
+                      nameTagsController.selectedFriendsNames);
+              await groupsController.addMembersToGroup(
+                  groupID,
+                  usernames,
+                  document['MembersUID'].whereType<String>().toList(),
+                  document['MembersUsername'].whereType<String>().toList());
+              // reset fields
+              nameTagsController.selectedFriendsNames.clear();
+              Get.back();
+            },
+            child: const Text('Add Members'),
+          )
+        ]));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +121,13 @@ class GroupInfoPage extends StatelessWidget {
             ElevatedButton(
                 onPressed: () {
                   // open dialog box to add user
+                  showGetxBottomSheet();
                 },
                 style: CCElevatedTextButtonTheme.lightInputButtonStyle,
-                child: const Text('Add Members', style: TextStyle(color: Colors.black),)),
+                child: const Text(
+                  'Add Members',
+                  style: TextStyle(color: Colors.black),
+                )),
             const SizedBox(
               height: 30,
             ),
@@ -47,7 +142,35 @@ class GroupInfoPage extends StatelessWidget {
               child: ListView(
                 children: document["MembersUsername"]
                     .toList()
-                    .map<Widget>((element) => Text(element))
+                    .map<Widget>((element) => ListTile(
+                          title: Text(element),
+                          trailing: IconButton(
+                            onPressed: () async {
+                              Get.defaultDialog(
+                                title: 'Remove $element from group?',
+                                confirm: ElevatedButton(
+                                    onPressed: () async {
+                                      await groupsController
+                                          .deleteMembersFromGroup(
+                                              groupID,
+                                              element,
+                                              document['MembersUID']
+                                                  .whereType<String>()
+                                                  .toList(),
+                                              document['MembersUsername']
+                                                  .whereType<String>()
+                                                  .toList());
+                                      Get.back();
+                                    },
+                                    child: const Text('Remove user')),
+                                cancel: ElevatedButton(
+                                    onPressed: () => Get.back(),
+                                    child: const Text('Cancel')),
+                              );
+                            },
+                            icon: const Icon(Icons.delete),
+                          ),
+                        ))
                     .toList(),
               ),
             ),
