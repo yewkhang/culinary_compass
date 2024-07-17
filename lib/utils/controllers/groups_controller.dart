@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/models/groups_model.dart';
+import 'package:culinary_compass/models/messages_model.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class GroupsController extends GetxController {
   // --------------------- FIREBASE --------------------- //
@@ -17,21 +19,12 @@ class GroupsController extends GetxController {
   final UserRepository userRepository = Get.put(UserRepository());
   final ProfileController profileController = ProfileController.instance;
 
-  // --------------------- OBS VARIABLES --------------------- //
-  Rx<Groups> selectedGroup = Groups.empty().obs;
-
   // --------------------- GETTERS --------------------- //
   static GroupsController get instance => Get.find();
 
   // --------------------- CONTROLLERS --------------------- //
   // chat textfield controller
   final TextEditingController chatTextController = TextEditingController();
-
-
-  // to clear the controller
-  void reset() {
-    selectedGroup(Groups.empty());
-  }
 
   // fetch all groups that user is in
   Stream<QuerySnapshot> fetchAllUserGroups() {
@@ -41,17 +34,6 @@ class GroupsController extends GetxController {
         .where('MembersUID', arrayContains: _auth.currentUser!.uid)
         .snapshots();
     return result;
-  }
-
-  // fetch group details from Firebase document
-  Future<void> fetchGroupDetails(String groupID) async {
-    try {
-      final Groups group = await userRepository.fetchUserGroupDetails(groupID);
-      selectedGroup(group);
-    } catch (e) {
-      print(e);
-      selectedGroup(Groups.empty());
-    }
   }
 
   Future<void> createGroup(String name, List<String> membersUID,
@@ -66,13 +48,13 @@ class GroupsController extends GetxController {
       ..add(profileController.user.value.username);
     // Create Groups Model for new group
     final newGroup = Groups(
-      name: name,
-      groupid: groupID,
-      membersUID: membersUID,
-      membersUsername: finalGroupMembersUsername,
-      // creator of the grp is the admin
-      admins: List<String>.empty(growable: true)..add(profileController.user.value.uid)
-    );
+        name: name,
+        groupid: groupID,
+        membersUID: membersUID,
+        membersUsername: finalGroupMembersUsername,
+        // creator of the grp is the admin
+        admins: List<String>.empty(growable: true)
+          ..add(profileController.user.value.uid));
 
     try {
       await ref.set(newGroup.toJson());
@@ -142,10 +124,13 @@ class GroupsController extends GetxController {
       List<String> newGroupUsernameList = List<String>.from(groupUsernameList);
 
       // friend to be removed
-      final friendSnapshot =
-          await _db.collection("Users").where("Username", isEqualTo: usernameToRemove).get();
+      final friendSnapshot = await _db
+          .collection("Users")
+          .where("Username", isEqualTo: usernameToRemove)
+          .get();
       // if user exists and is inside the group
-      if (friendSnapshot.docs.isNotEmpty && groupUsernameList.contains(usernameToRemove)) {
+      if (friendSnapshot.docs.isNotEmpty &&
+          groupUsernameList.contains(usernameToRemove)) {
         // remove the uid from the members UID list
         String friendUID = friendSnapshot.docs.first.data()["UID"];
         newGroupUIDList.remove(friendUID);
@@ -162,5 +147,31 @@ class GroupsController extends GetxController {
         },
       );
     }
+  }
+
+  // --- SEND A MESSAGE TO GROUP --- //
+  Future<void> sendMessageToGroup(String groupID, String name, String uid, String message) async {
+    final newMessage = Messages(
+        senderName: name,
+        senderUID: uid,
+        date: DateFormat('d MMM yyyy @ HH:mm').format(DateTime.now()),
+        message: message);
+    try {
+      await _db.collection("Groups").doc(groupID).collection("Messages").doc().set(newMessage.toJson());
+    } on FirebaseException catch (e) {
+      throw FirebaseException(plugin: 'Please try again');
+    }
+  }
+
+  // --- FETCH ALL GROUP'S MESSAGES --- //
+  Stream<QuerySnapshot> fetchGroupMessages(String groupID) {
+    Stream<QuerySnapshot> result = _db
+        .collection("Groups")
+        // select group
+        .doc(groupID)
+        // get the Messages collection inside each group
+        .collection("Messages")
+        .snapshots();
+    return result;
   }
 }

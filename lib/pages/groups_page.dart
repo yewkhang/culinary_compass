@@ -5,6 +5,7 @@ import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
 import 'package:culinary_compass/utils/controllers/groups_controller.dart';
+import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
@@ -15,6 +16,7 @@ class GroupsPage extends StatelessWidget {
   final Map<String, dynamic> document;
   final String groupID;
   final groupRecsController = Get.put(GrouprecsController());
+  final ProfileController profileController = ProfileController.instance;
   final groupsController = Get.put(GroupsController());
   final userRepository = Get.put(UserRepository());
   GroupsPage({super.key, required this.document, required this.groupID});
@@ -49,6 +51,26 @@ class GroupsPage extends StatelessWidget {
         child: Column(
           children: [
             // TODO: StreamBuilder for text messages
+            StreamBuilder(
+                stream: groupsController.fetchGroupMessages(groupID),
+                builder: (context, snapshot) {
+                  return (snapshot.connectionState == ConnectionState.waiting)
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: CCColors.primaryColor,
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            // data contains ALL messages from group
+                            var data = snapshot.data!.docs[index].data()
+                                as Map<String, dynamic>;
+                            return Text(data['Message'].toString());
+                          });
+                }),
             ElevatedButton(
                 style: CCElevatedTextButtonTheme.lightInputButtonStyle,
                 onPressed: () async {
@@ -77,7 +99,18 @@ class GroupsPage extends StatelessWidget {
               maxLines: 2,
               decoration: textFieldInputDecoration(
                   hintText: 'Type something', prefixIcon: Icons.text_fields),
-            )
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  await groupsController.sendMessageToGroup(
+                      groupID,
+                      profileController.user.value.username,
+                      profileController.user.value.uid,
+                      groupsController.chatTextController.text);
+                  // clear textfield after sending message
+                  groupsController.chatTextController.clear();
+                },
+                child: Text('Send message'))
           ],
         ),
       ),
