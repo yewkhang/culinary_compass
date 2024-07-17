@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:culinary_compass/user_repository.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;

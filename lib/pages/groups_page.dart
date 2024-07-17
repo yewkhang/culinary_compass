@@ -3,7 +3,10 @@ import 'package:culinary_compass/pages/recommendations_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
+import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
+import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,9 +14,9 @@ class GroupsPage extends StatelessWidget {
   final Map<String, dynamic> document;
   final String groupID;
   final groupRecsController = Get.put(GrouprecsController());
+  final groupsController = Get.put(GroupsController());
   final userRepository = Get.put(UserRepository());
   GroupsPage({super.key, required this.document, required this.groupID});
-  
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +28,7 @@ class GroupsPage extends StatelessWidget {
             return RecommendationsPage();
           });
     }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -40,7 +44,9 @@ class GroupsPage extends StatelessWidget {
       ),
       body: Column(
         children: [
+          // TODO: StreamBuilder for text messages
           ElevatedButton(
+              style: CCElevatedTextButtonTheme.lightInputButtonStyle,
               onPressed: () async {
                 // circular progress indicator
 
@@ -49,10 +55,15 @@ class GroupsPage extends StatelessWidget {
                     document['MembersUID'].whereType<String>().toList());
                 // Pass the json data to Heroku for processing, assigns output to "data"
                 await groupRecsController.herokuAPI(jsonData);
-                print(groupRecsController.data.toString());
                 showRecommendations();
               },
-              child: Text('get JSON')),
+              child: const Text('Suggest', style: TextStyle(color: Colors.black),)),
+          TextField(
+            controller: groupsController.chatTextController,
+            maxLines: null,
+            decoration: textFieldInputDecoration(
+                hintText: 'Type something', prefixIcon: Icons.text_fields),
+          )
         ],
       ),
     );

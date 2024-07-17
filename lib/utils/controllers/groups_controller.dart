@@ -3,6 +3,7 @@ import 'package:culinary_compass/models/groups_model.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class GroupsController extends GetxController {
@@ -21,6 +22,11 @@ class GroupsController extends GetxController {
 
   // --------------------- GETTERS --------------------- //
   static GroupsController get instance => Get.find();
+
+  // --------------------- CONTROLLERS --------------------- //
+  // chat textfield controller
+  final TextEditingController chatTextController = TextEditingController();
+
 
   // to clear the controller
   void reset() {

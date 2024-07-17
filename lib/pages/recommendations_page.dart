@@ -1,4 +1,5 @@
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
+import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ import 'package:get/get.dart';
 class RecommendationsPage extends StatelessWidget {
   final GrouprecsController grouprecsController =
       Get.put(GrouprecsController());
+  final GroupsController groupsController = Get.put(GroupsController());
   RecommendationsPage({super.key});
 
   @override
@@ -37,7 +39,15 @@ class RecommendationsPage extends StatelessWidget {
                 // Text(tileData['dishes'][0]['Name'])
                 subtitle: Text(consolidatedDishNames),
                 trailing: Text('${tileData['average_rating']}⭐'),
-                onTap: () {},
+                onTap: () { // user selects the choice they want to suggest
+                  String location = tileData['Location'];
+                  String averageRating = tileData['average_rating'].toString();
+                  String suggestionText = "Let's eat at $location! \n$consolidatedDishNames \n$averageRating";
+                  // assign suggestion text to chat Textfield
+                  groupsController.chatTextController.text = suggestionText;
+                  // go back to groups page
+                  Get.back();
+                },
               );
             }),
       ),
