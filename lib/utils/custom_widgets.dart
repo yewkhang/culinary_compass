@@ -3,6 +3,7 @@ import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/curved_edges.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SearchContainer extends StatelessWidget {
   const SearchContainer({
@@ -227,7 +228,7 @@ class ChatBubble extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(username + "   " + date.toDate().toLocal().toIso8601String().toString()),
+          Text(username + "   " + DateFormat('d/MM/yyyy @ HH:mm').format(date.toDate().toLocal()).toString()),
           Text(message, style: const TextStyle(fontSize: 16),),
         ],
       ),
