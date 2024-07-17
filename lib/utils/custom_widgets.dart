@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/curved_edges.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
@@ -196,5 +197,40 @@ class GroupNameContainer extends StatelessWidget {
               color: Colors.transparent,
             ),
             child: Text(groupName)));
+  }
+}
+
+class ChatBubble extends StatelessWidget {
+  final String message;
+  final String username;
+  final Timestamp date;
+  final bool isCurrentUser;
+  const ChatBubble(
+      {super.key,
+      required this.message,
+      required this.username,
+      required this.date,
+      required this.isCurrentUser});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+              offset: Offset.fromDirection(1.5, 2), color: Colors.grey.shade300)
+        ],
+        color: isCurrentUser ? CCColors.primaryColor : Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(username + "   " + date.toDate().toLocal().toIso8601String().toString()),
+          Text(message, style: const TextStyle(fontSize: 16),),
+        ],
+      ),
+    );
   }
 }

@@ -154,7 +154,7 @@ class GroupsController extends GetxController {
     final newMessage = Messages(
         senderName: name,
         senderUID: uid,
-        date: DateFormat('d MMM yyyy @ HH:mm').format(DateTime.now()),
+        date: Timestamp.now(),
         message: message);
     try {
       await _db.collection("Groups").doc(groupID).collection("Messages").doc().set(newMessage.toJson());
@@ -171,6 +171,7 @@ class GroupsController extends GetxController {
         .doc(groupID)
         // get the Messages collection inside each group
         .collection("Messages")
+        .orderBy("Date", descending: false)
         .snapshots();
     return result;
   }
