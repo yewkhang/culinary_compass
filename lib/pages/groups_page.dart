@@ -24,6 +24,7 @@ class GroupsPage extends StatelessWidget {
     // Show filter bottom sheet
     void showRecommendations() {
       showModalBottomSheet(
+          isDismissible: false,
           context: context,
           builder: (context) {
             return RecommendationsPage();
@@ -62,7 +63,8 @@ class GroupsPage extends StatelessWidget {
                         );
                       });
                   // Pass the json data to Heroku for processing, assigns output to "data"
-                  await groupRecsController.herokuAPI(document['MembersUID'].whereType<String>().toList());
+                  await groupRecsController.herokuAPI(
+                      document['MembersUID'].whereType<String>().toList());
                   Get.back(); // close loading indicator
                   showRecommendations();
                 },
@@ -72,7 +74,7 @@ class GroupsPage extends StatelessWidget {
                 )),
             TextField(
               controller: groupsController.chatTextController,
-              maxLines: null,
+              maxLines: 2,
               decoration: textFieldInputDecoration(
                   hintText: 'Type something', prefixIcon: Icons.text_fields),
             )

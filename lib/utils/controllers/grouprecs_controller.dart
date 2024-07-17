@@ -38,4 +38,12 @@ class GrouprecsController extends GetxController {
     }
     return consolidatedDishNames;
   }
+
+  List<String> consolidateTags(dynamic selectedData) {
+    List<String> consolidatedTags = List.empty(growable: true);
+    for (int i = 0; i < selectedData['dishes'].length; i++) {
+      consolidatedTags.addAll(selectedData['dishes'][i]['Tags'].whereType<String>().toList());
+    }
+    return consolidatedTags;
+  }
 }
