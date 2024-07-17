@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:culinary_compass/models/groups_model.dart';
 import 'package:culinary_compass/models/logging_model.dart';
 import 'package:culinary_compass/models/myuser.dart';
@@ -187,6 +188,24 @@ class UserRepository extends GetxController {
             whereIn: friends) // list contains the users friends and themselves
         .get();
     return result;
+  }
+
+  // Fetch all logs from user and friends and return a list to be encoded to json
+  Future<List<Map<String, dynamic>>> listOfFriendLogsFromUID(List<String> friendUIDs) async {
+    friendUIDs.add(_auth.currentUser!.uid); // add user's logs into query
+    QuerySnapshot result = await _db
+        .collection("Logs")
+        // select logs where UID matches user ID
+        .where('UID',
+            whereIn: friendUIDs) // list contains the users friends and themselves
+        .get();
+    return result.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  }
+
+  Future<String> getFirestoreDataAsJson(List<String> friendUIDs) async {
+    List<Map<String, dynamic>> data = await listOfFriendLogsFromUID(friendUIDs);
+    String jsonData = jsonEncode(data);
+    return jsonData;
   }
 
   // --- SAVE PLACES TO TRY --- //
