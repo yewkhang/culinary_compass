@@ -1,6 +1,8 @@
+import 'package:culinary_compass/pages/filters_page.dart';
+import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
 import 'package:culinary_compass/utils/controllers/groups_controller.dart';
-import 'package:culinary_compass/utils/custom_widgets.dart';
+import 'package:culinary_compass/utils/controllers/search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,8 +15,32 @@ class RecommendationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: SearchContainer(onPressed: () {}),
+        title: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: TextField(
+              onChanged: (value) {
+              },
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  focusColor: Colors.transparent,
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  hintText: 'Search logs',
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: BorderSide.strokeAlignCenter)),
+            ),
+          ),
+          actions: [
+            IconButton(
+                // can use Get.to()
+                onPressed: () => (),
+                icon: const Icon(Icons.filter_alt))
+          ],
+        backgroundColor: CCColors.primaryColor,
       ),
       body: SingleChildScrollView(
         child: ListView.builder(
@@ -23,20 +49,9 @@ class RecommendationsPage extends StatelessWidget {
             itemCount: grouprecsController.data.length,
             itemBuilder: (context, index) {
               var tileData = grouprecsController.data[index];
-              String consolidatedDishNames = '';
-              for (int i = 0; i < tileData['dishes'].length; i++) {
-                if (i == tileData['dishes'].length - 1) {
-                  consolidatedDishNames =
-                      consolidatedDishNames + tileData['dishes'][i]['Name'];
-                } else {
-                  // add comma to end of dish if there are more dishes with the same location
-                  consolidatedDishNames = "${consolidatedDishNames +
-                      tileData['dishes'][i]['Name']}, ";
-                }
-              }
+              String consolidatedDishNames = grouprecsController.consolidateDishNames(tileData);
               return ListTile(
                 title: Text(tileData['Location']),
-                // Text(tileData['dishes'][0]['Name'])
                 subtitle: Text(consolidatedDishNames),
                 trailing: Text('${tileData['average_rating']}⭐'),
                 onTap: () { // user selects the choice they want to suggest

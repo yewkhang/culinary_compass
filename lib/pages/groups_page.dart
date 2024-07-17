@@ -2,6 +2,7 @@ import 'package:culinary_compass/pages/groupinfo_page.dart';
 import 'package:culinary_compass/pages/recommendations_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
+import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
 import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
@@ -42,29 +43,41 @@ class GroupsPage extends StatelessWidget {
             }),
         backgroundColor: CCColors.secondaryColor,
       ),
-      body: Column(
-        children: [
-          // TODO: StreamBuilder for text messages
-          ElevatedButton(
-              style: CCElevatedTextButtonTheme.lightInputButtonStyle,
-              onPressed: () async {
-                // circular progress indicator
-
-                // get the data from Firebase and convert to json
-                String jsonData = await userRepository.getFirestoreDataAsJson(
-                    document['MembersUID'].whereType<String>().toList());
-                // Pass the json data to Heroku for processing, assigns output to "data"
-                await groupRecsController.herokuAPI(jsonData);
-                showRecommendations();
-              },
-              child: const Text('Suggest', style: TextStyle(color: Colors.black),)),
-          TextField(
-            controller: groupsController.chatTextController,
-            maxLines: null,
-            decoration: textFieldInputDecoration(
-                hintText: 'Type something', prefixIcon: Icons.text_fields),
-          )
-        ],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: CCSizes.spaceBtwItems),
+        child: Column(
+          children: [
+            // TODO: StreamBuilder for text messages
+            ElevatedButton(
+                style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                onPressed: () async {
+                  // circular progress indicator
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: CCColors.primaryColor,
+                          ),
+                        );
+                      });
+                  // Pass the json data to Heroku for processing, assigns output to "data"
+                  await groupRecsController.herokuAPI(document['MembersUID'].whereType<String>().toList());
+                  Get.back(); // close loading indicator
+                  showRecommendations();
+                },
+                child: const Text(
+                  'Suggest',
+                  style: TextStyle(color: Colors.black),
+                )),
+            TextField(
+              controller: groupsController.chatTextController,
+              maxLines: null,
+              decoration: textFieldInputDecoration(
+                  hintText: 'Type something', prefixIcon: Icons.text_fields),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -8,9 +8,11 @@ class GrouprecsController extends GetxController {
   var jsonInputData = '';
   final userRepository = Get.put(UserRepository());
 
-  Future<void> herokuAPI(String jsonData) async {
+  Future<void> herokuAPI(List<String> membersUID) async {
+    String jsonData = await userRepository.getFirestoreDataAsJson(membersUID);
     var url = //url includes the method name in python
-        Uri.parse('https://culinary-compass-706a522f797f.herokuapp.com/process_data');
+        Uri.parse(
+            'https://culinary-compass-706a522f797f.herokuapp.com/process_data');
     var response = await http.post(url,
         headers: {'Content-Type': 'application/json'}, body: jsonData);
     if (response.statusCode == 200) {
@@ -20,5 +22,20 @@ class GrouprecsController extends GetxController {
     } else {
       print('error' + response.statusCode.toString());
     }
+  }
+
+  String consolidateDishNames(dynamic selectedData) {
+    String consolidatedDishNames = '';
+    for (int i = 0; i < selectedData['dishes'].length; i++) {
+      if (i == selectedData['dishes'].length - 1) {
+        consolidatedDishNames =
+            consolidatedDishNames + selectedData['dishes'][i]['Name'];
+      } else {
+        // add comma to end of dish if there are more dishes with the same location
+        consolidatedDishNames =
+            "${consolidatedDishNames + selectedData['dishes'][i]['Name']}, ";
+      }
+    }
+    return consolidatedDishNames;
   }
 }
