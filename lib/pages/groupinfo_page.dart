@@ -1,3 +1,5 @@
+import 'package:culinary_compass/navigation_menu.dart';
+import 'package:culinary_compass/pages/socials_page.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
@@ -241,7 +243,8 @@ class GroupInfoPage extends StatelessWidget {
                                 CCElevatedTextButtonTheme.lightInputButtonStyle,
                             onPressed: () async {
                               await groupsController.deleteGroup(groupID);
-                              Get.back();
+                              // get back to socials page after deleting group
+                              Get.offAll(const NavigationMenu(), transition: Transition.leftToRight);
                             },
                             child: const Text('Delete Group',
                                 style: TextStyle(color: Colors.black))),
