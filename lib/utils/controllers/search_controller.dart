@@ -4,6 +4,7 @@ import 'package:culinary_compass/pages/viewlogs_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
+import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ class SearchFieldController extends GetxController {
   final GrouprecsController grouprecsController =
       Get.put(GrouprecsController());
   final userRepository = Get.put(UserRepository());
+  final profileController = Get.put(ProfileController());
   var query = ''.obs;
 
   // --- FILTERING VARIABLES --- //
@@ -55,7 +57,7 @@ class SearchFieldController extends GetxController {
       String search, List<String> cuisineFiltersFromUser, bool fromHomePage) {
     return StreamBuilder<QuerySnapshot>(
       stream: fromHomePage
-          ? Stream.fromFuture(userRepository.fetchAllFriendLogs())
+          ? userRepository.fetchAllFriendLogs(profileController.user.value.friendsUID)
           : userRepository.fetchAllUserLogs(),
       builder: (context, snapshot) {
         return (snapshot.connectionState == ConnectionState.waiting)
