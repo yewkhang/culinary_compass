@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
       value: AuthService().user, // to access the MyUser Stream
       child: const GetMaterialApp(
         home: Wrapper(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

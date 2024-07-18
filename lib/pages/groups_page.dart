@@ -42,7 +42,7 @@ class GroupsPage extends StatelessWidget {
                 groupID: groupID,
               ));
             }),
-        backgroundColor: CCColors.secondaryColor,
+        backgroundColor: CCColors.primaryColor,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: CCSizes.spaceBtwItems),

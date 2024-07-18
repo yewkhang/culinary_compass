@@ -33,7 +33,7 @@ class SocialsPage extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: CCColors.primaryColor,
             title: const Text("Social",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0)),
+                style: TextStyle(fontSize: 25.0)),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(50),
               child: Container(

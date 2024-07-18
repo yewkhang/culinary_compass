@@ -148,9 +148,6 @@ class ViewlogsPage extends StatelessWidget {
                 ),
               ),
             ),
-            const Padding(
-                padding: EdgeInsets.all(CCSizes.defaultSpace),
-                child: Text('Created by: username')),
           ]),
         ));
   }
