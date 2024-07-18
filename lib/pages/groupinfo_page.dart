@@ -98,6 +98,19 @@ class GroupInfoPage extends StatelessWidget {
               // reset fields
               nameTagsController.selectedFriendsNames.clear();
               Get.back();
+              Get.snackbar('', '',
+                      titleText: const Text(
+                        'Friend Added!',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      messageText: const SizedBox(),
+                      icon: const Icon(
+                        Icons.check_circle_outline_outlined,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.green,
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20));
             },
             child: const Text(
               'Add Members',
@@ -145,9 +158,7 @@ class GroupInfoPage extends StatelessWidget {
             ),
             Text('${document['MembersUID'].length} members'),
             const SizedBox(height: 30),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             const Text(
               'Members',
               style: TextStyle(fontSize: 20),

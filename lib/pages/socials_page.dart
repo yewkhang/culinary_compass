@@ -57,7 +57,7 @@ class SocialsPage extends StatelessWidget {
           ),
           floatingActionButton: ElevatedButton(
               onPressed: () {
-                Get.dialog(AddFriendsCreateGroupsDialog());
+                Get.dialog(const AddFriendsCreateGroupsDialog());
               },
               style: CCElevatedIconButtonTheme.lightInputButtonStyle,
               child: const Icon(
@@ -75,8 +75,7 @@ class AddFriendsCreateGroupsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-        child: DefaultTabController(
+    return DefaultTabController(
             length: 2,
             child: Scaffold(
               backgroundColor: Colors.white,
@@ -101,7 +100,7 @@ class AddFriendsCreateGroupsDialog extends StatelessWidget {
                     AddFriendsDialog(),
                     CreateGroupDialog(),
                   ],
-                ))));
+                )));
   }
 }
 // ----------------------- DEFAULT POP-UP DIALOG ----------------------- //
@@ -136,8 +135,19 @@ class FriendsList extends StatelessWidget {
                 await profileController.deleteFriendFromList(profileController
                     .user.value.friendsUsername
                     .elementAt(index));
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Friend successfully removed!")));
+                Get.snackbar('', '',
+                      titleText: const Text(
+                        'Friend Removed!',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      messageText: const SizedBox(),
+                      icon: const Icon(
+                        Icons.check_circle_outline_outlined,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.green,
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20));
               },
             ),
           );
@@ -148,6 +158,7 @@ class FriendsList extends StatelessWidget {
 }
 // ----------------------- FRIENDS TAB ----------------------- //
 
+// ----------------------- GROUPS TAB ----------------------- //
 class GroupsList extends StatelessWidget {
   GroupsList({super.key});
 
@@ -222,6 +233,7 @@ class GroupsList extends StatelessWidget {
         });
   }
 }
+// ----------------------- GROUPS TAB ----------------------- //
 
 // ----------------------- DIALOG: ADDING FRIENDS ----------------------- //
 class AddFriendsDialog extends StatelessWidget {
@@ -298,6 +310,7 @@ class AddFriendsDialog extends StatelessWidget {
 }
 // ----------------------- DIALOG: ADDING FRIENDS ----------------------- //
 
+// ----------------------- DIALOG: CREATING GROUPS ----------------------- //
 class CreateGroupDialog extends StatelessWidget {
   CreateGroupDialog({super.key});
 
@@ -421,3 +434,4 @@ class CreateGroupDialog extends StatelessWidget {
     );
   }
 }
+// ----------------------- DIALOG: CREATING GROUPS ----------------------- //
