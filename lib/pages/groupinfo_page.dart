@@ -28,8 +28,7 @@ class GroupInfoPage extends StatelessWidget {
         Column(children: [
           // ----- SELECTED FRIENDS DISPLAY ----- //
           Padding(
-            padding:
-                const EdgeInsets.all(CCSizes.spaceBtwItems),
+            padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
             child: Obx(() => nameTagsController.selectedFriendsNames.isEmpty
                 ? const Center(
                     child: Text('Add friends'),
@@ -55,7 +54,8 @@ class GroupInfoPage extends StatelessWidget {
                       controller: controller,
                       focusNode: focusNode,
                       decoration: textFieldInputDecoration(
-                          hintText: 'Enter username', prefixIcon: Icons.person));
+                          hintText: 'Enter username',
+                          prefixIcon: Icons.person));
                 },
                 itemBuilder: (BuildContext context, String itemData) {
                   return ListTile(
@@ -97,20 +97,22 @@ class GroupInfoPage extends StatelessWidget {
                   document['MembersUsername'].whereType<String>().toList());
               // reset fields
               nameTagsController.selectedFriendsNames.clear();
+              // refresh members list
+              groupsController.fetchGroupDetails(groupID);
               Get.back();
               Get.snackbar('', '',
-                      titleText: const Text(
-                        'Friend Added!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.check_circle_outline_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.green,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                  titleText: const Text(
+                    'Friend Added!',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  messageText: const SizedBox(),
+                  icon: const Icon(
+                    Icons.check_circle_outline_outlined,
+                    color: Colors.white,
+                  ),
+                  backgroundColor: Colors.green,
+                  snackPosition: SnackPosition.BOTTOM,
+                  margin: const EdgeInsets.all(20));
             },
             child: const Text(
               'Add Members',
@@ -126,6 +128,8 @@ class GroupInfoPage extends StatelessWidget {
         .whereType<String>()
         .toList()
         .contains(profileController.user.value.uid);
+    // initialise current group in Groups Controller
+    groupsController.fetchGroupDetails(groupID);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -165,57 +169,63 @@ class GroupInfoPage extends StatelessWidget {
             ),
             const Divider(),
             Expanded(
-              child: ListView(
-                children: document["MembersUsername"]
-                    .toList()
-                    .map<Widget>((element) => ListTile(
-                          title: Text(element),
-                          // show delete icon for users if admin, don't show it for themselves
-                          trailing: isAdmin &&
-                                  element.toString() !=
-                                      profileController.user.value.username
-                              ? IconButton(
-                                  onPressed: () async {
-                                    Get.defaultDialog(
-                                      backgroundColor: Colors.white,
-                                      title: 'Remove Member',
-                                      middleText: 'Remove $element from group?',
-                                      confirm: ElevatedButton(
-                                          style: CCElevatedTextButtonTheme
-                                              .lightInputButtonStyle,
-                                          onPressed: () async {
-                                            await groupsController
-                                                .deleteMembersFromGroup(
-                                                    groupID,
-                                                    element,
-                                                    document['MembersUID']
-                                                        .whereType<String>()
-                                                        .toList(),
-                                                    document['MembersUsername']
-                                                        .whereType<String>()
-                                                        .toList());
-                                            Get.back();
-                                          },
-                                          child: const Text('Remove user',
+              child: Obx(() {
+                return ListView(
+                  children: groupsController.currentGroup.value.membersUsername
+                      .toList()
+                      .map<Widget>((element) => ListTile(
+                            title: Text(element),
+                            // show delete icon for users if admin, don't show it for themselves
+                            trailing: isAdmin &&
+                                    element.toString() !=
+                                        profileController.user.value.username
+                                ? IconButton(
+                                    onPressed: () async {
+                                      Get.defaultDialog(
+                                        backgroundColor: Colors.white,
+                                        title: 'Remove Member',
+                                        middleText:
+                                            'Remove $element from group?',
+                                        confirm: ElevatedButton(
+                                            style: CCElevatedTextButtonTheme
+                                                .lightInputButtonStyle,
+                                            onPressed: () async {
+                                              await groupsController
+                                                  .deleteMembersFromGroup(
+                                                      groupID,
+                                                      element,
+                                                      document['MembersUID']
+                                                          .whereType<String>()
+                                                          .toList(),
+                                                      document[
+                                                              'MembersUsername']
+                                                          .whereType<String>()
+                                                          .toList());
+                                              // refresh members list
+                                              groupsController.fetchGroupDetails(groupID);
+                                              Get.back();
+                                            },
+                                            child: const Text('Remove user',
+                                                style: TextStyle(
+                                                    color: Colors.black))),
+                                        cancel: ElevatedButton(
+                                            style: CCElevatedTextButtonTheme
+                                                .unselectedButtonStyle,
+                                            onPressed: () => Get.back(),
+                                            child: const Text(
+                                              'Cancel',
                                               style: TextStyle(
-                                                  color: Colors.black))),
-                                      cancel: ElevatedButton(
-                                          style: CCElevatedTextButtonTheme
-                                              .unselectedButtonStyle,
-                                          onPressed: () => Get.back(),
-                                          child: const Text(
-                                            'Cancel',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )),
-                                    );
-                                  },
-                                  icon: const Icon(Icons.delete),
-                                )
-                              : const SizedBox(),
-                        ))
-                    .toList(),
-              ),
+                                                  color: Colors.black),
+                                            )),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete),
+                                  )
+                                : const SizedBox(),
+                          ))
+                      .toList(),
+                );
+              }),
             ),
             isAdmin
                 ? ElevatedButton(

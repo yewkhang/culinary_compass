@@ -6,7 +6,6 @@ import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class GroupsController extends GetxController {
   // --------------------- FIREBASE --------------------- //
@@ -25,6 +24,25 @@ class GroupsController extends GetxController {
   // --------------------- CONTROLLERS --------------------- //
   // chat textfield controller
   final TextEditingController chatTextController = TextEditingController();
+
+  // --------------------- OBS VARIABLES --------------------- //
+  // to be initialised every time group info page is accessed
+  Rx<Groups> currentGroup = Groups.empty().obs;
+
+  // to clear the controller
+  void reset() {
+    currentGroup(Groups.empty());
+  }
+
+  // fetch group details from Firebase document
+  Future<void> fetchGroupDetails(String groupID) async {
+    try {
+      final Groups currentGroup = await userRepository.fetchUserGroupDetails(groupID);
+      this.currentGroup(currentGroup);
+    } catch (e) {
+      currentGroup(Groups.empty());
+    }
+  }
 
   // fetch all groups that user is in
   Stream<QuerySnapshot> fetchAllUserGroups() {

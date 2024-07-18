@@ -38,11 +38,11 @@ class Groups {
   factory Groups.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final groupData = snapshot.data()!;
     return Groups(
-        name: groupData['Username'] ?? '',
-        groupid: groupData['UID'] ?? '',
-        membersUID: List<String>.from(groupData['FriendsUID'] ?? []),
-        membersUsername: List<String>.from(groupData['FriendsUsername'] ?? []),
-        admins: List<String>.from(groupData['FriendsUsername'] ?? [])
+        name: groupData['Name'] ?? '',
+        groupid: groupData['GroupID'] ?? '',
+        membersUID: List<String>.from(groupData['MembersUID'] ?? []),
+        membersUsername: List<String>.from(groupData['MembersUsername'] ?? []),
+        admins: List<String>.from(groupData['Admins'] ?? [])
       );
   }
 }
