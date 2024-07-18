@@ -51,6 +51,7 @@ class GroupsPage extends StatelessWidget {
             // Wrap StreamBuilder in expanded to take up remaining space
             Expanded(
               child: SingleChildScrollView(
+                controller: groupsController.scrollController,
                 child: StreamBuilder(
                   stream: groupsController.fetchGroupMessages(groupID),
                   builder: (context, snapshot) {
@@ -97,6 +98,7 @@ class GroupsPage extends StatelessWidget {
                     // ------ MESSAGE TEXTFIELD ------ //
                     child: TextField(
                         controller: groupsController.chatTextController,
+                        focusNode: groupsController.focusnode,
                         maxLines: null,
                         decoration: InputDecoration(
                           hintText: 'Type something',

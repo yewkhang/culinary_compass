@@ -24,10 +24,27 @@ class GroupsController extends GetxController {
   // --------------------- CONTROLLERS --------------------- //
   // chat textfield controller
   final TextEditingController chatTextController = TextEditingController();
+  final FocusNode focusnode = FocusNode();
+  final ScrollController scrollController = ScrollController();
 
   // --------------------- OBS VARIABLES --------------------- //
   // to be initialised every time group info page is accessed
   Rx<Groups> currentGroup = Groups.empty().obs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    focusnode.addListener(() {
+      if (focusnode.hasFocus) {
+        Future.delayed(const Duration(milliseconds: 50), () => scrollDown());
+      }
+    });
+  }
+
+  void scrollDown() {
+    scrollController.animateTo(scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 1000), curve: Curves.easeOutExpo);
+  }
 
   // to clear the controller
   void reset() {
