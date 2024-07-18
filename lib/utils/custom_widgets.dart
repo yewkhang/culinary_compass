@@ -218,17 +218,13 @@ class ChatBubble extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-              offset: Offset.fromDirection(1.5, 2), color: Colors.grey.shade300)
-        ],
         color: isCurrentUser ? CCColors.primaryColor : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(username + "   " + DateFormat('d/MM/yyyy @ HH:mm').format(date.toDate().toLocal()).toString()),
+          Text("$username   ${DateFormat('d/MM/yyyy @ HH:mm').format(date.toDate().toLocal())}"),
           Text(message, style: const TextStyle(fontSize: 16),),
         ],
       ),

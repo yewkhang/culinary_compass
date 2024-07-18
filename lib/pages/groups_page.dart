@@ -147,7 +147,7 @@ class GroupsPage extends StatelessWidget {
                   Container(
                     decoration: const BoxDecoration(
                         color: CCColors.primaryColor, shape: BoxShape.circle),
-                    margin: const EdgeInsets.only(left: CCSizes.spaceBtwItems),
+                    margin: const EdgeInsets.only(left: 5.0),
                     child: IconButton(
                       onPressed: () async {
                         if (groupsController.chatTextController.text
