@@ -34,10 +34,12 @@ class GroupsController extends GetxController {
     currentGroup(Groups.empty());
   }
 
+  // --------------------- METHODS --------------------- //
   // fetch group details from Firebase document
   Future<void> fetchGroupDetails(String groupID) async {
     try {
-      final Groups currentGroup = await userRepository.fetchUserGroupDetails(groupID);
+      final Groups currentGroup =
+          await userRepository.fetchUserGroupDetails(groupID);
       this.currentGroup(currentGroup);
     } catch (e) {
       currentGroup(Groups.empty());
@@ -168,14 +170,20 @@ class GroupsController extends GetxController {
   }
 
   // --- SEND A MESSAGE TO GROUP --- //
-  Future<void> sendMessageToGroup(String groupID, String name, String uid, String message) async {
+  Future<void> sendMessageToGroup(
+      String groupID, String name, String uid, String message) async {
     final newMessage = Messages(
         senderName: name,
         senderUID: uid,
         date: Timestamp.now(),
         message: message);
     try {
-      await _db.collection("Groups").doc(groupID).collection("Messages").doc().set(newMessage.toJson());
+      await _db
+          .collection("Groups")
+          .doc(groupID)
+          .collection("Messages")
+          .doc()
+          .set(newMessage.toJson());
     } on FirebaseException catch (e) {
       throw FirebaseException(plugin: 'Please try again');
     }

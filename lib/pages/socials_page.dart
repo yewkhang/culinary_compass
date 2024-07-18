@@ -40,7 +40,7 @@ class SocialsPage extends StatelessWidget {
                 color: Colors.white,
                 child: const TabBar(
                   labelColor: CCColors.primaryColor,
-                  indicatorColor: CCColors.primaryColor,
+                  indicatorColor: Colors.amberAccent,
                   tabs: [
                     Tab(text: "Friends"),
                     Tab(text: "Groups"),

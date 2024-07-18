@@ -7,8 +7,6 @@ import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
 import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
-import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
-import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
