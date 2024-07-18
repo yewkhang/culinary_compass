@@ -80,19 +80,25 @@ class AddFriendsCreateGroupsDialog extends StatelessWidget {
             child: Scaffold(
               backgroundColor: Colors.white,
                 appBar: AppBar(
-                  backgroundColor: Colors.white,
+                  backgroundColor: CCColors.primaryColor,
                   centerTitle: true,
                   title: const Text("Choose Action",
                       style: TextStyle(
                           fontWeight: FontWeight.normal, fontSize: 22.0)),
-                  bottom: const TabBar(
-                    labelColor: CCColors.primaryColor,
-                    indicatorColor: CCColors.primaryColor,
-                    overlayColor: WidgetStateColor.transparent,
-                    tabs: [
-                      Tab(text: "Add Friends"),
-                      Tab(text: "Create Groups"),
-                    ],
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(50),
+                    child: Container(
+                      color: Colors.white,
+                      child: const TabBar(
+                        labelColor: CCColors.primaryColor,
+                        indicatorColor: Colors.amberAccent,
+                        overlayColor: WidgetStateColor.transparent,
+                        tabs: [
+                          Tab(text: "Add Friends"),
+                          Tab(text: "Create Groups"),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
                 body: TabBarView(
