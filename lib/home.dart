@@ -135,10 +135,12 @@ class HomePage extends StatelessWidget {
                                           icon: Icons.delete,
                                           onPressed: (context) =>
                                               Get.defaultDialog(
+                                                backgroundColor: Colors.white,
                                                 title: 'Delete Place',
                                                 middleText:
                                                     'Are you sure you want to delete this place?',
                                                 confirm: ElevatedButton(
+                                                  style: CCElevatedTextButtonTheme.lightInputButtonStyle,
                                                     onPressed: () {
                                                       userRepository
                                                           .deletePlacesToTry(
@@ -146,11 +148,12 @@ class HomePage extends StatelessWidget {
                                                       Get.back();
                                                     },
                                                     child: const Text(
-                                                        'Delete Place')),
+                                                        'Delete Place', style: TextStyle(color: Colors.black),)),
                                                 cancel: ElevatedButton(
+                                                  style: CCElevatedTextButtonTheme.unselectedButtonStyle,
                                                     onPressed: () => Get.back(),
                                                     child:
-                                                        const Text('Cancel')),
+                                                        const Text('Cancel', style: TextStyle(color: Colors.black),)),
                                               ))
                                     ]),
                                 child: Padding(

@@ -4,6 +4,7 @@ import 'package:culinary_compass/pages/viewlogs_page.dart';
 import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
+import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -94,20 +95,23 @@ class SearchFieldController extends GetxController {
                                       backgroundColor: Colors.red,
                                       icon: Icons.delete,
                                       onPressed: (context) => Get.defaultDialog(
+                                            backgroundColor: Colors.white,
                                             title: 'Delete Log',
                                             middleText:
                                                 'Are you sure you want to delete this log?',
                                             confirm: ElevatedButton(
+                                              style: CCElevatedTextButtonTheme.lightInputButtonStyle,
                                                 onPressed: () {
                                                   userRepository.deleteUserLog(
                                                       docID, data['Picture']);
                                                   Get.back();
                                                 },
                                                 child:
-                                                    const Text('Delete Log')),
+                                                    const Text('Delete Log', style: TextStyle(color: Colors.black),)),
                                             cancel: ElevatedButton(
+                                              style: CCElevatedTextButtonTheme.unselectedButtonStyle,
                                                 onPressed: () => Get.back(),
-                                                child: const Text('Cancel')),
+                                                child: const Text('Cancel', style: TextStyle(color: Colors.black),)),
                                           ))
                                 ]),
                       child: ListTile(

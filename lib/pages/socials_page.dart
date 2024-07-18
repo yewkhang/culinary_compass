@@ -200,10 +200,12 @@ class GroupsList extends StatelessWidget {
                                 backgroundColor: Colors.red,
                                 icon: Icons.delete,
                                 onPressed: (context) => Get.defaultDialog(
+                                      backgroundColor: Colors.white,
                                       title: 'Leave Group',
                                       middleText:
                                           'Are you sure you want to leave this group?',
                                       confirm: ElevatedButton(
+                                        style: CCElevatedTextButtonTheme.lightInputButtonStyle,
                                           onPressed: () async {
                                             // assumes user does not change their username
                                             await groupsController
@@ -219,10 +221,11 @@ class GroupsList extends StatelessWidget {
                                                         .toList());
                                             Get.back();
                                           },
-                                          child: const Text('Leave Group')),
+                                          child: const Text('Leave Group', style: TextStyle(color: Colors.black),)),
                                       cancel: ElevatedButton(
+                                          style: CCElevatedTextButtonTheme.unselectedButtonStyle,
                                           onPressed: () => Get.back(),
-                                          child: const Text('Cancel')),
+                                          child: const Text('Cancel', style: TextStyle(color: Colors.black),)),
                                     ))
                           ]),
                       child: ListTile(
