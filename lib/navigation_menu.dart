@@ -1,4 +1,4 @@
-import 'package:culinary_compass/home.dart';
+import 'package:culinary_compass/pages/home.dart';
 import 'package:culinary_compass/pages/logging_page.dart';
 import 'package:culinary_compass/pages/settings_page.dart';
 import 'package:culinary_compass/pages/socials_page.dart';
