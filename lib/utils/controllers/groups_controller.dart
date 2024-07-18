@@ -24,7 +24,9 @@ class GroupsController extends GetxController {
   // --------------------- CONTROLLERS --------------------- //
   // chat textfield controller
   final TextEditingController chatTextController = TextEditingController();
+  // chat textfield focus node
   final FocusNode focusnode = FocusNode();
+  // scroll controller for singlechildscrollview with streambuilder child
   final ScrollController scrollController = ScrollController();
 
   // --------------------- OBS VARIABLES --------------------- //
@@ -34,6 +36,7 @@ class GroupsController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    // add listener to detect whether textfield has gained focus
     focusnode.addListener(() {
       if (focusnode.hasFocus) {
         Future.delayed(const Duration(milliseconds: 50), () => scrollDown());
@@ -41,6 +44,7 @@ class GroupsController extends GetxController {
     });
   }
 
+  // scroll down all the way to the end of the stream
   void scrollDown() {
     scrollController.animateTo(scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 1000), curve: Curves.easeOutExpo);
