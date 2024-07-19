@@ -32,8 +32,7 @@ class SocialsPage extends StatelessWidget {
           backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: CCColors.primaryColor,
-            title: const Text("Social",
-                style: TextStyle(fontSize: 25.0)),
+            title: const Text("Social", style: TextStyle(fontSize: 25.0)),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(50),
               child: Container(
@@ -76,37 +75,37 @@ class AddFriendsCreateGroupsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              backgroundColor: Colors.white,
-                appBar: AppBar(
-                  backgroundColor: CCColors.primaryColor,
-                  centerTitle: true,
-                  title: const Text("Choose Action",
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 22.0)),
-                  bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(50),
-                    child: Container(
-                      color: Colors.white,
-                      child: const TabBar(
-                        labelColor: CCColors.primaryColor,
-                        indicatorColor: Colors.amberAccent,
-                        overlayColor: WidgetStateColor.transparent,
-                        tabs: [
-                          Tab(text: "Add Friends"),
-                          Tab(text: "Create Groups"),
-                        ],
-                      ),
-                    ),
+        length: 2,
+        child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              backgroundColor: CCColors.primaryColor,
+              centerTitle: true,
+              title: const Text("Choose Action",
+                  style:
+                      TextStyle(fontWeight: FontWeight.normal, fontSize: 22.0)),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(50),
+                child: Container(
+                  color: Colors.white,
+                  child: const TabBar(
+                    labelColor: CCColors.primaryColor,
+                    indicatorColor: Colors.amberAccent,
+                    overlayColor: WidgetStateColor.transparent,
+                    tabs: [
+                      Tab(text: "Add Friends"),
+                      Tab(text: "Create Groups"),
+                    ],
                   ),
                 ),
-                body: TabBarView(
-                  children: [
-                    AddFriendsDialog(),
-                    CreateGroupDialog(),
-                  ],
-                )));
+              ),
+            ),
+            body: TabBarView(
+              children: [
+                AddFriendsDialog(),
+                CreateGroupDialog(),
+              ],
+            )));
   }
 }
 // ----------------------- DEFAULT POP-UP DIALOG ----------------------- //
@@ -142,18 +141,18 @@ class FriendsList extends StatelessWidget {
                     .user.value.friendsUsername
                     .elementAt(index));
                 Get.snackbar('', '',
-                      titleText: const Text(
-                        'Friend Removed!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.check_circle_outline_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.green,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                    titleText: const Text(
+                      'Friend Removed!',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    messageText: const SizedBox(),
+                    icon: const Icon(
+                      Icons.check_circle_outline_outlined,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: Colors.green,
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(20));
               },
             ),
           );
@@ -204,7 +203,8 @@ class GroupsList extends StatelessWidget {
                                       middleText:
                                           'Are you sure you want to leave this group?',
                                       confirm: ElevatedButton(
-                                        style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                                          style: CCElevatedTextButtonTheme
+                                              .lightInputButtonStyle,
                                           onPressed: () async {
                                             // assumes user does not change their username
                                             await groupsController
@@ -220,11 +220,20 @@ class GroupsList extends StatelessWidget {
                                                         .toList());
                                             Get.back();
                                           },
-                                          child: const Text('Leave Group', style: TextStyle(color: Colors.black),)),
+                                          child: const Text(
+                                            'Leave Group',
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          )),
                                       cancel: ElevatedButton(
-                                          style: CCElevatedTextButtonTheme.unselectedButtonStyle,
+                                          style: CCElevatedTextButtonTheme
+                                              .unselectedButtonStyle,
                                           onPressed: () => Get.back(),
-                                          child: const Text('Cancel', style: TextStyle(color: Colors.black),)),
+                                          child: const Text(
+                                            'Cancel',
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          )),
                                     ))
                           ]),
                       child: ListTile(
@@ -412,8 +421,13 @@ class CreateGroupDialog extends StatelessWidget {
                 List<String> UIDsToAdd =
                     await groupsController.getListOfFriendUidFromUsername(
                         nameTagsController.selectedFriendsNames);
-                await groupsController.createGroup(groupNameController.text,
-                    UIDsToAdd, nameTagsController.selectedFriendsNames);
+                await groupsController.createGroup(
+                    groupNameController.text,
+                    // add current user's UID to list of members
+                    UIDsToAdd..add(profileController.user.value.uid),
+                    // add current user's username to list of names
+                    List.from(nameTagsController.selectedFriendsNames)..add(profileController.user.value.username),
+                    profileController.user.value.uid);
                 // clear values
                 nameTagsController.selectedFriendsNames.clear();
                 Get.back();
