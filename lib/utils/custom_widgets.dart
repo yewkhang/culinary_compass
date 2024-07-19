@@ -32,7 +32,7 @@ class SearchContainer extends StatelessWidget {
             ),
             SizedBox(width: CCSizes.spaceBtwItems),
             Text(
-              'What would you like to eat today?',
+              'Search friend recommendations',
               style: TextStyle(fontSize: 16, color: Colors.black54),
             )
           ],
@@ -194,6 +194,7 @@ class GroupNameContainer extends StatelessWidget {
     return InkWell(
         onTap: onPressed,
         child: Container(
+          width: MediaQuery.sizeOf(context).width,
             decoration: const BoxDecoration(
               color: Colors.transparent,
             ),
