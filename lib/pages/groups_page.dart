@@ -31,6 +31,9 @@ class GroupsPage extends StatelessWidget {
           });
     }
 
+    // initialise current group in Groups Controller
+    groupsController.fetchGroupDetails(groupID);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -38,7 +41,6 @@ class GroupsPage extends StatelessWidget {
             groupName: document['Name'],
             onPressed: () {
               Get.to(GroupInfoPage(
-                document: document,
                 groupID: groupID,
               ));
             }),
@@ -131,8 +133,9 @@ class GroupsPage extends StatelessWidget {
                                           ),
                                         );
                                       });
+                                  // always retrieve the most updated member list
                                   await groupRecsController.herokuAPI(
-                                      document['MembersUID']
+                                      groupsController.currentGroup.value.membersUID
                                           .whereType<String>()
                                           .toList());
                                   Get.back();

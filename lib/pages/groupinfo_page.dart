@@ -1,5 +1,4 @@
 import 'package:culinary_compass/navigation_menu.dart';
-import 'package:culinary_compass/pages/socials_page.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
@@ -12,9 +11,8 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 
 class GroupInfoPage extends StatelessWidget {
-  final Map<String, dynamic> document;
   final String groupID;
-  GroupInfoPage({super.key, required this.document, required this.groupID});
+  GroupInfoPage({super.key, required this.groupID});
   final GroupsController groupsController = GroupsController.instance;
   final ProfileController profileController = ProfileController.instance;
   final TextEditingController groupNameController = TextEditingController();
@@ -71,7 +69,7 @@ class GroupInfoPage extends StatelessWidget {
                   if (nameTagsController.selectedFriendsNames
                               .contains(suggestion) ==
                           false &&
-                      !document['MembersUsername']
+                      !groupsController.currentGroup.value.membersUsername
                           .whereType<String>()
                           .toList()
                           .contains(suggestion)) {
@@ -95,8 +93,8 @@ class GroupInfoPage extends StatelessWidget {
               await groupsController.addMembersToGroup(
                   groupID,
                   usernames,
-                  document['MembersUID'].whereType<String>().toList(),
-                  document['MembersUsername'].whereType<String>().toList());
+                  groupsController.currentGroup.value.membersUID.whereType<String>().toList(),
+                  groupsController.currentGroup.value.membersUsername.whereType<String>().toList());
               // reset fields
               nameTagsController.selectedFriendsNames.clear();
               // refresh members list
@@ -126,12 +124,10 @@ class GroupInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAdmin = document['Admins']
+    bool isAdmin = groupsController.currentGroup.value.admins
         .whereType<String>()
         .toList()
         .contains(profileController.user.value.uid);
-    // initialise current group in Groups Controller
-    groupsController.fetchGroupDetails(groupID);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -159,10 +155,10 @@ class GroupInfoPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              document['Name'],
+              groupsController.currentGroup.value.name,
               style: const TextStyle(fontSize: 24),
             ),
-            Text('${document['MembersUID'].length} members'),
+            Text('${groupsController.currentGroup.value.membersUID.length} members'),
             const SizedBox(height: 30),
             const SizedBox(height: 30),
             const Text(
@@ -196,11 +192,10 @@ class GroupInfoPage extends StatelessWidget {
                                                   .deleteMembersFromGroup(
                                                       groupID,
                                                       element,
-                                                      document['MembersUID']
+                                                      groupsController.currentGroup.value.membersUID
                                                           .whereType<String>()
                                                           .toList(),
-                                                      document[
-                                                              'MembersUsername']
+                                                      groupsController.currentGroup.value.membersUsername
                                                           .whereType<String>()
                                                           .toList());
                                               // refresh members list
