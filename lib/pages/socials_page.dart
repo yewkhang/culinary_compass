@@ -185,7 +185,6 @@ class GroupsList extends StatelessWidget {
                 )
               : ListView.builder(
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
                     String groupID = snapshot.data!.docs[index].id;

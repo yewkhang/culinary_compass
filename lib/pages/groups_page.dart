@@ -53,6 +53,7 @@ class GroupsPage extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   controller: groupsController.scrollController,
+                  physics: const ClampingScrollPhysics(),
                   child: StreamBuilder(
                     stream: groupsController.fetchGroupMessages(groupID),
                     builder: (context, snapshot) {
@@ -182,7 +183,7 @@ class GroupsPage extends StatelessWidget {
             bottom: 85,
               child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.grey.shade400, shape: BoxShape.circle),
+                      color: Colors.grey.shade600.withOpacity(0.3), shape: BoxShape.circle),
                   margin: const EdgeInsets.only(left: 5.0),
                   child: IconButton(
                     onPressed: () => groupsController.scrollDown(),
