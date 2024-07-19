@@ -35,12 +35,12 @@ class YourlogsPage extends StatelessWidget {
               onChanged: (value) {
                 searchController.query.value = value;
               },
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search),
+              decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search),
                   focusColor: Colors.transparent,
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: 'Search logs',
-                  contentPadding: EdgeInsets.symmetric(
+                  border: const OutlineInputBorder(borderSide: BorderSide.none),
+                  hintText: fromHomePage ? 'Search friend logs' : 'Search logs',
+                  contentPadding: const EdgeInsets.symmetric(
                       vertical: BorderSide.strokeAlignCenter)),
             ),
           ),
