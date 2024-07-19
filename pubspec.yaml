@@ -40,6 +40,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   flutter_typeahead:
   flutter_slidable: 
+  intl: 
 
 
   # The following adds the Cupertino Icons font to your application.

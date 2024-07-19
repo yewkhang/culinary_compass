@@ -1,4 +1,4 @@
-import 'package:culinary_compass/home.dart';
+import 'package:culinary_compass/pages/home.dart';
 import 'package:culinary_compass/pages/logging_page.dart';
 import 'package:culinary_compass/pages/settings_page.dart';
 import 'package:culinary_compass/pages/socials_page.dart';
@@ -30,7 +30,7 @@ class NavigationMenu extends StatelessWidget {
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
             NavigationDestination(icon: Icon(Icons.book), label: 'Your Logs'),
             NavigationDestination(icon: Icon(Icons.camera_alt), label: 'Log'),
-            NavigationDestination(icon: Icon(Icons.people), label: 'Groups'),
+            NavigationDestination(icon: Icon(Icons.people), label: 'Social'),
             NavigationDestination(
                 icon: Icon(Icons.settings), label: 'Settings'),
           ],

@@ -138,8 +138,10 @@ class ProfileController extends GetxController {
       }
 
       // update Firestore with the new lists
-      await usersCollection.doc(currentUser.email).update({"FriendsUID": friendsUIDList});
-      await usersCollection.doc(currentUser.email).update({"FriendsUsername": friendsUsernameList});
+      await usersCollection.doc(currentUser.email).update({
+        "FriendsUID": friendsUIDList, 
+        "FriendsUsername": friendsUsernameList
+      });
 
       // updates on remote profile controller
       user(MyUser(

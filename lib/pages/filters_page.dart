@@ -9,7 +9,7 @@ class FiltersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SearchFieldController filtersController = Get.find();
+    SearchFieldController filtersController = Get.put(SearchFieldController());
 
     return Scaffold(
       appBar: AppBar(

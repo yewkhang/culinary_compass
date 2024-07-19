@@ -7,6 +7,10 @@ class CCElevatedTextButtonTheme {
   static ButtonStyle lightInputButtonStyle = ElevatedButton.styleFrom(
       backgroundColor: CCColors.primaryColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)));
+  static ButtonStyle unselectedButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: Colors.grey.shade200,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+  );
 }
 
 class CCElevatedIconButtonTheme {

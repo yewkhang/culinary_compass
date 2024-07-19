@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/curved_edges.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SearchContainer extends StatelessWidget {
   const SearchContainer({
@@ -30,7 +32,7 @@ class SearchContainer extends StatelessWidget {
             ),
             SizedBox(width: CCSizes.spaceBtwItems),
             Text(
-              'What would you like to eat today?',
+              'Search friend recommendations',
               style: TextStyle(fontSize: 16, color: Colors.black54),
             )
           ],
@@ -162,7 +164,8 @@ class CCTagsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding( // padding between tags
+    return Padding(
+      // padding between tags
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Chip(
         label: label,
@@ -170,6 +173,61 @@ class CCTagsContainer extends StatelessWidget {
         padding: const EdgeInsets.all(1),
         deleteIcon: deleteIcon,
         onDeleted: onDeleted,
+      ),
+    );
+  }
+}
+
+class GroupNameContainer extends StatelessWidget {
+  final String groupName;
+
+  const GroupNameContainer({
+    super.key,
+    required this.groupName,
+    required this.onPressed,
+  });
+
+  final void Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: onPressed,
+        child: Container(
+          width: MediaQuery.sizeOf(context).width,
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+            ),
+            child: Text(groupName)));
+  }
+}
+
+class ChatBubble extends StatelessWidget {
+  final String message;
+  final String username;
+  final Timestamp date;
+  final bool isCurrentUser;
+  const ChatBubble(
+      {super.key,
+      required this.message,
+      required this.username,
+      required this.date,
+      required this.isCurrentUser});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
+      decoration: BoxDecoration(
+        color: isCurrentUser ? CCColors.secondaryColor : Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("$username   ${DateFormat('d/MM/yyyy @ HH:mm').format(date.toDate().toLocal())}"),
+          Text(message, style: const TextStyle(fontSize: 18),),
+        ],
       ),
     );
   }

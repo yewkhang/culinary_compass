@@ -5,7 +5,7 @@ class CCColors {
 
   // App basic Colors
   static const Color primaryColor = Colors.amber;
-  static const Color secondaryColor = Colors.green;
+  static const Color secondaryColor = Color.fromARGB(255, 119, 205, 77);
 
   // Background Colors
   static const Color light = Colors.white;

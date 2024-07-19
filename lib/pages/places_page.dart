@@ -17,11 +17,13 @@ class PlacesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final placesController = Get.put(PlacesController());
     final locationController = Get.put(LocationController());
+    // initialise field to empty upon entering page
+    locationController.locationSearch.text = '';
     final userRepository = Get.put(UserRepository());
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add a place'),
+        title: const Text('Add a place to try'),
         backgroundColor: CCColors.primaryColor,
       ),
       backgroundColor: Colors.white,
@@ -36,7 +38,7 @@ class PlacesPage extends StatelessWidget {
               child: TextField(
                   controller: placesController.nameTextField,
                   decoration: textFieldInputDecoration(
-                      hintText: 'Name', prefixIcon: Icons.local_dining)),
+                      hintText: 'Dish Name', prefixIcon: Icons.local_dining)),
             ),
             // ----- LOCATION TEXTFIELD ----- //
             Padding(
@@ -54,7 +56,7 @@ class PlacesPage extends StatelessWidget {
                   }
                 },
                 decoration: textFieldInputDecoration(
-                    hintText: 'Location', prefixIcon: Icons.location_on),
+                    hintText: 'Dish Location', prefixIcon: Icons.location_on),
                 maxLines: null,
               ),
             ),

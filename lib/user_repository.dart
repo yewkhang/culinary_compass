@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:culinary_compass/models/groups_model.dart';
 import 'package:culinary_compass/models/logging_model.dart';
 import 'package:culinary_compass/models/myuser.dart';
 import 'package:culinary_compass/models/places_model.dart';
@@ -174,18 +176,32 @@ class UserRepository extends GetxController {
   }
 
   // Fetch all logs from user and friends
-  Future<QuerySnapshot> fetchAllFriendLogs() async {
-    final documentSnapshot =
-        await _db.collection("Users").doc(_auth.currentUser!.email).get();
-    List friends = documentSnapshot.data()?['Friends'].toList();
-    friends.add(_auth.currentUser!.uid); // add user's logs into query
-    Future<QuerySnapshot> result = _db
+  Stream<QuerySnapshot> fetchAllFriendLogs(List<String> friendsUID)  {
+    Stream<QuerySnapshot> result = _db
+        .collection("Logs")
+        // select logs where UID matches user ID and friends UID
+        .where('UID',
+            whereIn: friendsUID) 
+        .snapshots();
+    return result;
+  }
+
+  // Fetch all logs from user and friends and return a list to be encoded to json
+  Future<List<Map<String, dynamic>>> listOfFriendLogsFromUID(List<String> friendUIDs) async {
+    friendUIDs.add(_auth.currentUser!.uid); // add user's logs into query
+    QuerySnapshot result = await _db
         .collection("Logs")
         // select logs where UID matches user ID
         .where('UID',
-            whereIn: friends) // list contains the users friends and themselves
+            whereIn: friendUIDs) // list contains the users friends and themselves
         .get();
-    return result;
+    return result.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  }
+
+  Future<String> getFirestoreDataAsJson(List<String> friendUIDs) async {
+    List<Map<String, dynamic>> data = await listOfFriendLogsFromUID(friendUIDs);
+    String jsonData = jsonEncode(data);
+    return jsonData;
   }
 
   // --- SAVE PLACES TO TRY --- //
@@ -218,7 +234,7 @@ class UserRepository extends GetxController {
     return result;
   }
 
-    // --- FETCH USER LOGS --- //
+    // --- FETCH USER DETAILS --- //
   Future<MyUser> fetchAllUserDetails() async {
     try {
       final result = await _db
@@ -234,4 +250,22 @@ class UserRepository extends GetxController {
       throw Exception("error in fetchAllUserDetails");
     }
   }
+
+    // --- FETCH GROUP DETAILS --- //
+  Future<Groups> fetchUserGroupDetails(String groupID) async {
+    try {
+      final result = await _db
+          .collection("Groups")
+          .doc(groupID)
+          .get();
+      if (result.exists) {
+        return Groups.fromSnapshot(result);
+      } else {
+        return Groups.empty();
+      }
+    } on Exception catch (e) {
+      throw Exception("error in fetchGroupDetails");
+    }
+  }
+
 }

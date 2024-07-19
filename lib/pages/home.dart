@@ -22,8 +22,14 @@ class HomePage extends StatelessWidget {
       showModalBottomSheet(
           context: context,
           isDismissible: false,
+          isScrollControlled: true,
           builder: (context) {
-            return const PlacesPage();
+            return DraggableScrollableSheet(
+              initialChildSize: 0.7,
+              expand: false,
+                builder: (context, scrollController) {
+              return const PlacesPage();
+            });
           });
     }
 
@@ -56,9 +62,11 @@ class HomePage extends StatelessWidget {
                     () => Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: CCSizes.defaultSpace + 10),
+                        padding: const EdgeInsets.only(
+                            left: CCSizes.defaultSpace + 10),
                         child: Text(
-                          profileController.user.value.username, // To be replaced with username
+                          profileController.user.value
+                              .username, // To be replaced with username
                           style: const TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -114,7 +122,8 @@ class HomePage extends StatelessWidget {
                             ),
                           )
                         : ListView.builder(
-                            padding: const EdgeInsets.only(top: 0, bottom: CCSizes.spaceBtwItems),
+                            padding: const EdgeInsets.only(
+                                top: 0, bottom: CCSizes.spaceBtwItems),
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: snapshot.data!.docs.length,
@@ -135,10 +144,13 @@ class HomePage extends StatelessWidget {
                                           icon: Icons.delete,
                                           onPressed: (context) =>
                                               Get.defaultDialog(
+                                                backgroundColor: Colors.white,
                                                 title: 'Delete Place',
                                                 middleText:
                                                     'Are you sure you want to delete this place?',
                                                 confirm: ElevatedButton(
+                                                    style: CCElevatedTextButtonTheme
+                                                        .lightInputButtonStyle,
                                                     onPressed: () {
                                                       userRepository
                                                           .deletePlacesToTry(
@@ -146,11 +158,19 @@ class HomePage extends StatelessWidget {
                                                       Get.back();
                                                     },
                                                     child: const Text(
-                                                        'Delete Place')),
+                                                      'Delete Place',
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    )),
                                                 cancel: ElevatedButton(
+                                                    style: CCElevatedTextButtonTheme
+                                                        .unselectedButtonStyle,
                                                     onPressed: () => Get.back(),
-                                                    child:
-                                                        const Text('Cancel')),
+                                                    child: const Text(
+                                                      'Cancel',
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    )),
                                               ))
                                     ]),
                                 child: Padding(
@@ -196,4 +216,3 @@ class HomePage extends StatelessWidget {
         ));
   }
 }
-
