@@ -57,7 +57,10 @@ class SearchFieldController extends GetxController {
       String search, List<String> cuisineFiltersFromUser, bool fromHomePage) {
     return StreamBuilder<QuerySnapshot>(
       stream: fromHomePage
-          ? userRepository.fetchAllFriendLogs(profileController.user.value.friendsUID)
+          ? userRepository.fetchAllFriendLogs(
+            // copy user's friendUID list to prevent from constantly adding to the list
+              List.from(profileController.user.value.friendsUID)
+                ..add(profileController.user.value.uid))
           : userRepository.fetchAllUserLogs(),
       builder: (context, snapshot) {
         return (snapshot.connectionState == ConnectionState.waiting)
@@ -78,7 +81,9 @@ class SearchFieldController extends GetxController {
                   var data =
                       snapshot.data!.docs[index].data() as Map<String, dynamic>;
                   // Show results that match search AND filters
-                  if (data['Name'].toString().toLowerCase().contains(search) &&
+                  if (((data['Name'].toString() + data['Location'].toString())
+                          .toLowerCase() 
+                          .contains(search)) && // search for location or name
                       // returns true and displays search only results if isEmpty,
                       // else also displays filter results
                       (cuisineFiltersFromUser.isEmpty ||
@@ -102,18 +107,27 @@ class SearchFieldController extends GetxController {
                                             middleText:
                                                 'Are you sure you want to delete this log?',
                                             confirm: ElevatedButton(
-                                              style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                                                style: CCElevatedTextButtonTheme
+                                                    .lightInputButtonStyle,
                                                 onPressed: () {
                                                   userRepository.deleteUserLog(
                                                       docID, data['Picture']);
                                                   Get.back();
                                                 },
-                                                child:
-                                                    const Text('Delete Log', style: TextStyle(color: Colors.black),)),
+                                                child: const Text(
+                                                  'Delete Log',
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                )),
                                             cancel: ElevatedButton(
-                                              style: CCElevatedTextButtonTheme.unselectedButtonStyle,
+                                                style: CCElevatedTextButtonTheme
+                                                    .unselectedButtonStyle,
                                                 onPressed: () => Get.back(),
-                                                child: const Text('Cancel', style: TextStyle(color: Colors.black),)),
+                                                child: const Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                )),
                                           ))
                                 ]),
                       child: ListTile(

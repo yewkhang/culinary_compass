@@ -177,7 +177,6 @@ class UserRepository extends GetxController {
 
   // Fetch all logs from user and friends
   Stream<QuerySnapshot> fetchAllFriendLogs(List<String> friendsUID)  {
-    friendsUID.add(_auth.currentUser!.uid); // add user's logs into query
     Stream<QuerySnapshot> result = _db
         .collection("Logs")
         // select logs where UID matches user ID and friends UID
