@@ -55,6 +55,7 @@ class GroupsPage extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   controller: groupsController.scrollController,
+                  reverse: true, // opens group to the latest message
                   physics: const ClampingScrollPhysics(),
                   child: StreamBuilder(
                     stream: groupsController.fetchGroupMessages(groupID),

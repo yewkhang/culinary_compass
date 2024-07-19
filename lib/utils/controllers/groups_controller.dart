@@ -46,7 +46,7 @@ class GroupsController extends GetxController {
 
   // scroll down all the way to the end of the stream
   void scrollDown() {
-    scrollController.animateTo(scrollController.position.maxScrollExtent,
+    scrollController.animateTo(scrollController.position.minScrollExtent,
         duration: const Duration(milliseconds: 1000), curve: Curves.easeOutExpo);
   }
 
