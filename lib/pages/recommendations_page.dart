@@ -27,113 +27,82 @@ class RecommendationsPage extends StatelessWidget {
           });
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+    return PopScope(
+      onPopInvoked: (didPop) => didPop ? searchController.query.value = '' : null,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: TextField(
+              onChanged: (value) {
+                searchController.query.value = value;
+              },
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  focusColor: Colors.transparent,
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  hintText: 'Suggest a place',
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: BorderSide.strokeAlignCenter)),
+            ),
           ),
-          child: TextField(
-            onChanged: (value) {
-              searchController.query.value = value;
-            },
-            decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                focusColor: Colors.transparent,
-                border: OutlineInputBorder(borderSide: BorderSide.none),
-                hintText: 'Suggest a place',
-                contentPadding: EdgeInsets.symmetric(
-                    vertical: BorderSide.strokeAlignCenter)),
-          ),
+          actions: [
+            IconButton(
+                // can use Get.to()
+                onPressed: () => showFilters(),
+                icon: const Icon(Icons.filter_alt))
+          ],
+          backgroundColor: CCColors.primaryColor,
         ),
-        actions: [
-          IconButton(
-              // can use Get.to()
-              onPressed: () => showFilters(),
-              icon: const Icon(Icons.filter_alt))
-        ],
-        backgroundColor: CCColors.primaryColor,
-      ),
-      body: SingleChildScrollView(
-        child: Obx(
-          () // rebuild ListView everytime list changes
-              =>
-              searchController.query.value.isEmpty
-                  ? ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: grouprecsController.data.map((tileData) {
-                        // gather all the dishes that share the same location into a comma separated String
-                        String consolidatedDishNames =
-                            grouprecsController.consolidateDishNames(tileData);
-                        return ListTile(
-                          title: Text(tileData['Location']),
-                          subtitle: Text(consolidatedDishNames),
-                          // toStringAsFixed to round numbers to 2dp
-                          trailing: Text(
-                            '${tileData['average_rating'].toStringAsFixed(2)}⭐',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          onTap: () {
-                            // user selects the choice they want to suggest
-                            String location = tileData['Location'];
-                            String averageRating =
-                                tileData['average_rating'].toStringAsFixed(2);
-                            String suggestionText =
-                                "Let's eat at $location! \n\nFood:\n$consolidatedDishNames \n\nAverage Rating: $averageRating⭐";
-                            // assign suggestion text to chat Textfield
-                            groupsController.chatTextController.text =
-                                suggestionText;
-                            // clear search field text
-                            searchController.query.value = '';
-                            // go back to groups page
-                            Get.back();
-                          },
-                        );
-                      }).toList(),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: searchController
-                          .searchAndFilterRecommendationsData(
-                              grouprecsController.data)
-                          .length,
-                      itemBuilder: (context, index) {
-                        // get data from API call that matches search and filters
-                        var tileData =
-                            searchController.searchAndFilterRecommendationsData(
-                                grouprecsController.data)[index];
-                        // gather all the dishes that share the same location into a comma separated String
-                        String consolidatedDishNames =
-                            grouprecsController.consolidateDishNames(tileData);
-                        return ListTile(
-                          title: Text(tileData['Location']),
-                          subtitle: Text(consolidatedDishNames),
-                          // toStringAsFixed to round numbers to 2dp
-                          trailing: Text(
-                            '${tileData['average_rating'].toStringAsFixed(2)}⭐',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          onTap: () {
-                            // user selects the choice they want to suggest
-                            String location = tileData['Location'];
-                            String averageRating =
-                                tileData['average_rating'].toStringAsFixed(2);
-                            String suggestionText =
-                                "Let's eat at $location! \n\nFood:\n$consolidatedDishNames \n\nAverage Rating: $averageRating⭐";
-                            // assign suggestion text to chat Textfield
-                            groupsController.chatTextController.text =
-                                suggestionText;
-                            // clear search field text
-                            searchController.query.value = '';
-                            // go back to groups page
-                            Get.back();
-                          },
-                        );
-                      }),
+        body: SingleChildScrollView(
+          child: Obx(
+            () // rebuild ListView everytime list changes
+                =>
+                ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: searchController
+                            .searchAndFilterRecommendationsData(
+                                grouprecsController.data)
+                            .length,
+                        itemBuilder: (context, index) {
+                          // get data from API call that matches search and filters
+                          var tileData =
+                              searchController.searchAndFilterRecommendationsData(
+                                  grouprecsController.data)[index];
+                          // gather all the dishes that share the same location into a comma separated String
+                          String consolidatedDishNames =
+                              grouprecsController.consolidateDishNames(tileData);
+                          return ListTile(
+                            title: Text(tileData['Location']),
+                            subtitle: Text(consolidatedDishNames),
+                            // toStringAsFixed to round numbers to 2dp
+                            trailing: Text(
+                              '${tileData['average_rating'].toStringAsFixed(2)}⭐',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            onTap: () {
+                              // user selects the choice they want to suggest
+                              String location = tileData['Location'];
+                              String averageRating =
+                                  tileData['average_rating'].toStringAsFixed(2);
+                              String suggestionText =
+                                  "Let's eat at $location! \n\nFood:\n$consolidatedDishNames \n\nAverage Rating: $averageRating⭐";
+                              // assign suggestion text to chat Textfield
+                              groupsController.chatTextController.text =
+                                  suggestionText;
+                              // clear search field text
+                              searchController.query.value = '';
+                              // go back to groups page
+                              Get.back();
+                            },
+                          );
+                        }),
+          ),
         ),
       ),
     );
