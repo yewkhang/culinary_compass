@@ -6,7 +6,8 @@ import 'package:get/get.dart';
 
 class YourlogsPage extends StatelessWidget {
   final bool fromHomePage;
-  const YourlogsPage({super.key, this.fromHomePage = false});
+  final String friendUID;
+  const YourlogsPage({super.key, this.fromHomePage = false, this.friendUID = ''});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,7 @@ class YourlogsPage extends StatelessWidget {
             () =>
                 searchController // add a toList() to access the value List<String> instead of RxList<String>
                     .buildSearchResults(searchController.query.value,
-                        searchController.finalCuisineFilters.toList(), fromHomePage),
+                        searchController.finalCuisineFilters.toList(), fromHomePage, friendUID),
           ),
         ));
   }

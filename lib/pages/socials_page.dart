@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/pages/groups_page.dart';
+import 'package:culinary_compass/pages/yourlogs_page.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/friendsdialog_controller.dart';
@@ -115,7 +116,9 @@ class FriendsList extends StatelessWidget {
   FriendsList({super.key});
 
   final ProfileController profileController = ProfileController.instance;
+  final GroupsController groupsController = Get.put(GroupsController());
   final friendsDialogController = FriendsDialogController.instance;
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -125,15 +128,25 @@ class FriendsList extends StatelessWidget {
           return ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.grey[400],
-              child: GestureDetector(
-                onTap: () {
-                  Get.dialog(AddFriendsDialog());
-                },
-                child: const Icon(Icons.person, color: Colors.white),
-              ),
+              child: const Icon(Icons.person, color: Colors.white),
             ),
             title: Text(
-                profileController.user.value.friendsUsername.elementAt(index)),
+              profileController.user.value.friendsUsername.elementAt(index),
+            ),
+            onTap: () async {
+              List<String> friendsUID = await groupsController
+                  .getListOfFriendUidFromUsername(List.filled(
+                      1,
+                      profileController.user.value.friendsUsername
+                          .elementAt(index)));
+              String UID = friendsUID[0];
+              Get.to(
+                  YourlogsPage(
+                    fromHomePage: true,
+                    friendUID: UID,
+                  ),
+                  transition: Transition.rightToLeftWithFade);
+            },
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () async {
@@ -426,7 +439,8 @@ class CreateGroupDialog extends StatelessWidget {
                     // add current user's UID to list of members
                     UIDsToAdd..add(profileController.user.value.uid),
                     // add current user's username to list of names
-                    List.from(nameTagsController.selectedFriendsNames)..add(profileController.user.value.username),
+                    List.from(nameTagsController.selectedFriendsNames)
+                      ..add(profileController.user.value.username),
                     profileController.user.value.uid);
                 // clear values
                 nameTagsController.selectedFriendsNames.clear();

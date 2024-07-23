@@ -186,6 +186,17 @@ class UserRepository extends GetxController {
     return result;
   }
 
+  // Fetch all logs from specific friend
+  Stream<QuerySnapshot> fetchSpecificFriendLogs(String friendUID)  {
+    Stream<QuerySnapshot> result = _db
+        .collection("Logs")
+        // select logs where UID matches user ID and friends UID
+        .where('UID',
+            isEqualTo: friendUID) 
+        .snapshots();
+    return result;
+  }
+
   // Fetch all logs from user and friends and return a list to be encoded to json
   Future<List<Map<String, dynamic>>> listOfFriendLogsFromUID(List<String> friendUIDs) async {
     friendUIDs.add(_auth.currentUser!.uid); // add user's logs into query

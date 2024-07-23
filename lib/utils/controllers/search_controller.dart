@@ -54,12 +54,12 @@ class SearchFieldController extends GetxController {
   }
 
   Widget buildSearchResults(
-      String search, List<String> cuisineFiltersFromUser, bool fromHomePage) {
+      String search, List<String> cuisineFiltersFromUser, bool fromHomePage, String friendUID) {
     return StreamBuilder<QuerySnapshot>(
       stream: fromHomePage
-          ? userRepository.fetchAllFriendLogs(
+          ? friendUID.isNotEmpty ? (userRepository.fetchSpecificFriendLogs(friendUID)) :
             // copy user's friendUID list to prevent from constantly adding to the list
-              List.from(profileController.user.value.friendsUID)
+              userRepository.fetchAllFriendLogs(List.from(profileController.user.value.friendsUID)
                 ..add(profileController.user.value.uid))
           : userRepository.fetchAllUserLogs(),
       builder: (context, snapshot) {
