@@ -16,8 +16,6 @@ class RecommendationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ensure query value is empty
-    searchController.query.value = '';
     // Show filter bottom sheet
     void showFilters() {
       showModalBottomSheet(
@@ -62,43 +60,80 @@ class RecommendationsPage extends StatelessWidget {
         child: Obx(
           () // rebuild ListView everytime list changes
               =>
-              ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: searchController
-                      .searchAndFilterRecommendationsData(
-                          grouprecsController.data)
-                      .length,
-                  itemBuilder: (context, index) {
-                    // get data from API call that matches search and filters
-                    var tileData =
-                        searchController.searchAndFilterRecommendationsData(
-                            grouprecsController.data)[index];
-                    // gather all the dishes that share the same location into a comma separated String
-                    String consolidatedDishNames =
-                        grouprecsController.consolidateDishNames(tileData);
-                    return ListTile(
-                      title: Text(tileData['Location']),
-                      subtitle: Text(consolidatedDishNames),
-                      // toStringAsFixed to round numbers to 2dp
-                      trailing: Text(
-                          '${tileData['average_rating'].toStringAsFixed(2)}⭐',
-                          style: const TextStyle(fontSize: 16),),
-                      onTap: () {
-                        // user selects the choice they want to suggest
-                        String location = tileData['Location'];
-                        String averageRating =
-                            tileData['average_rating'].toStringAsFixed(2);
-                        String suggestionText =
-                            "Let's eat at $location! \n\nFood:\n$consolidatedDishNames \n\nAverage Rating: $averageRating⭐";
-                        // assign suggestion text to chat Textfield
-                        groupsController.chatTextController.text =
-                            suggestionText;
-                        // go back to groups page
-                        Get.back();
-                      },
-                    );
-                  }),
+              searchController.query.value.isEmpty
+                  ? ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: grouprecsController.data.map((tileData) {
+                        // gather all the dishes that share the same location into a comma separated String
+                        String consolidatedDishNames =
+                            grouprecsController.consolidateDishNames(tileData);
+                        return ListTile(
+                          title: Text(tileData['Location']),
+                          subtitle: Text(consolidatedDishNames),
+                          // toStringAsFixed to round numbers to 2dp
+                          trailing: Text(
+                            '${tileData['average_rating'].toStringAsFixed(2)}⭐',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          onTap: () {
+                            // user selects the choice they want to suggest
+                            String location = tileData['Location'];
+                            String averageRating =
+                                tileData['average_rating'].toStringAsFixed(2);
+                            String suggestionText =
+                                "Let's eat at $location! \n\nFood:\n$consolidatedDishNames \n\nAverage Rating: $averageRating⭐";
+                            // assign suggestion text to chat Textfield
+                            groupsController.chatTextController.text =
+                                suggestionText;
+                            // clear search field text
+                            searchController.query.value = '';
+                            // go back to groups page
+                            Get.back();
+                          },
+                        );
+                      }).toList(),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: searchController
+                          .searchAndFilterRecommendationsData(
+                              grouprecsController.data)
+                          .length,
+                      itemBuilder: (context, index) {
+                        // get data from API call that matches search and filters
+                        var tileData =
+                            searchController.searchAndFilterRecommendationsData(
+                                grouprecsController.data)[index];
+                        // gather all the dishes that share the same location into a comma separated String
+                        String consolidatedDishNames =
+                            grouprecsController.consolidateDishNames(tileData);
+                        return ListTile(
+                          title: Text(tileData['Location']),
+                          subtitle: Text(consolidatedDishNames),
+                          // toStringAsFixed to round numbers to 2dp
+                          trailing: Text(
+                            '${tileData['average_rating'].toStringAsFixed(2)}⭐',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          onTap: () {
+                            // user selects the choice they want to suggest
+                            String location = tileData['Location'];
+                            String averageRating =
+                                tileData['average_rating'].toStringAsFixed(2);
+                            String suggestionText =
+                                "Let's eat at $location! \n\nFood:\n$consolidatedDishNames \n\nAverage Rating: $averageRating⭐";
+                            // assign suggestion text to chat Textfield
+                            groupsController.chatTextController.text =
+                                suggestionText;
+                            // clear search field text
+                            searchController.query.value = '';
+                            // go back to groups page
+                            Get.back();
+                          },
+                        );
+                      }),
         ),
       ),
     );
