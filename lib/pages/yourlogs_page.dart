@@ -14,6 +14,8 @@ class YourlogsPage extends StatelessWidget {
     final searchController = Get.put(SearchFieldController());
     // initial values 
     searchController.query.value = '';
+    searchController.finalCuisineFilters.clear();
+    searchController.selectedCuisineFilters.clear();
 
     // Show filter bottom sheet
     void showFilters() {
