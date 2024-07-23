@@ -219,7 +219,7 @@ class LoggingPage extends StatelessWidget {
                     controller: controller,
                     focusNode: focusNode,
                     decoration: textFieldInputDecoration(
-                        hintText: 'Tags', prefixIcon: Icons.tag));
+                        hintText: 'Cuisines', prefixIcon: Icons.tag));
               },
               itemBuilder: (BuildContext context, String itemData) {
                 return ListTile(
