@@ -1,15 +1,17 @@
+import 'package:culinary_compass/navigation_menu.dart';
 import 'package:culinary_compass/pages/profile_page.dart';
 import 'package:culinary_compass/services/auth.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/misc.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class SettingsPage extends StatelessWidget {
 
-  final AuthService _auth = AuthService();
+  final AuthService _auth = AuthService(auth: FirebaseAuth.instance);
   final ProfileController profileController = Get.put(ProfileController());
 
   SettingsPage({super.key});
@@ -76,6 +78,8 @@ class SettingsPage extends StatelessWidget {
                   await _auth.signOut();
                   profileController.reset();
                   Get.delete<ProfileController>();
+                  final NavigationController navigationController = NavigationController.instance;
+                  navigationController.selectedIndex.value = 0;
                 }
               )
             ],
