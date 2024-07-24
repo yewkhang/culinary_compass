@@ -9,6 +9,7 @@ import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class GroupInfoPage extends StatelessWidget {
   final String groupID;
@@ -51,6 +52,7 @@ class GroupInfoPage extends StatelessWidget {
                 controller: userSearchController,
                 builder: (context, controller, focusNode) {
                   return TextField(
+                      key: Key("GroupAddFriendDialog"),
                       controller: controller,
                       focusNode: focusNode,
                       decoration: textFieldInputDecoration(
@@ -59,6 +61,7 @@ class GroupInfoPage extends StatelessWidget {
                 },
                 itemBuilder: (BuildContext context, String itemData) {
                   return ListTile(
+                    key: Key("GroupAddFriendDialogListTile$itemData"),
                     title: Text(itemData),
                     tileColor: Colors.white,
                   );
@@ -85,6 +88,7 @@ class GroupInfoPage extends StatelessWidget {
                 }),
           ),
           ElevatedButton(
+            key: Key("GroupAddFriendDialogButton"),
             style: CCElevatedTextButtonTheme.lightInputButtonStyle,
             onPressed: () async {
               List<String> usernames =
@@ -239,7 +243,7 @@ class GroupInfoPage extends StatelessWidget {
                             onPressed: () async {
                               await groupsController.deleteGroup(groupID);
                               // get back to socials page after deleting group
-                              Get.offAll(const NavigationMenu(), transition: Transition.leftToRight);
+                              Get.offAll(NavigationMenu(imagePicker: ImagePicker()), transition: Transition.leftToRight);
                             },
                             child: const Text('Delete Group',
                                 style: TextStyle(color: Colors.black))),

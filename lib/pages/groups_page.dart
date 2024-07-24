@@ -8,6 +8,7 @@ import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class GroupsPage extends StatelessWidget {
@@ -103,6 +104,7 @@ class GroupsPage extends StatelessWidget {
                     Expanded(
                       // ------ MESSAGE TEXTFIELD ------ //
                       child: TextField(
+                          key: Key("GroupMessageTextField"),
                           controller: groupsController.chatTextController,
                           focusNode: groupsController.focusnode,
                           maxLines: null,
@@ -125,21 +127,11 @@ class GroupsPage extends StatelessWidget {
                               // ------ SHOW RECOMMENDATIONS BUTTON ------ //
                               child: IconButton(
                                 onPressed: () async {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return const Center(
-                                          child: CircularProgressIndicator(
-                                            color: CCColors.primaryColor,
-                                          ),
-                                        );
-                                      });
                                   // always retrieve the most updated member list
                                   await groupRecsController.herokuAPI(
                                       groupsController.currentGroup.value.membersUID
                                           .whereType<String>()
                                           .toList());
-                                  Get.back();
                                   showRecommendations();
                                 },
                                 icon: const Icon(
@@ -156,6 +148,7 @@ class GroupsPage extends StatelessWidget {
                           color: CCColors.primaryColor, shape: BoxShape.circle),
                       margin: const EdgeInsets.only(left: 5.0),
                       child: IconButton(
+                        key: Key("GroupSendMessageButton"),
                         onPressed: () async {
                           if (groupsController.chatTextController.text
                               .trim()

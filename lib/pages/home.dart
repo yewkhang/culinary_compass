@@ -102,6 +102,7 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
+                    key: Key("AddPlacesToTry"),
                     onPressed: () {
                       showAddPlaces();
                     },
@@ -149,6 +150,7 @@ class HomePage extends StatelessWidget {
                                                 middleText:
                                                     'Are you sure you want to delete this place?',
                                                 confirm: ElevatedButton(
+                                                    key: Key("DeletePlacesToTry"),
                                                     style: CCElevatedTextButtonTheme
                                                         .lightInputButtonStyle,
                                                     onPressed: () {

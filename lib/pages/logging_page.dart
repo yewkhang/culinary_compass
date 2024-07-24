@@ -24,6 +24,7 @@ class LoggingPage extends StatelessWidget {
   final double rating;
   final List<String> tags;
   final bool fromYourLogsPage;
+  final ImagePicker imagePicker;
 
   const LoggingPage(
       {super.key,
@@ -34,14 +35,15 @@ class LoggingPage extends StatelessWidget {
       required this.location,
       required this.description,
       required this.tags,
-      required this.rating});
+      required this.rating,
+      required this.imagePicker});
 
   @override
   Widget build(BuildContext context) {
     // TextField Controllers
     final textFieldControllers = Get.put(TextfieldControllers());
     // Image Controller
-    final imageController = Get.put(ImageController());
+    final imageController = Get.put(ImageController(imagePicker: imagePicker));
     // Location Suggestion Controller
     final locationController = Get.put(LocationController());
     // Tags Controller
@@ -136,6 +138,7 @@ class LoggingPage extends StatelessWidget {
               left: CCSizes.defaultSpace,
               right: CCSizes.defaultSpace),
           child: TextField(
+              key: Key("DishName"),
               controller: textFieldControllers.nameTextField,
               decoration: textFieldInputDecoration(
                   hintText: 'Dish Name', prefixIcon: Icons.local_dining)),
@@ -147,6 +150,7 @@ class LoggingPage extends StatelessWidget {
               left: CCSizes.defaultSpace,
               right: CCSizes.defaultSpace),
           child: TextField(
+            key: Key("Location"),
             controller: locationController.locationSearch,
             onChanged: (String value) {
               if (value.isNotEmpty) {
@@ -185,6 +189,7 @@ class LoggingPage extends StatelessWidget {
                             : 0,
                         itemBuilder: (context, index) {
                           return ListTile(
+                            key: Key("ListTile$index"),
                             title: Text(locationController.data[index]
                                     ['description']
                                 .toString()),
@@ -216,6 +221,7 @@ class LoggingPage extends StatelessWidget {
               controller: textFieldControllers.tagsTextField,
               builder: (context, controller, focusNode) {
                 return TextField(
+                    key: Key("Tags"),
                     controller: controller,
                     focusNode: focusNode,
                     decoration: textFieldInputDecoration(
@@ -264,6 +270,7 @@ class LoggingPage extends StatelessWidget {
               left: CCSizes.defaultSpace,
               right: CCSizes.defaultSpace),
           child: TextField(
+              key: Key("Description"),
               controller: textFieldControllers.descriptionTextField,
               maxLines: null,
               decoration: textFieldInputDecoration(
@@ -280,6 +287,7 @@ class LoggingPage extends StatelessWidget {
           padding: const EdgeInsets.only(
               bottom: CCSizes.defaultSpace, left: 10, right: 10),
           child: ElevatedButton(
+              key: Key("SaveLogButton"),
               style: CCElevatedTextButtonTheme.lightInputButtonStyle,
               onPressed: () async {
                 // Check if any of the fields are empty
@@ -305,16 +313,6 @@ class LoggingPage extends StatelessWidget {
                 }
                 // All input fields are filled, proceed to save log
                 else {
-                  // Circular progress indicator for saving user logs
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: CCColors.primaryColor,
-                          ),
-                        );
-                      });
                   // Save/Update user log to Firestore
                   fromYourLogsPage
                       ? await userRepository.updateUserLog(

@@ -135,6 +135,7 @@ class FriendsList extends StatelessWidget {
             title: Text(
                 profileController.user.value.friendsUsername.elementAt(index)),
             trailing: IconButton(
+              key: Key("DeleteFriend${profileController.user.value.friendsUsername.elementAt(index)}"),
               icon: const Icon(Icons.delete),
               onPressed: () async {
                 await profileController.deleteFriendFromList(profileController
@@ -203,6 +204,7 @@ class GroupsList extends StatelessWidget {
                                       middleText:
                                           'Are you sure you want to leave this group?',
                                       confirm: ElevatedButton(
+                                          key: Key("LeaveGroupButton"),
                                           style: CCElevatedTextButtonTheme
                                               .lightInputButtonStyle,
                                           onPressed: () async {
@@ -273,6 +275,7 @@ class AddFriendsDialog extends StatelessWidget {
             const Text("Add Friends",
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
             TextFormField(
+              key: const Key("AddFriendsTextField"),
               controller: friendsDialogController.friendUIDTextField,
               decoration: textFieldInputDecoration(
                   hintText: "Enter UID here", prefixIcon: Icons.person),
@@ -352,6 +355,7 @@ class CreateGroupDialog extends StatelessWidget {
           Form(
             key: _formKey,
             child: TextFormField(
+              key: Key("GroupName"),
               controller: groupNameController,
               decoration: textFieldInputDecoration(
                   hintText: 'Group Name', prefixIcon: Icons.people_alt),
@@ -387,6 +391,7 @@ class CreateGroupDialog extends StatelessWidget {
               controller: userSearchController,
               builder: (context, controller, focusNode) {
                 return TextField(
+                    key: Key("GroupEnterUsername"),
                     controller: controller,
                     focusNode: focusNode,
                     decoration: textFieldInputDecoration(
@@ -394,6 +399,7 @@ class CreateGroupDialog extends StatelessWidget {
               },
               itemBuilder: (BuildContext context, String itemData) {
                 return ListTile(
+                  key: Key("GroupEnterUsernameListTile$itemData"),
                   title: Text(itemData),
                   tileColor: Colors.white,
                 );
@@ -415,6 +421,7 @@ class CreateGroupDialog extends StatelessWidget {
               }),
           const SizedBox(height: 20.0),
           ElevatedButton(
+            key: Key("CreateGroupButton"),
             style: CCElevatedTextButtonTheme.lightInputButtonStyle,
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
