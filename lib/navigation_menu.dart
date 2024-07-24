@@ -6,13 +6,15 @@ import 'package:culinary_compass/pages/yourlogs_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
+import 'package:image_picker/image_picker.dart';
 
 class NavigationMenu extends StatelessWidget {
-  const NavigationMenu({super.key});
+  final ImagePicker imagePicker;
+  const NavigationMenu({super.key, required this.imagePicker});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(NavigationController());
+    final controller = Get.put(NavigationController(imagePicker: imagePicker));
 
     return Scaffold(
       bottomNavigationBar: Obx(
@@ -44,9 +46,14 @@ class NavigationMenu extends StatelessWidget {
 class NavigationController extends GetxController {
   // observed current navigation page index
   final Rx<int> selectedIndex = 0.obs; // integer value wrapped in Rx context
+  final ImagePicker imagePicker;
+
+  NavigationController({required this.imagePicker});
+  
+  static NavigationController get instance => Get.find();
 
   // Change when screens are created
-  final screens = [
+  late final screens = [
     const HomePage(),
     YourlogsPage(),
     LoggingPage(
@@ -57,6 +64,7 @@ class NavigationController extends GetxController {
       originalPictureURL: '',
       tags: List<String>.empty(growable: true),
       rating: 0,
+      imagePicker: imagePicker
     ),
     SocialsPage(),
     SettingsPage()

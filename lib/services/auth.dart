@@ -7,7 +7,12 @@ class AuthService {
 
   // note: _auth --> _ to denote final property only in this class
   // for accessing any auth methods or properties, use this instance _auth
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  final FirebaseAuth auth;
+
+  AuthService({required this.auth});
 
   // to create a user object based on Firebase's User (this invocation is initially for verification)
   MyUser? _myUserFromFirebaseUser(User user) {
@@ -24,30 +29,15 @@ class AuthService {
 
   // stream to check for auth changes of user
   Stream<MyUser?> get user {
-    return _auth
+    return auth
       .authStateChanges() // gets Firebase's User
       .map((User? user) => _myUserFromFirebaseUser(user!)); // map to MyUser class
   }
 
-/*
-  // method for signing in (anonymously)
-  Future signInAnon() async {
-    // might have error
-    try {
-      UserCredential userCredentialAnon = await _auth.signInAnonymously();
-      User? userAnon = userCredentialAnon.user;
-      return _myUserFromFirebaseUser(userAnon!);
-    } catch(e) {
-      print(e.toString());
-      return null;
-    }
-  }
-*/
-
   // method for signing in (email and password)
   Future signInUserEmail(String email, String password) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      UserCredential result = await auth.signInWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       return _myUserFromFirebaseUser(user!);
     } catch(e) {
@@ -59,7 +49,7 @@ class AuthService {
   // method for register with email and password
   Future registerUserEmail(String email, String password) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential result = await auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       createInitialFirestoreCollection(email, user!.uid);
       return _myUserFromFirebaseUser(user);
@@ -73,7 +63,7 @@ class AuthService {
   Future signOut() async {
     try {
       signOutGoogle(); // if user uses Google to sign in
-      return await _auth.signOut(); // using Firebase's auth's signOut(), not our defined one
+      return await auth.signOut(); // using Firebase's auth's signOut(), not our defined one
     } catch(e) {
       print(e.toString());
       return null;
@@ -96,7 +86,7 @@ class AuthService {
         idToken: googleAuth.idToken
       );
 
-      UserCredential result = await _auth.signInWithCredential(credential);
+      UserCredential result = await auth.signInWithCredential(credential);
       User? user = result.user;
 
       // logic for dealing with previous google sign-ins, to create firebase user collection
@@ -106,7 +96,7 @@ class AuthService {
       }
 
       // sign in
-      return await _auth.signInWithCredential(credential);
+      return await auth.signInWithCredential(credential);
 
     } catch (e) {
       print(e.toString());
@@ -127,7 +117,7 @@ class AuthService {
   // method for resetting password
   Future passwordReset(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      await auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       throw Exception("Exception");

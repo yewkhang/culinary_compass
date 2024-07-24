@@ -2,10 +2,12 @@ import 'package:culinary_compass/authenticate/authenticate.dart';
 import 'package:culinary_compass/models/myuser.dart';
 import 'package:culinary_compass/navigation_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
-  const Wrapper({super.key});
+  final ImagePicker imagePicker;
+  const Wrapper({super.key, required this.imagePicker});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class Wrapper extends StatelessWidget {
     if (myUser == null) {
       return const Authenticate();
     } else {
-      return const NavigationMenu();
+      return NavigationMenu(imagePicker: imagePicker);
     }
   }
 }

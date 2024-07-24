@@ -2,6 +2,7 @@ import 'package:culinary_compass/services/auth.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/loading.dart';
 import 'package:culinary_compass/utils/constants/misc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
@@ -16,7 +17,7 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
 
   // to access auth services
-  final AuthService _auth = AuthService();
+  final AuthService _auth = AuthService(auth: FirebaseAuth.instance);
   // to help keep track of state of form, can access validation techniques
   final _formKey = GlobalKey<FormState>();
   // loading state
@@ -56,6 +57,7 @@ class _RegisterState extends State<Register> {
 
                         // Email TextForm Field
                         TextFormField(
+                          key: const Key("EmailFieldRegister"),
                           initialValue: email,
                           decoration: textInputDecoration.copyWith(hintText: "Email"),
                           // returns null --> means is valid
@@ -69,6 +71,7 @@ class _RegisterState extends State<Register> {
                         // Password TextFormField
                         const SizedBox(height: 10.0),
                         TextFormField(
+                          key: const Key("PasswordFieldRegister"),
                           initialValue: password,
                           decoration: textInputDecoration.copyWith(hintText: "Password"),
                           obscureText: true,
@@ -80,6 +83,7 @@ class _RegisterState extends State<Register> {
                         ),
                         const SizedBox(height: 10.0),
                         TextFormField(
+                          key: const Key("ConfirmPasswordFieldRegister"),
                           initialValue: passwordConfirmed,
                           decoration: textInputDecoration.copyWith(hintText: "Confirm Password"),
                           obscureText: true,
