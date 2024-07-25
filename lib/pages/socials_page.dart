@@ -140,7 +140,7 @@ class FriendsList extends StatelessWidget {
                       profileController.user.value.friendsUsername
                           .elementAt(index)));
               String UID = friendsUID[0];
-              Get.to(
+              Get.to(() =>
                   YourlogsPage(
                     fromHomePage: true,
                     friendUID: UID,
@@ -252,10 +252,12 @@ class GroupsList extends StatelessWidget {
                       child: ListTile(
                         title: Text(data['Name']),
                         onTap: () {
-                          Get.to(GroupsPage(
-                            document: data,
-                            groupID: groupID,
-                          ));
+                          Get.to(() =>
+                            GroupsPage(
+                              document: data,
+                              groupID: groupID,
+                            )
+                          );
                         },
                       ),
                     );
@@ -291,14 +293,20 @@ class AddFriendsDialog extends StatelessWidget {
                   hintText: "Enter UID here", prefixIcon: Icons.person),
               validator: (text) {
                 if (text == null || text.trim().isEmpty) {
-                  return "Friend's UID cannot be blank";
+                  return "Friend's UID cannot be blank!";
+                } else if (friendsDialogController.uidBelongsToUser.value) {
+                  return "You cannot add yourself as a friend!";
                 } else if (!friendsDialogController.uidExists.value) {
                   return "User with UID '${friendsDialogController.friendUIDTextField.text.trim()}' does not exist";
+                } else if (friendsDialogController.uidAlreadyAdded.value) {
+                  return "Already added a friend with this UID!";
                 }
                 return null;
               },
               onChanged: (text) async {
+                friendsDialogController.checkUIDBelongsToUser(text);
                 await friendsDialogController.validateUIDExists(text);
+                await friendsDialogController.overallValidationUID(text);
               },
             ),
             const SizedBox(height: 20.0),
