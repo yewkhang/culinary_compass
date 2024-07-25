@@ -1,8 +1,12 @@
+import 'package:culinary_compass/navigation_menu.dart';
 import 'package:culinary_compass/pages/profile_page.dart';
 import 'package:culinary_compass/services/auth.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/misc.dart';
+import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
+import 'package:culinary_compass/utils/controllers/search_controller.dart';
+import 'package:culinary_compass/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -74,8 +78,7 @@ class SettingsPage extends StatelessWidget {
                 color: Colors.red,
                 onTap: () async {
                   await _auth.signOut();
-                  profileController.reset();
-                  Get.delete<ProfileController>();
+                  Get.offAll(() => Wrapper()); // also removes ALL Get Controllers
                 }
               )
             ],
