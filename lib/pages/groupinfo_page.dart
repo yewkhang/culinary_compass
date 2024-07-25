@@ -151,112 +151,114 @@ class GroupInfoPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(CCSizes.defaultSpace),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              groupsController.currentGroup.value.name,
-              style: const TextStyle(fontSize: 24),
-            ),
-            Text('${groupsController.currentGroup.value.membersUID.length} members'),
-            const SizedBox(height: 30),
-            const SizedBox(height: 30),
-            const Text(
-              'Members',
-              style: TextStyle(fontSize: 20),
-            ),
-            const Divider(),
-            Expanded(
-              child: Obx(() {
-                return ListView(
-                  children: groupsController.currentGroup.value.membersUsername
-                      .toList()
-                      .map<Widget>((element) => ListTile(
-                            title: Text(element),
-                            // show delete icon for users if admin, don't show it for themselves
-                            trailing: isAdmin &&
-                                    element.toString() !=
-                                        profileController.user.value.username
-                                ? IconButton(
-                                    onPressed: () async {
-                                      Get.defaultDialog(
-                                        backgroundColor: Colors.white,
-                                        title: 'Remove Member',
-                                        middleText:
-                                            'Remove $element from group?',
-                                        confirm: ElevatedButton(
-                                            style: CCElevatedTextButtonTheme
-                                                .lightInputButtonStyle,
-                                            onPressed: () async {
-                                              await groupsController
-                                                  .deleteMembersFromGroup(
-                                                      groupID,
-                                                      element,
-                                                      groupsController.currentGroup.value.membersUID
-                                                          .whereType<String>()
-                                                          .toList(),
-                                                      groupsController.currentGroup.value.membersUsername
-                                                          .whereType<String>()
-                                                          .toList());
-                                              // refresh members list
-                                              groupsController.fetchGroupDetails(groupID);
-                                              Get.back();
-                                            },
-                                            child: const Text('Remove user',
+        child: Obx(() => 
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                groupsController.currentGroup.value.name,
+                style: const TextStyle(fontSize: 24),
+              ),
+              Text('${groupsController.currentGroup.value.membersUID.length} members'),
+              const SizedBox(height: 30),
+              const SizedBox(height: 30),
+              const Text(
+                'Members',
+                style: TextStyle(fontSize: 20),
+              ),
+              const Divider(),
+              Expanded(
+                child: Obx(() {
+                  return ListView(
+                    children: groupsController.currentGroup.value.membersUsername
+                        .toList()
+                        .map<Widget>((element) => ListTile(
+                              title: Text(element),
+                              // show delete icon for users if admin, don't show it for themselves
+                              trailing: isAdmin &&
+                                      element.toString() !=
+                                          profileController.user.value.username
+                                  ? IconButton(
+                                      onPressed: () async {
+                                        Get.defaultDialog(
+                                          backgroundColor: Colors.white,
+                                          title: 'Remove Member',
+                                          middleText:
+                                              'Remove $element from group?',
+                                          confirm: ElevatedButton(
+                                              style: CCElevatedTextButtonTheme
+                                                  .lightInputButtonStyle,
+                                              onPressed: () async {
+                                                await groupsController
+                                                    .deleteMembersFromGroup(
+                                                        groupID,
+                                                        element,
+                                                        groupsController.currentGroup.value.membersUID
+                                                            .whereType<String>()
+                                                            .toList(),
+                                                        groupsController.currentGroup.value.membersUsername
+                                                            .whereType<String>()
+                                                            .toList());
+                                                // refresh members list
+                                                groupsController.fetchGroupDetails(groupID);
+                                                Get.back();
+                                              },
+                                              child: const Text('Remove user',
+                                                  style: TextStyle(
+                                                      color: Colors.black))),
+                                          cancel: ElevatedButton(
+                                              style: CCElevatedTextButtonTheme
+                                                  .unselectedButtonStyle,
+                                              onPressed: () => Get.back(),
+                                              child: const Text(
+                                                'Cancel',
                                                 style: TextStyle(
-                                                    color: Colors.black))),
-                                        cancel: ElevatedButton(
-                                            style: CCElevatedTextButtonTheme
-                                                .unselectedButtonStyle,
-                                            onPressed: () => Get.back(),
-                                            child: const Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            )),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.delete),
-                                  )
-                                : const SizedBox(),
-                          ))
-                      .toList(),
-                );
-              }),
-            ),
-            isAdmin
-                ? ElevatedButton(
-                    style: CCElevatedTextButtonTheme.lightInputButtonStyle,
-                    onPressed: () async {
-                      Get.defaultDialog(
-                        backgroundColor: Colors.white,
-                        title: 'Delete Group',
-                        middleText:
-                            'Are you sure you want to delete the whole group?',
-                        confirm: ElevatedButton(
-                            style:
-                                CCElevatedTextButtonTheme.lightInputButtonStyle,
-                            onPressed: () async {
-                              await groupsController.deleteGroup(groupID);
-                              // get back to socials page after deleting group
-                              Get.offAll(const NavigationMenu(), transition: Transition.leftToRight);
-                            },
-                            child: const Text('Delete Group',
-                                style: TextStyle(color: Colors.black))),
-                        cancel: ElevatedButton(
-                            style:
-                                CCElevatedTextButtonTheme.unselectedButtonStyle,
-                            onPressed: () => Get.back(),
-                            child: const Text('Cancel',
-                                style: TextStyle(color: Colors.black))),
-                      );
-                    },
-                    child: const Text(
-                      'Delete Group',
-                      style: TextStyle(color: Colors.black),
-                    ))
-                : const SizedBox()
-          ],
+                                                    color: Colors.black),
+                                              )),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.delete),
+                                    )
+                                  : const SizedBox(),
+                            ))
+                        .toList(),
+                  );
+                }),
+              ),
+              isAdmin
+                  ? ElevatedButton(
+                      style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                      onPressed: () async {
+                        Get.defaultDialog(
+                          backgroundColor: Colors.white,
+                          title: 'Delete Group',
+                          middleText:
+                              'Are you sure you want to delete the whole group?',
+                          confirm: ElevatedButton(
+                              style:
+                                  CCElevatedTextButtonTheme.lightInputButtonStyle,
+                              onPressed: () async {
+                                await groupsController.deleteGroup(groupID);
+                                // get back to socials page after deleting group
+                                Get.offAll(const NavigationMenu(), transition: Transition.leftToRight);
+                              },
+                              child: const Text('Delete Group',
+                                  style: TextStyle(color: Colors.black))),
+                          cancel: ElevatedButton(
+                              style:
+                                  CCElevatedTextButtonTheme.unselectedButtonStyle,
+                              onPressed: () => Get.back(),
+                              child: const Text('Cancel',
+                                  style: TextStyle(color: Colors.black))),
+                        );
+                      },
+                      child: const Text(
+                        'Delete Group',
+                        style: TextStyle(color: Colors.black),
+                      ))
+                  : const SizedBox()
+            ],
+          ),
         ),
       ),
     );

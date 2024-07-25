@@ -40,10 +40,13 @@ class GroupsPage extends StatelessWidget {
         title: GroupNameContainer(
             groupName: document['Name'],
             onPressed: () {
-              Get.to(GroupInfoPage(
-                groupID: groupID,
-              ));
-            }),
+              Get.to(() => 
+                GroupInfoPage(
+                  groupID: groupID,
+                )
+              );
+            }
+          ),
         backgroundColor: CCColors.primaryColor,
       ),
       body: Padding(
