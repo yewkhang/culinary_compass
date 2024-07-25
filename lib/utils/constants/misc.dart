@@ -133,11 +133,13 @@ class ProfileTextboxNonEditable extends StatelessWidget {
 }
 
 // Profile Page UID Textbox Abstraction (Copy to Clipboard)
-class ProfileUIDTextBox extends StatelessWidget {
+class ProfileUneditableTextBox extends StatelessWidget {
+  final String field;
   final String text;
 
-  const ProfileUIDTextBox({
+  const ProfileUneditableTextBox({
     super.key,
+    required this.field,
     required this.text,
   });
 
@@ -159,7 +161,7 @@ class ProfileUIDTextBox extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "UID",
+                    field,
                     style: TextStyle(color: Colors.grey[500]),
                   ),
 
