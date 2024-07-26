@@ -17,6 +17,7 @@ class UserRepository extends GetxController {
 
   // --- SAVE USER LOGS --- //
   Future<void> saveUserLog(
+      String username,
       String selectedImagePath,
       String name,
       String location,
@@ -43,6 +44,7 @@ class UserRepository extends GetxController {
     // Upload Log to Firestore
     final newLog = LoggingModel(
         uid: uid,
+        username: username,
         pictureURL: savedImageURL,
         name: name,
         location: location,
@@ -77,6 +79,7 @@ class UserRepository extends GetxController {
   Future<void> updateUserLog(
       String docID,
       String originalPictureURL,
+      String username,
       String newSelectedImagePath,
       String name,
       String location,
@@ -119,6 +122,7 @@ class UserRepository extends GetxController {
       }
       final updatedLog = LoggingModel(
           uid: uid,
+          username: username,
           pictureURL: newPictureURL,
           name: name,
           location: location,
