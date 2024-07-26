@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoggingModel {
-  final String? uid;
+  final String uid;
+  final String username;
   final String pictureURL;
   final String name;
   final String location;
@@ -11,6 +12,7 @@ class LoggingModel {
 
   const LoggingModel(
       {required this.uid,
+      required this.username,
       required this.pictureURL,
       required this.name,
       required this.location,
@@ -21,6 +23,7 @@ class LoggingModel {
   Map<String, dynamic> toJson() {
     return {
       "UID": uid,
+      "Username": username,
       "Picture": pictureURL,
       "Name": name,
       "Location": location,
@@ -33,12 +36,13 @@ class LoggingModel {
   factory LoggingModel.fromJson(DocumentSnapshot snapshot) {
     final data = snapshot.data() as Map<String, dynamic>;
     return LoggingModel(
-        uid: data['uid'] ?? '',
-        pictureURL: data ['pictureURL'] ?? '',
-        name: data ['name'] ?? '',
-        location: data['location'] ?? '',
-        rating: data['rating'] ?? '',
-        description: data['description'] ?? '',
-        tags: data['tags'] ?? '',);
+        uid: data['UID'] ?? '',
+        username: data["Username"] ?? '',
+        pictureURL: data ['Picture'] ?? '',
+        name: data ['Name'] ?? '',
+        location: data['Location'] ?? '',
+        rating: data['Rating'] ?? '',
+        description: data['Description'] ?? '',
+        tags: data['Tags'] ?? '',);
   }
 }
