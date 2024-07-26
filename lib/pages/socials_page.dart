@@ -256,7 +256,7 @@ class GroupsList extends StatelessWidget {
                             GroupsPage(
                               document: data,
                               groupID: groupID,
-                            )
+                            ), transition: Transition.rightToLeftWithFade
                           );
                         },
                       ),

@@ -43,7 +43,7 @@ class GroupsPage extends StatelessWidget {
               Get.to(() => 
                 GroupInfoPage(
                   groupID: groupID,
-                )
+                ), transition: Transition.rightToLeftWithFade
               );
             }
           ),
