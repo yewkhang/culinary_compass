@@ -102,7 +102,7 @@ class GroupInfoPage extends StatelessWidget {
               Get.back();
               Get.snackbar('', '',
                   titleText: const Text(
-                    'Friend Added!',
+                    'Friend Added To Group!',
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   messageText: const SizedBox(),
@@ -112,7 +112,8 @@ class GroupInfoPage extends StatelessWidget {
                   ),
                   backgroundColor: Colors.green,
                   snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(20));
+                  margin: const EdgeInsets.all(20),
+                  duration: const Duration(seconds: 2));
             },
             child: const Text(
               'Add Members',
@@ -202,6 +203,20 @@ class GroupInfoPage extends StatelessWidget {
                                                 // refresh members list
                                                 groupsController.fetchGroupDetails(groupID);
                                                 Get.back();
+                                                Get.snackbar('', '',
+                                                  titleText: Text(
+                                                    'Removed $element from group!',
+                                                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                                                  ),
+                                                  messageText: const SizedBox(),
+                                                  icon: const Icon(
+                                                    Icons.check_circle_outline_outlined,
+                                                    color: Colors.white,
+                                                  ),
+                                                  backgroundColor: Colors.green,
+                                                  snackPosition: SnackPosition.BOTTOM,
+                                                  margin: const EdgeInsets.all(20),
+                                                  duration: const Duration(seconds: 2));
                                               },
                                               child: const Text('Remove user',
                                                   style: TextStyle(
@@ -241,6 +256,20 @@ class GroupInfoPage extends StatelessWidget {
                                 await groupsController.deleteGroup(groupID);
                                 // get back to socials page after deleting group
                                 Get.offAll(const NavigationMenu(pageIndex: 3,), transition: Transition.leftToRight);
+                                Get.snackbar('', '',
+                                  titleText: const Text(
+                                    'Group Deleted!',
+                                    style: TextStyle(color: Colors.white, fontSize: 18),
+                                  ),
+                                  messageText: const SizedBox(),
+                                  icon: const Icon(
+                                    Icons.check_circle_outline_outlined,
+                                    color: Colors.white,
+                                  ),
+                                  backgroundColor: Colors.green,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  margin: const EdgeInsets.all(20),
+                                  duration: const Duration(seconds: 2));
                               },
                               child: const Text('Delete Group',
                                   style: TextStyle(color: Colors.black))),
