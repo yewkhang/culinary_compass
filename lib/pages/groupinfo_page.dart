@@ -240,7 +240,7 @@ class GroupInfoPage extends StatelessWidget {
                               onPressed: () async {
                                 await groupsController.deleteGroup(groupID);
                                 // get back to socials page after deleting group
-                                Get.offAll(const NavigationMenu(), transition: Transition.leftToRight);
+                                Get.offAll(const NavigationMenu(pageIndex: 3,), transition: Transition.leftToRight);
                               },
                               child: const Text('Delete Group',
                                   style: TextStyle(color: Colors.black))),

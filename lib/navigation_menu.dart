@@ -8,11 +8,15 @@ import 'package:get/get.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 
 class NavigationMenu extends StatelessWidget {
-  const NavigationMenu({super.key});
+  final int? pageIndex;
+  const NavigationMenu({super.key, this.pageIndex});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(NavigationController());
+    if (pageIndex != null) {
+      controller.selectedIndex.value = pageIndex!;
+    }
 
     return Scaffold(
       bottomNavigationBar: Obx(
