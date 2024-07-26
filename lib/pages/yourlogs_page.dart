@@ -22,7 +22,7 @@ class YourlogsPage extends StatelessWidget {
       showModalBottomSheet(
           context: context,
           builder: (context) {
-            return FiltersPage();
+            return const FiltersPage();
           });
     }
 
@@ -48,10 +48,13 @@ class YourlogsPage extends StatelessWidget {
             ),
           ),
           actions: [
-            IconButton(
-                // can use Get.to()
-                onPressed: () => showFilters(),
-                icon: const Icon(Icons.filter_alt))
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: IconButton(
+                  // can use Get.to()
+                  onPressed: () => showFilters(),
+                  icon: const Icon(Icons.filter_alt)),
+            )
           ],
           backgroundColor: CCColors.primaryColor,
         ),
