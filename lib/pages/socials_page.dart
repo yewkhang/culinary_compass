@@ -165,7 +165,8 @@ class FriendsList extends StatelessWidget {
                     ),
                     backgroundColor: Colors.green,
                     snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20));
+                    margin: const EdgeInsets.all(20),
+                    duration: const Duration(seconds: 2));
               },
             ),
           );
@@ -232,6 +233,20 @@ class GroupsList extends StatelessWidget {
                                                         .whereType<String>()
                                                         .toList());
                                             Get.back();
+                                            Get.snackbar('', '',
+                                              titleText: const Text(
+                                                'Left Group!',
+                                                style: TextStyle(color: Colors.white, fontSize: 18),
+                                              ),
+                                              messageText: const SizedBox(),
+                                              icon: const Icon(
+                                                Icons.check_circle_outline_outlined,
+                                                color: Colors.white,
+                                              ),
+                                              backgroundColor: Colors.green,
+                                              snackPosition: SnackPosition.BOTTOM,
+                                              margin: const EdgeInsets.all(20),
+                                              duration: const Duration(seconds: 2));
                                           },
                                           child: const Text(
                                             'Leave Group',
@@ -330,7 +345,8 @@ class AddFriendsDialog extends StatelessWidget {
                       ),
                       backgroundColor: Colors.green,
                       snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                      margin: const EdgeInsets.all(20),
+                      duration: const Duration(seconds: 2));
                 }
                 friendsDialogController.friendUIDTextField.text =
                     ""; // clear controller
@@ -465,7 +481,8 @@ class CreateGroupDialog extends StatelessWidget {
                     ),
                     backgroundColor: Colors.green,
                     snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20));
+                    margin: const EdgeInsets.all(20),
+                    duration: const Duration(seconds: 2));
               }
             },
             child: const Text(
