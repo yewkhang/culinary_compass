@@ -1,5 +1,6 @@
 // Dependencies
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
@@ -48,6 +49,9 @@ class LoggingPage extends StatelessWidget {
     final tagsController = Get.put(TagsController());
     // Rating Bar Controller
     final ratingBarController = Get.put(RatingBarController());
+    // Profile Controller
+    final profileController = ProfileController.instance;
+    // User Repository (Methods)
     final userRepository = Get.put(UserRepository());
 
     //initial values
@@ -320,6 +324,7 @@ class LoggingPage extends StatelessWidget {
                       ? await userRepository.updateUserLog(
                           docID,
                           originalPictureURL,
+                          profileController.user.value.username,
                           imageController.selectedImagePath.value,
                           textFieldControllers.nameTextField.text,
                           locationController.locationSearch.text,
@@ -327,6 +332,7 @@ class LoggingPage extends StatelessWidget {
                           textFieldControllers.descriptionTextField.text,
                           tagsController.selectedTags)
                       : await userRepository.saveUserLog(
+                          profileController.user.value.username,
                           imageController.selectedImagePath.value,
                           textFieldControllers.nameTextField.text,
                           locationController.locationSearch.text,
