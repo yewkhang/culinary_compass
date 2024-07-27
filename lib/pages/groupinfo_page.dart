@@ -4,7 +4,9 @@ import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
+import 'package:culinary_compass/utils/theme/defaultdialog_theme.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -93,26 +95,18 @@ class GroupInfoPage extends StatelessWidget {
               await groupsController.addMembersToGroup(
                   groupID,
                   usernames,
-                  groupsController.currentGroup.value.membersUID.whereType<String>().toList(),
-                  groupsController.currentGroup.value.membersUsername.whereType<String>().toList());
+                  groupsController.currentGroup.value.membersUID
+                      .whereType<String>()
+                      .toList(),
+                  groupsController.currentGroup.value.membersUsername
+                      .whereType<String>()
+                      .toList());
               // reset fields
               nameTagsController.selectedFriendsNames.clear();
               // refresh members list
               groupsController.fetchGroupDetails(groupID);
               Get.back();
-              Get.snackbar('', '',
-                  titleText: const Text(
-                    'Friend Added!',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  messageText: const SizedBox(),
-                  icon: const Icon(
-                    Icons.check_circle_outline_outlined,
-                    color: Colors.white,
-                  ),
-                  backgroundColor: Colors.green,
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(20));
+              CCSnackBarTheme.defaultSuccessSnackBar('Friend Added To Group!');
             },
             child: const Text(
               'Add Members',
@@ -151,112 +145,96 @@ class GroupInfoPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(CCSizes.defaultSpace),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              groupsController.currentGroup.value.name,
-              style: const TextStyle(fontSize: 24),
-            ),
-            Text('${groupsController.currentGroup.value.membersUID.length} members'),
-            const SizedBox(height: 30),
-            const SizedBox(height: 30),
-            const Text(
-              'Members',
-              style: TextStyle(fontSize: 20),
-            ),
-            const Divider(),
-            Expanded(
-              child: Obx(() {
-                return ListView(
-                  children: groupsController.currentGroup.value.membersUsername
-                      .toList()
-                      .map<Widget>((element) => ListTile(
-                            title: Text(element),
-                            // show delete icon for users if admin, don't show it for themselves
-                            trailing: isAdmin &&
-                                    element.toString() !=
-                                        profileController.user.value.username
-                                ? IconButton(
-                                    onPressed: () async {
-                                      Get.defaultDialog(
-                                        backgroundColor: Colors.white,
-                                        title: 'Remove Member',
-                                        middleText:
-                                            'Remove $element from group?',
-                                        confirm: ElevatedButton(
-                                            style: CCElevatedTextButtonTheme
-                                                .lightInputButtonStyle,
-                                            onPressed: () async {
-                                              await groupsController
-                                                  .deleteMembersFromGroup(
-                                                      groupID,
-                                                      element,
-                                                      groupsController.currentGroup.value.membersUID
-                                                          .whereType<String>()
-                                                          .toList(),
-                                                      groupsController.currentGroup.value.membersUsername
-                                                          .whereType<String>()
-                                                          .toList());
-                                              // refresh members list
-                                              groupsController.fetchGroupDetails(groupID);
-                                              Get.back();
-                                            },
-                                            child: const Text('Remove user',
-                                                style: TextStyle(
-                                                    color: Colors.black))),
-                                        cancel: ElevatedButton(
-                                            style: CCElevatedTextButtonTheme
-                                                .unselectedButtonStyle,
-                                            onPressed: () => Get.back(),
-                                            child: const Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            )),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.delete),
-                                  )
-                                : const SizedBox(),
-                          ))
-                      .toList(),
-                );
-              }),
-            ),
-            isAdmin
-                ? ElevatedButton(
-                    style: CCElevatedTextButtonTheme.lightInputButtonStyle,
-                    onPressed: () async {
-                      Get.defaultDialog(
-                        backgroundColor: Colors.white,
-                        title: 'Delete Group',
-                        middleText:
+        child: Obx(
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                groupsController.currentGroup.value.name,
+                style: const TextStyle(fontSize: 24),
+              ),
+              Text(
+                  '${groupsController.currentGroup.value.membersUID.length} members'),
+              const SizedBox(height: 30),
+              const SizedBox(height: 30),
+              const Text(
+                'Members',
+                style: TextStyle(fontSize: 20),
+              ),
+              const Divider(),
+              Expanded(
+                child: Obx(() {
+                  return ListView(
+                    children: groupsController
+                        .currentGroup.value.membersUsername
+                        .toList()
+                        .map<Widget>((element) => ListTile(
+                              title: Text(element),
+                              // show delete icon for users if admin, don't show it for themselves
+                              trailing: isAdmin &&
+                                      element.toString() !=
+                                          profileController.user.value.username
+                                  ? IconButton(
+                                      onPressed: () async {
+                                        return CCDefaultDialogTheme
+                                            .defaultGetxDialog(
+                                                'Remove Member',
+                                                'Remove $element from group?',
+                                                'Remove Member', () async {
+                                          await groupsController
+                                              .deleteMembersFromGroup(
+                                                  groupID,
+                                                  element,
+                                                  groupsController.currentGroup
+                                                      .value.membersUID
+                                                      .whereType<String>()
+                                                      .toList(),
+                                                  groupsController.currentGroup
+                                                      .value.membersUsername
+                                                      .whereType<String>()
+                                                      .toList());
+                                          // refresh members list
+                                          groupsController
+                                              .fetchGroupDetails(groupID);
+                                          Get.back();
+                                          CCSnackBarTheme.defaultSuccessSnackBar(
+                                              'Removed $element from group!');
+                                        });
+                                      },
+                                      icon: const Icon(Icons.delete),
+                                    )
+                                  : const SizedBox(),
+                            ))
+                        .toList(),
+                  );
+                }),
+              ),
+              isAdmin
+                  ? ElevatedButton(
+                      style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                      onPressed: () async {
+                        return CCDefaultDialogTheme.defaultGetxDialog(
+                            'Delete Group',
                             'Are you sure you want to delete the whole group?',
-                        confirm: ElevatedButton(
-                            style:
-                                CCElevatedTextButtonTheme.lightInputButtonStyle,
-                            onPressed: () async {
-                              await groupsController.deleteGroup(groupID);
-                              // get back to socials page after deleting group
-                              Get.offAll(const NavigationMenu(), transition: Transition.leftToRight);
-                            },
-                            child: const Text('Delete Group',
-                                style: TextStyle(color: Colors.black))),
-                        cancel: ElevatedButton(
-                            style:
-                                CCElevatedTextButtonTheme.unselectedButtonStyle,
-                            onPressed: () => Get.back(),
-                            child: const Text('Cancel',
-                                style: TextStyle(color: Colors.black))),
-                      );
-                    },
-                    child: const Text(
-                      'Delete Group',
-                      style: TextStyle(color: Colors.black),
-                    ))
-                : const SizedBox()
-          ],
+                            'Delete Group', () async {
+                          await groupsController.deleteGroup(groupID);
+                          // get back to socials page after deleting group
+                          Get.offAll(
+                              const NavigationMenu(
+                                pageIndex: 3,
+                              ),
+                              transition: Transition.leftToRight);
+                          CCSnackBarTheme.defaultSuccessSnackBar(
+                              'Group Deleted!');
+                        });
+                      },
+                      child: const Text(
+                        'Delete Group',
+                        style: TextStyle(color: Colors.black),
+                      ))
+                  : const SizedBox()
+            ],
+          ),
         ),
       ),
     );

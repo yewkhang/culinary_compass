@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culinary_compass/pages/groups_page.dart';
+import 'package:culinary_compass/pages/yourlogs_page.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/friendsdialog_controller.dart';
@@ -7,7 +8,9 @@ import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
+import 'package:culinary_compass/utils/theme/defaultDialog_theme.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -115,7 +118,9 @@ class FriendsList extends StatelessWidget {
   FriendsList({super.key});
 
   final ProfileController profileController = ProfileController.instance;
+  final GroupsController groupsController = Get.put(GroupsController());
   final friendsDialogController = FriendsDialogController.instance;
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -125,34 +130,38 @@ class FriendsList extends StatelessWidget {
           return ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.grey[400],
-              child: GestureDetector(
-                onTap: () {
-                  Get.dialog(AddFriendsDialog());
-                },
-                child: const Icon(Icons.person, color: Colors.white),
-              ),
+              child: const Icon(Icons.person, color: Colors.white),
             ),
             title: Text(
-                profileController.user.value.friendsUsername.elementAt(index)),
+              profileController.user.value.friendsUsername.elementAt(index),
+            ),
+            onTap: () async {
+              List<String> friendsUID = await groupsController
+                  .getListOfFriendUidFromUsername(List.filled(
+                      1,
+                      profileController.user.value.friendsUsername
+                          .elementAt(index)));
+              String UID = friendsUID[0];
+              Get.to(
+                  () => YourlogsPage(
+                        fromHomePage: true,
+                        friendUID: UID,
+                      ),
+                  transition: Transition.rightToLeftWithFade);
+            },
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () async {
-                await profileController.deleteFriendFromList(profileController
-                    .user.value.friendsUsername
-                    .elementAt(index));
-                Get.snackbar('', '',
-                    titleText: const Text(
-                      'Friend Removed!',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    messageText: const SizedBox(),
-                    icon: const Icon(
-                      Icons.check_circle_outline_outlined,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.green,
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20));
+                return CCDefaultDialogTheme.defaultGetxDialog(
+                    'Remove Friend',
+                    'Are you sure you want to remove this friend?',
+                    'Remove Friend', () async {
+                  await profileController.deleteFriendFromList(profileController
+                      .user.value.friendsUsername
+                      .elementAt(index));
+                  Get.back();
+                  CCSnackBarTheme.defaultSuccessSnackBar('Friend Removed!');
+                });
               },
             ),
           );
@@ -197,52 +206,37 @@ class GroupsList extends StatelessWidget {
                             SlidableAction(
                                 backgroundColor: Colors.red,
                                 icon: Icons.delete,
-                                onPressed: (context) => Get.defaultDialog(
-                                      backgroundColor: Colors.white,
-                                      title: 'Leave Group',
-                                      middleText:
-                                          'Are you sure you want to leave this group?',
-                                      confirm: ElevatedButton(
-                                          style: CCElevatedTextButtonTheme
-                                              .lightInputButtonStyle,
-                                          onPressed: () async {
-                                            // assumes user does not change their username
-                                            await groupsController
-                                                .deleteMembersFromGroup(
-                                                    groupID,
-                                                    profileController
-                                                        .user.value.username,
-                                                    data['MembersUID']
-                                                        .whereType<String>()
-                                                        .toList(),
-                                                    data['MembersUsername']
-                                                        .whereType<String>()
-                                                        .toList());
-                                            Get.back();
-                                          },
-                                          child: const Text(
-                                            'Leave Group',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )),
-                                      cancel: ElevatedButton(
-                                          style: CCElevatedTextButtonTheme
-                                              .unselectedButtonStyle,
-                                          onPressed: () => Get.back(),
-                                          child: const Text(
-                                            'Cancel',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )),
-                                    ))
+                                onPressed: (context) =>
+                                    CCDefaultDialogTheme.defaultGetxDialog(
+                                        'Leave Group',
+                                        'Are you sure you want to leave this group?',
+                                        'Leave Group', () async {
+                                      // assumes user does not change their username
+                                      await groupsController
+                                          .deleteMembersFromGroup(
+                                              groupID,
+                                              profileController
+                                                  .user.value.username,
+                                              data['MembersUID']
+                                                  .whereType<String>()
+                                                  .toList(),
+                                              data['MembersUsername']
+                                                  .whereType<String>()
+                                                  .toList());
+                                      Get.back();
+                                      CCSnackBarTheme.defaultSuccessSnackBar(
+                                          'Left Group!');
+                                    }))
                           ]),
                       child: ListTile(
                         title: Text(data['Name']),
                         onTap: () {
-                          Get.to(GroupsPage(
-                            document: data,
-                            groupID: groupID,
-                          ));
+                          Get.to(
+                              () => GroupsPage(
+                                    document: data,
+                                    groupID: groupID,
+                                  ),
+                              transition: Transition.rightToLeftWithFade);
                         },
                       ),
                     );
@@ -278,14 +272,20 @@ class AddFriendsDialog extends StatelessWidget {
                   hintText: "Enter UID here", prefixIcon: Icons.person),
               validator: (text) {
                 if (text == null || text.trim().isEmpty) {
-                  return "Friend's UID cannot be blank";
+                  return "Friend's UID cannot be blank!";
+                } else if (friendsDialogController.uidBelongsToUser.value) {
+                  return "You cannot add yourself as a friend!";
                 } else if (!friendsDialogController.uidExists.value) {
                   return "User with UID '${friendsDialogController.friendUIDTextField.text.trim()}' does not exist";
+                } else if (friendsDialogController.uidAlreadyAdded.value) {
+                  return "Already added a friend with this UID!";
                 }
                 return null;
               },
               onChanged: (text) async {
+                friendsDialogController.checkUIDBelongsToUser(text);
                 await friendsDialogController.validateUIDExists(text);
+                await friendsDialogController.overallValidationUID(text);
               },
             ),
             const SizedBox(height: 20.0),
@@ -297,19 +297,7 @@ class AddFriendsDialog extends StatelessWidget {
                   await profileController.addFriendToList(
                       friendsDialogController.friendUIDTextField.text);
                   Get.back();
-                  Get.snackbar('', '',
-                      titleText: const Text(
-                        'Friend Added!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.check_circle_outline_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.green,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                  CCSnackBarTheme.defaultSuccessSnackBar('Friend Added!');
                 }
                 friendsDialogController.friendUIDTextField.text =
                     ""; // clear controller
@@ -426,24 +414,13 @@ class CreateGroupDialog extends StatelessWidget {
                     // add current user's UID to list of members
                     UIDsToAdd..add(profileController.user.value.uid),
                     // add current user's username to list of names
-                    List.from(nameTagsController.selectedFriendsNames)..add(profileController.user.value.username),
+                    List.from(nameTagsController.selectedFriendsNames)
+                      ..add(profileController.user.value.username),
                     profileController.user.value.uid);
                 // clear values
                 nameTagsController.selectedFriendsNames.clear();
                 Get.back();
-                Get.snackbar('', '',
-                    titleText: const Text(
-                      'Group Created!',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    messageText: const SizedBox(),
-                    icon: const Icon(
-                      Icons.check_circle_outline_outlined,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.green,
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20));
+                CCSnackBarTheme.defaultSuccessSnackBar('Group Created!');
               }
             },
             child: const Text(

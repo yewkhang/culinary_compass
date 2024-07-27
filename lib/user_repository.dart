@@ -17,6 +17,7 @@ class UserRepository extends GetxController {
 
   // --- SAVE USER LOGS --- //
   Future<void> saveUserLog(
+      String username,
       String selectedImagePath,
       String name,
       String location,
@@ -43,6 +44,7 @@ class UserRepository extends GetxController {
     // Upload Log to Firestore
     final newLog = LoggingModel(
         uid: uid,
+        username: username,
         pictureURL: savedImageURL,
         name: name,
         location: location,
@@ -77,6 +79,7 @@ class UserRepository extends GetxController {
   Future<void> updateUserLog(
       String docID,
       String originalPictureURL,
+      String username,
       String newSelectedImagePath,
       String name,
       String location,
@@ -119,6 +122,7 @@ class UserRepository extends GetxController {
       }
       final updatedLog = LoggingModel(
           uid: uid,
+          username: username,
           pictureURL: newPictureURL,
           name: name,
           location: location,
@@ -182,6 +186,17 @@ class UserRepository extends GetxController {
         // select logs where UID matches user ID and friends UID
         .where('UID',
             whereIn: friendsUID) 
+        .snapshots();
+    return result;
+  }
+
+  // Fetch all logs from specific friend
+  Stream<QuerySnapshot> fetchSpecificFriendLogs(String friendUID)  {
+    Stream<QuerySnapshot> result = _db
+        .collection("Logs")
+        // select logs where UID matches user ID and friends UID
+        .where('UID',
+            isEqualTo: friendUID) 
         .snapshots();
     return result;
   }

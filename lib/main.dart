@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       catchError: (_, __) {},
       initialData: null, // self-explanatory, set initial to nothing (null)
       value: AuthService().user, // to access the MyUser Stream
-      child: const GetMaterialApp(
+      child: GetMaterialApp(
         home: Wrapper(),
         debugShowCheckedModeBanner: false,
       ),

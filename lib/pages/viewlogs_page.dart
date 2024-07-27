@@ -23,18 +23,41 @@ class ViewlogsPage extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(children: [
             // Image
-            SizedBox(
-              width: 450,
-              height: 390,
-              child: Image.network(
-                document['Picture'],
-                fit: BoxFit.cover,
-              ),
+            Stack(
+              children: [
+                SizedBox(
+                  width: 450,
+                  height: 390,
+                  child: Image.network(
+                    document['Picture'],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ]
+            ),
+            // Log creator's name
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: CCSizes.spaceBtwItems,
+                  left: 30,
+                  right: CCSizes.spaceBtwItems),
+              child: Row(children: [
+                const Icon(Icons.person, color: CCColors.primaryColor, size: 24,),
+                const SizedBox(width: CCSizes.spaceBtwItems),
+                Text(
+                      "${document['Username']}",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500
+                      ),
+                    ),
+              ],),
             ),
             // Rating + Name
             Padding(
               padding: const EdgeInsets.only(
-                  top: CCSizes.spaceBtwItems,
+                  top: 10,
                   right: CCSizes.spaceBtwItems,
                   left: CCSizes.spaceBtwItems),
               child: CardContainer(
@@ -148,7 +171,37 @@ class ViewlogsPage extends StatelessWidget {
                 ),
               ),
             ),
-          ]),
-        ));
+            /*
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 10,
+                  left: CCSizes.spaceBtwItems,
+                  right: CCSizes.spaceBtwItems,
+                  bottom: CCSizes.spaceBtwItems),
+              child: CardContainer(
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.person,
+                      color: CCColors.primaryColor,
+                    ),
+                    const SizedBox(width: CCSizes.spaceBtwItems),
+                    Expanded(
+                      child: Text(
+                        document['Username'],
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.black),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            */
+            const SizedBox(height: CCSizes.spaceBtwItems)
+          ]
+        ),
+      )
+    );
   }
 }

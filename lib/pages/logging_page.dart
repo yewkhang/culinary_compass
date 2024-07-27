@@ -1,7 +1,9 @@
 // Dependencies
 import 'package:culinary_compass/utils/constants/sizes.dart';
+import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -48,6 +50,9 @@ class LoggingPage extends StatelessWidget {
     final tagsController = Get.put(TagsController());
     // Rating Bar Controller
     final ratingBarController = Get.put(RatingBarController());
+    // Profile Controller
+    final profileController = ProfileController.instance;
+    // User Repository (Methods)
     final userRepository = Get.put(UserRepository());
 
     //initial values
@@ -219,7 +224,7 @@ class LoggingPage extends StatelessWidget {
                     controller: controller,
                     focusNode: focusNode,
                     decoration: textFieldInputDecoration(
-                        hintText: 'Tags', prefixIcon: Icons.tag));
+                        hintText: 'Cuisines', prefixIcon: Icons.tag));
               },
               itemBuilder: (BuildContext context, String itemData) {
                 return ListTile(
@@ -288,20 +293,7 @@ class LoggingPage extends StatelessWidget {
                     locationController.locationSearch.text.isEmpty ||
                     ratingBarController.currentRating.value.isEqual(0) ||
                     tagsController.selectedTags.isEmpty) {
-                  Get.snackbar('', '',
-                      titleText: const Text(
-                        'Please enter a value for all fields!',
-                        maxLines: null,
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.cancel_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.red,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                  CCSnackBarTheme.defaultFailureSnackBar('Please enter a value for all fields!');
                 }
                 // All input fields are filled, proceed to save log
                 else {
@@ -320,6 +312,7 @@ class LoggingPage extends StatelessWidget {
                       ? await userRepository.updateUserLog(
                           docID,
                           originalPictureURL,
+                          profileController.user.value.username,
                           imageController.selectedImagePath.value,
                           textFieldControllers.nameTextField.text,
                           locationController.locationSearch.text,
@@ -327,6 +320,7 @@ class LoggingPage extends StatelessWidget {
                           textFieldControllers.descriptionTextField.text,
                           tagsController.selectedTags)
                       : await userRepository.saveUserLog(
+                          profileController.user.value.username,
                           imageController.selectedImagePath.value,
                           textFieldControllers.nameTextField.text,
                           locationController.locationSearch.text,
@@ -338,20 +332,7 @@ class LoggingPage extends StatelessWidget {
                   if (fromYourLogsPage) {
                     Get.back();
                   }
-                  Get.snackbar('', '',
-                      titleText: Text(
-                        fromYourLogsPage ? 'Log Updated!' : 'Log Saved!',
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.check_circle_outline_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.green,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                  CCSnackBarTheme.defaultSuccessSnackBar(fromYourLogsPage ? 'Log Updated!' : 'Log Saved!');
                   // Reset fields upon saving
                   imageController.selectedImagePath.value = '';
                   textFieldControllers.nameTextField.text = '';

@@ -6,6 +6,7 @@ import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -53,134 +54,166 @@ class SearchFieldController extends GetxController {
     return searchAndFilteredList;
   }
 
-  Widget buildSearchResults(
-      String search, List<String> cuisineFiltersFromUser, bool fromHomePage) {
+  Widget buildSearchResults(String search, List<String> cuisineFiltersFromUser,
+      bool fromHomePage, String friendUID) {
     return StreamBuilder<QuerySnapshot>(
       stream: fromHomePage
-          ? userRepository.fetchAllFriendLogs(
-            // copy user's friendUID list to prevent from constantly adding to the list
-              List.from(profileController.user.value.friendsUID)
-                ..add(profileController.user.value.uid))
+          ? friendUID.isNotEmpty
+              ? (userRepository.fetchSpecificFriendLogs(friendUID))
+              :
+              // copy user's friendUID list to prevent from constantly adding to the list
+              userRepository.fetchAllFriendLogs(
+                  List.from(profileController.user.value.friendsUID)
+                    ..add(profileController.user.value.uid))
           : userRepository.fetchAllUserLogs(),
       builder: (context, snapshot) {
-        return (snapshot.connectionState == ConnectionState.waiting)
-            ? const Center(
-                // Retrieving from Firestore
-                child: CircularProgressIndicator(
-                  color: CCColors.primaryColor,
-                ),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                  // ID of each document
-                  String docID = snapshot.data!.docs[index].id;
-                  // data contains ALL logs from user
-                  var data =
-                      snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                  // Show results that match search AND filters
-                  if (((data['Name'].toString() + data['Location'].toString())
-                          .toLowerCase() 
-                          .contains(search)) && // search for location or name
-                      // returns true and displays search only results if isEmpty,
-                      // else also displays filter results
-                      (cuisineFiltersFromUser.isEmpty ||
-                          cuisineFiltersFromUser
-                              .any((e) => data['Tags'].toList().contains(e)))) {
-                    return Slidable(
-                      // Slide to left to delete log
-                      // if fromHomePage, dont allow sliding
-                      endActionPane: fromHomePage
-                          ? null
-                          : ActionPane(
-                              motion: const ScrollMotion(),
-                              extentRatio: 0.25,
-                              children: [
-                                  SlidableAction(
-                                      backgroundColor: Colors.red,
-                                      icon: Icons.delete,
-                                      onPressed: (context) => Get.defaultDialog(
-                                            backgroundColor: Colors.white,
-                                            title: 'Delete Log',
-                                            middleText:
-                                                'Are you sure you want to delete this log?',
-                                            confirm: ElevatedButton(
-                                                style: CCElevatedTextButtonTheme
-                                                    .lightInputButtonStyle,
-                                                onPressed: () {
-                                                  userRepository.deleteUserLog(
-                                                      docID, data['Picture']);
-                                                  Get.back();
-                                                },
-                                                child: const Text(
-                                                  'Delete Log',
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                )),
-                                            cancel: ElevatedButton(
-                                                style: CCElevatedTextButtonTheme
-                                                    .unselectedButtonStyle,
-                                                onPressed: () => Get.back(),
-                                                child: const Text(
-                                                  'Cancel',
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                )),
-                                          ))
-                                ]),
-                      child: ListTile(
-                        leading: SizedBox(
-                            height: 80,
-                            width: 80,
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child: data.containsKey('Picture')
-                                    ? Image.network(
-                                        data['Picture'],
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const Text('No picture!'))),
-                        title: Text(
-                          data['Name'],
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        subtitle: Text(
-                          data['Location'],
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: Text(
-                          '${data['Rating']}⭐',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        onTap: () {
-                          // Redirect to edit log
-                          Get.to(
-                              fromHomePage
-                                  ? ViewlogsPage(document: data)
-                                  : LoggingPage(
-                                      fromYourLogsPage: true,
-                                      docID: docID,
-                                      originalPictureURL: data['Picture'],
-                                      name: data['Name'],
-                                      location: data['Location'],
-                                      description: data['Description'],
-                                      rating: data['Rating'],
-                                      tags: data['Tags']
-                                          .whereType<String>()
-                                          .toList(),
-                                    ),
-                              transition: Transition.rightToLeftWithFade);
-                        },
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            // Retrieving from Firestore
+            child: CircularProgressIndicator(
+              color: CCColors.primaryColor,
+            ),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Column(
+            children: [
+              const SizedBox(height: 50),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      'No logs have been added yet!',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
                       ),
-                    );
-                  } else {
-                    // Hide results that do not match the search
-                    return const SizedBox();
-                  }
-                });
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else {
+          return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                // ID of each document
+                String docID = snapshot.data!.docs[index].id;
+                // data contains ALL logs from user
+                var data =
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                // Show results that match search AND filters
+                if (((data['Name'].toString() + data['Location'].toString())
+                        .toLowerCase()
+                        .contains(search)) && // search for location or name
+                    // returns true and displays search only results if isEmpty,
+                    // else also displays filter results
+                    (cuisineFiltersFromUser.isEmpty ||
+                        cuisineFiltersFromUser
+                            .any((e) => data['Tags'].toList().contains(e)))) {
+                  return Slidable(
+                    // Slide to left to delete log
+                    // if fromHomePage, dont allow sliding
+                    endActionPane: fromHomePage
+                        ? null
+                        : ActionPane(
+                            motion: const ScrollMotion(),
+                            extentRatio: 0.25,
+                            children: [
+                                SlidableAction(
+                                    backgroundColor: Colors.red,
+                                    icon: Icons.delete,
+                                    onPressed: (context) => Get.defaultDialog(
+                                          backgroundColor: Colors.white,
+                                          title: 'Delete Log',
+                                          middleText:
+                                              'Are you sure you want to delete this log?',
+                                          confirm: ElevatedButton(
+                                              style: CCElevatedTextButtonTheme
+                                                  .lightInputButtonStyle,
+                                              onPressed: () {
+                                                userRepository.deleteUserLog(
+                                                    docID, data['Picture']);
+                                                Get.back();
+                                                CCSnackBarTheme.defaultSuccessSnackBar('Log Deleted!');
+                                              },
+                                              child: const Text(
+                                                'Delete Log',
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                              )),
+                                          cancel: ElevatedButton(
+                                              style: CCElevatedTextButtonTheme
+                                                  .unselectedButtonStyle,
+                                              onPressed: () => Get.back(),
+                                              child: const Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                              )),
+                                        ))
+                              ]),
+                    child: ListTile(
+                      leading: SizedBox(
+                          height: 80,
+                          width: 80,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: data.containsKey('Picture')
+                                  ? Image.network(
+                                      data['Picture'],
+                                      fit: BoxFit.cover,
+                                    )
+                                  : const Text('No picture!'))),
+                      title: Text(
+                        data['Name'],
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      subtitle: Text(
+                        data['Location'],
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      trailing: Text(
+                        '${data['Rating']}⭐',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      onTap: () {
+                        // Redirect to edit log
+                        Get.to(
+                            fromHomePage
+                                ? ViewlogsPage(document: data)
+                                : LoggingPage(
+                                    fromYourLogsPage: true,
+                                    docID: docID,
+                                    originalPictureURL: data['Picture'],
+                                    name: data['Name'],
+                                    location: data['Location'],
+                                    description: data['Description'],
+                                    rating: data['Rating'],
+                                    tags: data['Tags']
+                                        .whereType<String>()
+                                        .toList(),
+                                  ),
+                            transition: Transition.rightToLeftWithFade);
+                      },
+                    ),
+                  );
+                } else {
+                  // Hide results that do not match the search
+                  return const SizedBox();
+                }
+              });
+        }
       },
     );
   }

@@ -6,20 +6,23 @@ import 'package:get/get.dart';
 
 class YourlogsPage extends StatelessWidget {
   final bool fromHomePage;
-  const YourlogsPage({super.key, this.fromHomePage = false});
+  final String friendUID;
+  const YourlogsPage({super.key, this.fromHomePage = false, this.friendUID = ''});
 
   @override
   Widget build(BuildContext context) {
     final searchController = Get.put(SearchFieldController());
     // initial values 
     searchController.query.value = '';
+    searchController.finalCuisineFilters.clear();
+    searchController.selectedCuisineFilters.clear();
 
     // Show filter bottom sheet
     void showFilters() {
       showModalBottomSheet(
           context: context,
           builder: (context) {
-            return FiltersPage();
+            return const FiltersPage();
           });
     }
 
@@ -45,10 +48,13 @@ class YourlogsPage extends StatelessWidget {
             ),
           ),
           actions: [
-            IconButton(
-                // can use Get.to()
-                onPressed: () => showFilters(),
-                icon: const Icon(Icons.filter_alt))
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: IconButton(
+                  // can use Get.to()
+                  onPressed: () => showFilters(),
+                  icon: const Icon(Icons.filter_alt)),
+            )
           ],
           backgroundColor: CCColors.primaryColor,
         ),
@@ -59,7 +65,7 @@ class YourlogsPage extends StatelessWidget {
             () =>
                 searchController // add a toList() to access the value List<String> instead of RxList<String>
                     .buildSearchResults(searchController.query.value,
-                        searchController.finalCuisineFilters.toList(), fromHomePage),
+                        searchController.finalCuisineFilters.toList(), fromHomePage, friendUID),
           ),
         ));
   }

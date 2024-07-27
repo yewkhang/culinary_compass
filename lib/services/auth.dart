@@ -12,7 +12,8 @@ class AuthService {
   // to create a user object based on Firebase's User (this invocation is initially for verification)
   MyUser? _myUserFromFirebaseUser(User user) {
     return MyUser(
-      username: user.email!.split("@")[0],
+      // username: user.email!.split("@")[0],
+      username: "",
       uid: user.uid,
       bio: "No Bio",
       profileImageURL: "",
@@ -141,7 +142,8 @@ class AuthService {
         .collection("Users")
         .doc(email)
         .set({
-          "Username": email.split("@")[0],
+          // "Username": email.split("@")[0],
+          "Username": "",
           "Bio": "No Bio",
           "UID": uid,
           "Profile Image": "",

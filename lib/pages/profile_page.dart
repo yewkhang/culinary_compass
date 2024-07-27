@@ -91,14 +91,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
 
                 // Username
-                ProfileTextboxEditable(
-                  sectionName: "Username",
+                ProfileUneditableTextBox(
+                  field: "Username",
                   text: userData["Username"],
-                  onPressed: () => editField("Username")
                 ),
 
                 // User's uid
-                ProfileUIDTextBox(
+                ProfileUneditableTextBox(
+                  field: "UID",
                   text: userData["UID"],
                 ),
 

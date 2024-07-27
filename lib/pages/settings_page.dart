@@ -3,6 +3,7 @@ import 'package:culinary_compass/services/auth.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/misc.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
+import 'package:culinary_compass/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -55,14 +56,7 @@ class SettingsPage extends StatelessWidget {
                 icon: Icons.person,
                 color: CCColors.secondaryColor,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const ProfilePage();
-                      }
-                    )
-                  );
+                  Get.to(const ProfilePage(), transition: Transition.rightToLeftWithFade);
                 }
               ),
 
@@ -74,8 +68,7 @@ class SettingsPage extends StatelessWidget {
                 color: Colors.red,
                 onTap: () async {
                   await _auth.signOut();
-                  profileController.reset();
-                  Get.delete<ProfileController>();
+                  Get.offAll(() => Wrapper(), transition: Transition.rightToLeftWithFade); // also removes ALL Get Controllers
                 }
               )
             ],

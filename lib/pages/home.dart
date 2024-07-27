@@ -4,7 +4,9 @@ import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
+import 'package:culinary_compass/utils/theme/defaultdialog_theme.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -25,11 +27,11 @@ class HomePage extends StatelessWidget {
           isScrollControlled: true,
           builder: (context) {
             return DraggableScrollableSheet(
-              initialChildSize: 0.7,
-              expand: false,
+                initialChildSize: 0.7,
+                expand: false,
                 builder: (context, scrollController) {
-              return const PlacesPage();
-            });
+                  return const PlacesPage();
+                });
           });
     }
 
@@ -65,8 +67,7 @@ class HomePage extends StatelessWidget {
                         padding: const EdgeInsets.only(
                             left: CCSizes.defaultSpace + 10),
                         child: Text(
-                          profileController.user.value
-                              .username, // To be replaced with username
+                          profileController.user.value.username,
                           style: const TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -112,105 +113,121 @@ class HomePage extends StatelessWidget {
               ),
               // List of user's places to try
               StreamBuilder(
-                  stream: userRepository.fetchPlacesToTry(),
-                  builder: (context, snapshot) {
-                    return (snapshot.connectionState == ConnectionState.waiting)
-                        ? const Center(
-                            // Retrieving from Firestore
-                            child: CircularProgressIndicator(
-                              color: CCColors.primaryColor,
-                            ),
-                          )
-                        : ListView.builder(
-                            padding: const EdgeInsets.only(
-                                top: 0, bottom: CCSizes.spaceBtwItems),
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: snapshot.data!.docs.length,
-                            itemBuilder: (context, index) {
-                              // ID of each document
-                              String docID = snapshot.data!.docs[index].id;
-                              // data contains ALL logs from user
-                              var data = snapshot.data!.docs[index].data()
-                                  as Map<String, dynamic>;
-                              return Slidable(
-                                // Slide to left to delete log
-                                endActionPane: ActionPane(
-                                    motion: const ScrollMotion(),
-                                    extentRatio: 0.25,
-                                    children: [
-                                      SlidableAction(
-                                          backgroundColor: Colors.red,
-                                          icon: Icons.delete,
-                                          onPressed: (context) =>
-                                              Get.defaultDialog(
-                                                backgroundColor: Colors.white,
-                                                title: 'Delete Place',
-                                                middleText:
-                                                    'Are you sure you want to delete this place?',
-                                                confirm: ElevatedButton(
-                                                    style: CCElevatedTextButtonTheme
-                                                        .lightInputButtonStyle,
-                                                    onPressed: () {
-                                                      userRepository
-                                                          .deletePlacesToTry(
-                                                              docID);
-                                                      Get.back();
-                                                    },
-                                                    child: const Text(
-                                                      'Delete Place',
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    )),
-                                                cancel: ElevatedButton(
-                                                    style: CCElevatedTextButtonTheme
-                                                        .unselectedButtonStyle,
-                                                    onPressed: () => Get.back(),
-                                                    child: const Text(
-                                                      'Cancel',
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    )),
-                                              ))
-                                    ]),
-                                child: Padding(
-                                  // between cards and screen
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: Card(
-                                    color: Colors.white,
-                                    child: ExpansionTile(
-                                      title: Text(
-                                        data['Name'],
-                                        style: const TextStyle(fontSize: 20),
-                                      ),
-                                      subtitle: Row(children: [
-                                        const Icon(
-                                          Icons.location_on_sharp,
-                                          color: CCColors.primaryColor,
-                                        ),
-                                        const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 2)),
-                                        Expanded(child: Text(data['Location']))
-                                      ]),
-                                      shape: const RoundedRectangleBorder(),
-                                      // padding for the expanded text
-                                      childrenPadding: const EdgeInsets.only(
-                                          top: 10, bottom: 10, left: 25),
-                                      expandedAlignment: Alignment.topLeft,
-                                      children: [
-                                        Text(
-                                          data['Description'],
-                                          style: const TextStyle(fontSize: 16),
-                                        )
-                                      ],
-                                    ),
-                                  ),
+                stream: userRepository.fetchPlacesToTry(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: CCColors.primaryColor,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Center(
+                      child: Text('An error occurred'),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 50),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                'No places have been added yet!',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black,
                                 ),
-                              );
-                            });
-                  }),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(
+                          top: 0, bottom: CCSizes.spaceBtwItems),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        // ID of each document
+                        String docID = snapshot.data!.docs[index].id;
+                        // data contains ALL logs from user
+                        var data = snapshot.data!.docs[index].data()
+                            as Map<String, dynamic>;
+                        return Slidable(
+                          // Slide to left to delete log
+                          endActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            extentRatio: 0.25,
+                            children: [
+                              SlidableAction(
+                                  backgroundColor: Colors.red,
+                                  icon: Icons.delete,
+                                  onPressed: (context) =>
+                                      CCDefaultDialogTheme.defaultGetxDialog(
+                                          'Delete Place',
+                                          'Are you sure you want to delete this place?',
+                                          'Delete Place', () {
+                                        userRepository.deletePlacesToTry(docID);
+                                        Get.back();
+                                        CCSnackBarTheme.defaultSuccessSnackBar(
+                                            'Place Deleted!');
+                                      }))
+                            ],
+                          ),
+                          child: Padding(
+                            // between cards and screen
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Card(
+                              color: Colors.white,
+                              child: ExpansionTile(
+                                title: Text(
+                                  data['Name'],
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                                subtitle: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on_sharp,
+                                      color: CCColors.primaryColor,
+                                    ),
+                                    const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 2)),
+                                    Expanded(child: Text(data['Location']))
+                                  ],
+                                ),
+                                shape: const RoundedRectangleBorder(),
+                                // padding for the expanded text
+                                childrenPadding: const EdgeInsets.only(
+                                    top: 10, bottom: 10, left: 25),
+                                expandedAlignment: Alignment.topLeft,
+                                children: [
+                                  Text(
+                                    data['Description'],
+                                    style: const TextStyle(fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ));
