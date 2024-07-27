@@ -4,6 +4,7 @@ import 'package:culinary_compass/user_repository.dart';
 import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
+import 'package:culinary_compass/utils/theme/defaultdialog_theme.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:flutter/material.dart';
@@ -66,8 +67,7 @@ class HomePage extends StatelessWidget {
                         padding: const EdgeInsets.only(
                             left: CCSizes.defaultSpace + 10),
                         child: Text(
-                          profileController.user.value
-                              .username, 
+                          profileController.user.value.username,
                           style: const TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -171,37 +171,18 @@ class HomePage extends StatelessWidget {
                             extentRatio: 0.25,
                             children: [
                               SlidableAction(
-                                backgroundColor: Colors.red,
-                                icon: Icons.delete,
-                                onPressed: (context) => Get.defaultDialog(
-                                  backgroundColor: Colors.white,
-                                  title: 'Delete Place',
-                                  middleText:
-                                      'Are you sure you want to delete this place?',
-                                  confirm: ElevatedButton(
-                                    style: CCElevatedTextButtonTheme
-                                        .lightInputButtonStyle,
-                                    onPressed: () {
-                                      userRepository.deletePlacesToTry(docID);
-                                      Get.back();
-                                      CCSnackBarTheme.defaultSuccessSnackBar('Place Deleted!');
-                                    },
-                                    child: const Text(
-                                      'Delete Place',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ),
-                                  cancel: ElevatedButton(
-                                    style: CCElevatedTextButtonTheme
-                                        .unselectedButtonStyle,
-                                    onPressed: () => Get.back(),
-                                    child: const Text(
-                                      'Cancel',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                              )
+                                  backgroundColor: Colors.red,
+                                  icon: Icons.delete,
+                                  onPressed: (context) =>
+                                      CCDefaultDialogTheme.defaultGetxDialog(
+                                          'Delete Place',
+                                          'Are you sure you want to delete this place?',
+                                          'Delete Place', () {
+                                        userRepository.deletePlacesToTry(docID);
+                                        Get.back();
+                                        CCSnackBarTheme.defaultSuccessSnackBar(
+                                            'Place Deleted!');
+                                      }))
                             ],
                           ),
                           child: Padding(

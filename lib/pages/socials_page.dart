@@ -8,6 +8,7 @@ import 'package:culinary_compass/utils/controllers/groups_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
+import 'package:culinary_compass/utils/theme/defaultDialog_theme.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
 import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
@@ -151,31 +152,16 @@ class FriendsList extends StatelessWidget {
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () async {
-                Get.defaultDialog(
-                  backgroundColor: Colors.white,
-                  title: 'Remove Friend',
-                  middleText: 'Are you sure you want to remove this friend?',
-                  confirm: ElevatedButton(
-                      style: CCElevatedTextButtonTheme.lightInputButtonStyle,
-                      onPressed: () async {
-                        await profileController.deleteFriendFromList(
-                            profileController.user.value.friendsUsername
-                                .elementAt(index));
-                        Get.back();
-                        CCSnackBarTheme.defaultSuccessSnackBar('Friend Removed!');
-                      },
-                      child: const Text(
-                        'Remove Friend',
-                        style: TextStyle(color: Colors.black),
-                      )),
-                  cancel: ElevatedButton(
-                      style: CCElevatedTextButtonTheme.unselectedButtonStyle,
-                      onPressed: () => Get.back(),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.black),
-                      )),
-                );
+                return CCDefaultDialogTheme.defaultGetxDialog(
+                    'Remove Friend',
+                    'Are you sure you want to remove this friend?',
+                    'Remove Friend', () async {
+                  await profileController.deleteFriendFromList(profileController
+                      .user.value.friendsUsername
+                      .elementAt(index));
+                  Get.back();
+                  CCSnackBarTheme.defaultSuccessSnackBar('Friend Removed!');
+                });
               },
             ),
           );
@@ -220,45 +206,27 @@ class GroupsList extends StatelessWidget {
                             SlidableAction(
                                 backgroundColor: Colors.red,
                                 icon: Icons.delete,
-                                onPressed: (context) => Get.defaultDialog(
-                                      backgroundColor: Colors.white,
-                                      title: 'Leave Group',
-                                      middleText:
-                                          'Are you sure you want to leave this group?',
-                                      confirm: ElevatedButton(
-                                          style: CCElevatedTextButtonTheme
-                                              .lightInputButtonStyle,
-                                          onPressed: () async {
-                                            // assumes user does not change their username
-                                            await groupsController
-                                                .deleteMembersFromGroup(
-                                                    groupID,
-                                                    profileController
-                                                        .user.value.username,
-                                                    data['MembersUID']
-                                                        .whereType<String>()
-                                                        .toList(),
-                                                    data['MembersUsername']
-                                                        .whereType<String>()
-                                                        .toList());
-                                            Get.back();
-                                            CCSnackBarTheme.defaultSuccessSnackBar('Left Group!');
-                                          },
-                                          child: const Text(
-                                            'Leave Group',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )),
-                                      cancel: ElevatedButton(
-                                          style: CCElevatedTextButtonTheme
-                                              .unselectedButtonStyle,
-                                          onPressed: () => Get.back(),
-                                          child: const Text(
-                                            'Cancel',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )),
-                                    ))
+                                onPressed: (context) =>
+                                    CCDefaultDialogTheme.defaultGetxDialog(
+                                        'Leave Group',
+                                        'Are you sure you want to leave this group?',
+                                        'Leave Group', () async {
+                                      // assumes user does not change their username
+                                      await groupsController
+                                          .deleteMembersFromGroup(
+                                              groupID,
+                                              profileController
+                                                  .user.value.username,
+                                              data['MembersUID']
+                                                  .whereType<String>()
+                                                  .toList(),
+                                              data['MembersUsername']
+                                                  .whereType<String>()
+                                                  .toList());
+                                      Get.back();
+                                      CCSnackBarTheme.defaultSuccessSnackBar(
+                                          'Left Group!');
+                                    }))
                           ]),
                       child: ListTile(
                         title: Text(data['Name']),
