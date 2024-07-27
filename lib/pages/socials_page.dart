@@ -140,33 +140,55 @@ class FriendsList extends StatelessWidget {
                       profileController.user.value.friendsUsername
                           .elementAt(index)));
               String UID = friendsUID[0];
-              Get.to(() =>
-                  YourlogsPage(
-                    fromHomePage: true,
-                    friendUID: UID,
-                  ),
+              Get.to(
+                  () => YourlogsPage(
+                        fromHomePage: true,
+                        friendUID: UID,
+                      ),
                   transition: Transition.rightToLeftWithFade);
             },
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () async {
-                await profileController.deleteFriendFromList(profileController
-                    .user.value.friendsUsername
-                    .elementAt(index));
-                Get.snackbar('', '',
-                    titleText: const Text(
-                      'Friend Removed!',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    messageText: const SizedBox(),
-                    icon: const Icon(
-                      Icons.check_circle_outline_outlined,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.green,
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20),
-                    duration: const Duration(seconds: 2));
+                Get.defaultDialog(
+                  backgroundColor: Colors.white,
+                  title: 'Remove Friend',
+                  middleText: 'Are you sure you want to remove this friend?',
+                  confirm: ElevatedButton(
+                      style: CCElevatedTextButtonTheme.lightInputButtonStyle,
+                      onPressed: () async {
+                        await profileController.deleteFriendFromList(
+                            profileController.user.value.friendsUsername
+                                .elementAt(index));
+                        Get.back();
+                        Get.snackbar('', '',
+                            titleText: const Text(
+                              'Friend Removed!',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                            messageText: const SizedBox(),
+                            icon: const Icon(
+                              Icons.check_circle_outline_outlined,
+                              color: Colors.white,
+                            ),
+                            backgroundColor: Colors.green,
+                            snackPosition: SnackPosition.BOTTOM,
+                            margin: const EdgeInsets.all(20),
+                            duration: const Duration(seconds: 2));
+                      },
+                      child: const Text(
+                        'Remove Friend',
+                        style: TextStyle(color: Colors.black),
+                      )),
+                  cancel: ElevatedButton(
+                      style: CCElevatedTextButtonTheme.unselectedButtonStyle,
+                      onPressed: () => Get.back(),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.black),
+                      )),
+                );
               },
             ),
           );
@@ -234,19 +256,25 @@ class GroupsList extends StatelessWidget {
                                                         .toList());
                                             Get.back();
                                             Get.snackbar('', '',
-                                              titleText: const Text(
-                                                'Left Group!',
-                                                style: TextStyle(color: Colors.white, fontSize: 18),
-                                              ),
-                                              messageText: const SizedBox(),
-                                              icon: const Icon(
-                                                Icons.check_circle_outline_outlined,
-                                                color: Colors.white,
-                                              ),
-                                              backgroundColor: Colors.green,
-                                              snackPosition: SnackPosition.BOTTOM,
-                                              margin: const EdgeInsets.all(20),
-                                              duration: const Duration(seconds: 2));
+                                                titleText: const Text(
+                                                  'Left Group!',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 18),
+                                                ),
+                                                messageText: const SizedBox(),
+                                                icon: const Icon(
+                                                  Icons
+                                                      .check_circle_outline_outlined,
+                                                  color: Colors.white,
+                                                ),
+                                                backgroundColor: Colors.green,
+                                                snackPosition:
+                                                    SnackPosition.BOTTOM,
+                                                margin:
+                                                    const EdgeInsets.all(20),
+                                                duration:
+                                                    const Duration(seconds: 2));
                                           },
                                           child: const Text(
                                             'Leave Group',
@@ -267,12 +295,12 @@ class GroupsList extends StatelessWidget {
                       child: ListTile(
                         title: Text(data['Name']),
                         onTap: () {
-                          Get.to(() =>
-                            GroupsPage(
-                              document: data,
-                              groupID: groupID,
-                            ), transition: Transition.rightToLeftWithFade
-                          );
+                          Get.to(
+                              () => GroupsPage(
+                                    document: data,
+                                    groupID: groupID,
+                                  ),
+                              transition: Transition.rightToLeftWithFade);
                         },
                       ),
                     );
