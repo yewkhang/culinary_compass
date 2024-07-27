@@ -151,7 +151,8 @@ class PlacesPage extends StatelessWidget {
                       ),
                       backgroundColor: Colors.green,
                       snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20));
+                      margin: const EdgeInsets.all(20),
+                      duration: const Duration(seconds: 2));
                 },
                 child: const Text(
                   'Add place',
