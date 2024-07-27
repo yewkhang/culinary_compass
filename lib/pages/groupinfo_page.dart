@@ -5,6 +5,7 @@ import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -100,20 +101,7 @@ class GroupInfoPage extends StatelessWidget {
               // refresh members list
               groupsController.fetchGroupDetails(groupID);
               Get.back();
-              Get.snackbar('', '',
-                  titleText: const Text(
-                    'Friend Added To Group!',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  messageText: const SizedBox(),
-                  icon: const Icon(
-                    Icons.check_circle_outline_outlined,
-                    color: Colors.white,
-                  ),
-                  backgroundColor: Colors.green,
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(20),
-                  duration: const Duration(seconds: 2));
+              CCSnackBarTheme.defaultSuccessSnackBar('Friend Added To Group!');
             },
             child: const Text(
               'Add Members',
@@ -203,20 +191,7 @@ class GroupInfoPage extends StatelessWidget {
                                                 // refresh members list
                                                 groupsController.fetchGroupDetails(groupID);
                                                 Get.back();
-                                                Get.snackbar('', '',
-                                                  titleText: Text(
-                                                    'Removed $element from group!',
-                                                    style: const TextStyle(color: Colors.white, fontSize: 18),
-                                                  ),
-                                                  messageText: const SizedBox(),
-                                                  icon: const Icon(
-                                                    Icons.check_circle_outline_outlined,
-                                                    color: Colors.white,
-                                                  ),
-                                                  backgroundColor: Colors.green,
-                                                  snackPosition: SnackPosition.BOTTOM,
-                                                  margin: const EdgeInsets.all(20),
-                                                  duration: const Duration(seconds: 2));
+                                                CCSnackBarTheme.defaultSuccessSnackBar('Removed $element from group!');
                                               },
                                               child: const Text('Remove user',
                                                   style: TextStyle(
@@ -256,20 +231,7 @@ class GroupInfoPage extends StatelessWidget {
                                 await groupsController.deleteGroup(groupID);
                                 // get back to socials page after deleting group
                                 Get.offAll(const NavigationMenu(pageIndex: 3,), transition: Transition.leftToRight);
-                                Get.snackbar('', '',
-                                  titleText: const Text(
-                                    'Group Deleted!',
-                                    style: TextStyle(color: Colors.white, fontSize: 18),
-                                  ),
-                                  messageText: const SizedBox(),
-                                  icon: const Icon(
-                                    Icons.check_circle_outline_outlined,
-                                    color: Colors.white,
-                                  ),
-                                  backgroundColor: Colors.green,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  margin: const EdgeInsets.all(20),
-                                  duration: const Duration(seconds: 2));
+                                CCSnackBarTheme.defaultSuccessSnackBar('Group Deleted!');
                               },
                               child: const Text('Delete Group',
                                   style: TextStyle(color: Colors.black))),

@@ -9,6 +9,7 @@ import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/controllers/tags_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -161,21 +162,7 @@ class FriendsList extends StatelessWidget {
                             profileController.user.value.friendsUsername
                                 .elementAt(index));
                         Get.back();
-                        Get.snackbar('', '',
-                            titleText: const Text(
-                              'Friend Removed!',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                            messageText: const SizedBox(),
-                            icon: const Icon(
-                              Icons.check_circle_outline_outlined,
-                              color: Colors.white,
-                            ),
-                            backgroundColor: Colors.green,
-                            snackPosition: SnackPosition.BOTTOM,
-                            margin: const EdgeInsets.all(20),
-                            duration: const Duration(seconds: 2));
+                        CCSnackBarTheme.defaultSuccessSnackBar('Friend Removed!');
                       },
                       child: const Text(
                         'Remove Friend',
@@ -255,26 +242,7 @@ class GroupsList extends StatelessWidget {
                                                         .whereType<String>()
                                                         .toList());
                                             Get.back();
-                                            Get.snackbar('', '',
-                                                titleText: const Text(
-                                                  'Left Group!',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 18),
-                                                ),
-                                                messageText: const SizedBox(),
-                                                icon: const Icon(
-                                                  Icons
-                                                      .check_circle_outline_outlined,
-                                                  color: Colors.white,
-                                                ),
-                                                backgroundColor: Colors.green,
-                                                snackPosition:
-                                                    SnackPosition.BOTTOM,
-                                                margin:
-                                                    const EdgeInsets.all(20),
-                                                duration:
-                                                    const Duration(seconds: 2));
+                                            CCSnackBarTheme.defaultSuccessSnackBar('Left Group!');
                                           },
                                           child: const Text(
                                             'Leave Group',
@@ -361,20 +329,7 @@ class AddFriendsDialog extends StatelessWidget {
                   await profileController.addFriendToList(
                       friendsDialogController.friendUIDTextField.text);
                   Get.back();
-                  Get.snackbar('', '',
-                      titleText: const Text(
-                        'Friend Added!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.check_circle_outline_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.green,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20),
-                      duration: const Duration(seconds: 2));
+                  CCSnackBarTheme.defaultSuccessSnackBar('Friend Added!');
                 }
                 friendsDialogController.friendUIDTextField.text =
                     ""; // clear controller
@@ -497,20 +452,7 @@ class CreateGroupDialog extends StatelessWidget {
                 // clear values
                 nameTagsController.selectedFriendsNames.clear();
                 Get.back();
-                Get.snackbar('', '',
-                    titleText: const Text(
-                      'Group Created!',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    messageText: const SizedBox(),
-                    icon: const Icon(
-                      Icons.check_circle_outline_outlined,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.green,
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(20),
-                    duration: const Duration(seconds: 2));
+                CCSnackBarTheme.defaultSuccessSnackBar('Group Created!');
               }
             },
             child: const Text(

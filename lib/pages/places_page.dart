@@ -4,6 +4,7 @@ import 'package:culinary_compass/utils/constants/sizes.dart';
 import 'package:culinary_compass/utils/controllers/location_controller.dart';
 import 'package:culinary_compass/utils/controllers/places_controller.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:culinary_compass/utils/theme/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -139,20 +140,7 @@ class PlacesPage extends StatelessWidget {
                   locationController.locationSearch.text = '';
                   placesController.descriptionTextField.text = '';
                   Get.back(); // get back to home page
-                  Get.snackbar('', '',
-                      titleText: const Text(
-                        'Place Saved!',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      messageText: const SizedBox(),
-                      icon: const Icon(
-                        Icons.check_circle_outline_outlined,
-                        color: Colors.white,
-                      ),
-                      backgroundColor: Colors.green,
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: const EdgeInsets.all(20),
-                      duration: const Duration(seconds: 2));
+                  CCSnackBarTheme.defaultSuccessSnackBar('Place Saved!');
                 },
                 child: const Text(
                   'Add place',
