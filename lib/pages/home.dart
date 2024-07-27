@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
                             left: CCSizes.defaultSpace + 10),
                         child: Text(
                           profileController.user.value
-                              .username, // To be replaced with username
+                              .username, 
                           style: const TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -134,11 +134,11 @@ class HomePage extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.all(16.0),
                               decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.1),
+                                color: Colors.grey.shade100,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Text(
-                                'No places have been added yet!\nTap on the button above to begin!',
+                                'No places have been added yet!',
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.black,
