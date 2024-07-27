@@ -6,6 +6,7 @@ import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/controllers/grouprecs_controller.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/theme/elevated_button_theme.dart';
+import 'package:culinary_compass/utils/theme/snackbar_theme.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -143,6 +144,7 @@ class SearchFieldController extends GetxController {
                                                 userRepository.deleteUserLog(
                                                     docID, data['Picture']);
                                                 Get.back();
+                                                CCSnackBarTheme.defaultSuccessSnackBar('Log Deleted!');
                                               },
                                               child: const Text(
                                                 'Delete Log',
