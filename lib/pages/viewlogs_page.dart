@@ -33,22 +33,26 @@ class ViewlogsPage extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: Container(
-                    color: Colors.black.withOpacity(0.6),
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Created by: ${document['Username']}",
+              ]
+            ),
+            // Log creator's name
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: CCSizes.spaceBtwItems,
+                  left: 30,
+                  right: CCSizes.spaceBtwItems),
+              child: Row(children: [
+                const Icon(Icons.person, color: CCColors.primaryColor, size: 24,),
+                const SizedBox(width: CCSizes.spaceBtwItems),
+                Text(
+                      "${document['Username']}",
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 16,
+                        fontWeight: FontWeight.w500
                       ),
                     ),
-                  ),
-                ),
-              ]
+              ],),
             ),
             // Rating + Name
             Padding(
