@@ -17,7 +17,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
 
   // controller for profile, manages updating to firestore
-  final ProfileController profileController = Get.put(ProfileController());
+  final ProfileController profileController = ProfileController.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -34,81 +34,85 @@ class _ProfilePageState extends State<ProfilePage> {
             final userData = snapshot.data!.data() as Map<String, dynamic>;
             String profileImageURL = userData["Profile Image"] ?? "";
 
-            return ListView(
-              children: [
-                const SizedBox(height: 25.0),
-
-                // Profile Picture
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // to display profile image if there is one on Firestore
-                          profileImageURL != ""
-                            ? CircleAvatar(
-                              radius: 60,
-                              backgroundImage: NetworkImage(userData["Profile Image"])
+            return Obx(
+              () => ListView(
+                children: [
+                  const SizedBox(height: 25.0),
+              
+                  // Profile Picture
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // to display profile image if there is one on Firestore
+                            // Unfortunately, this implementation will have to do, using Obx solely
+                            // does not display updated profile picture correctly
+                            profileImageURL != ""
+                              ? CircleAvatar(
+                                radius: 60,
+                                backgroundImage: NetworkImage(userData["Profile Image"])
+                              )
+                              : CircleAvatar(
+                                radius: 60,
+                                backgroundImage: Image.asset("lib/images/user-profile-avatar.jpg").image,
+                              ),
+                            Positioned(
+                              bottom: -10,
+                              left: 85,
+                              child: IconButton(
+                                onPressed: () {
+                                  profileController.uploadProfileImage();
+                                },
+                                icon: const Icon(Icons.add_a_photo),
+                              ),
                             )
-                            : CircleAvatar(
-                              radius: 60,
-                              backgroundImage: Image.asset("lib/images/user-profile-avatar.jpg").image,
-                            ),
-                          Positioned(
-                            bottom: -10,
-                            left: 85,
-                            child: IconButton(
-                              onPressed: () {
-                                profileController.uploadProfileImage();
-                              },
-                              icon: const Icon(Icons.add_a_photo),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-
-                const SizedBox(height: 10.0),
-
-                Text(
-                  profileController.currentUser.email!,
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 20.0),
-
-                // User Details
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    "User Details",
-                    style: TextStyle(color: Colors.grey[600])
+              
+                  const SizedBox(height: 10.0),
+              
+                  Text(
+                    profileController.currentUser.email!,
+                    textAlign: TextAlign.center,
                   ),
-                ),
-
-                // Username
-                ProfileUneditableTextBox(
-                  field: "Username",
-                  text: userData["Username"],
-                ),
-
-                // User's uid
-                ProfileUneditableTextBox(
-                  field: "UID",
-                  text: userData["UID"],
-                ),
-
-                // Bio/Description
-                ProfileTextboxEditable(
-                  sectionName: "Bio",
-                  text: userData["Bio"],
-                  onPressed: () => editField("Bio")
-                ),
-              ],
+              
+                  const SizedBox(height: 20.0),
+              
+                  // User Details
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: Text(
+                      "User Details",
+                      style: TextStyle(color: Colors.grey[600])
+                    ),
+                  ),
+              
+                  // Username
+                  ProfileUneditableTextBox(
+                    field: "Username",
+                    text: profileController.user.value.username,
+                  ),
+              
+                  // User's uid
+                  ProfileUneditableTextBox(
+                    field: "UID",
+                    text: profileController.user.value.uid,
+                  ),
+              
+                  // Bio/Description
+                  ProfileTextboxEditable(
+                    sectionName: "Bio",
+                    text: profileController.user.value.bio,
+                    onPressed: () => editField("Bio")
+                  ),
+                ],
+              ),
             );
           } else if (snapshot.hasError) {
             return Center(
