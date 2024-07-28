@@ -114,7 +114,7 @@ class SearchFieldController extends GetxController {
                 // Show results that match search AND filters
                 if (((data['Name'].toString() + data['Location'].toString())
                         .toLowerCase()
-                        .contains(search)) && // search for location or name
+                        .contains(search.toLowerCase())) && // search for location or name
                     // returns true and displays search only results if isEmpty,
                     // else also displays filter results
                     (cuisineFiltersFromUser.isEmpty ||
