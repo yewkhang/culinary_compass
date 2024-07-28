@@ -67,7 +67,17 @@ class ProfileController extends GetxController {
       profileImageController.selectedImagePath.value,
       currentUser.email!,
     );
-    profileImageController.selectedImagePath.value = ""; // clear image path
+    // updates on remote profile controller
+    user(MyUser(
+      username: user.value.username,
+      uid: user.value.uid,
+      bio: user.value.bio,
+      profileImageURL: profileImageController.selectedImagePath.value,
+      friendsUID: user.value.friendsUID,
+      friendsUsername: user.value.friendsUsername
+    ));
+    // clear image path
+    profileImageController.selectedImagePath.value = "";
   }
 
   Future<void> updateTextField(String field, String newValue) async {
