@@ -103,6 +103,7 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
+                    key: Key("AddPlacesToTry"),
                     onPressed: () {
                       showAddPlaces();
                     },
@@ -175,6 +176,7 @@ class HomePage extends StatelessWidget {
                                   icon: Icons.delete,
                                   onPressed: (context) =>
                                       CCDefaultDialogTheme.defaultGetxDialog(
+
                                           'Delete Place',
                                           'Are you sure you want to delete this place?',
                                           'Delete Place', () {
@@ -182,7 +184,7 @@ class HomePage extends StatelessWidget {
                                         Get.back();
                                         CCSnackBarTheme.defaultSuccessSnackBar(
                                             'Place Deleted!');
-                                      }))
+                                      }, Key("DeletePlacesToTry"),))
                             ],
                           ),
                           child: Padding(

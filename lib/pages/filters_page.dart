@@ -41,6 +41,7 @@ class FiltersPage extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 10),
             height: 50,
             child: ListView(
+              key: Key("FilteringListView"),
               scrollDirection: Axis.horizontal,
               children: filtersController
                   .cuisineFilters // contains all cuisines
@@ -49,6 +50,7 @@ class FiltersPage extends StatelessWidget {
                           // padding between tags
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: FilterChip(
+                            key: Key(element),
                             backgroundColor: Colors.white,
                             padding: const EdgeInsets.all(2),
                             selectedColor: CCColors.primaryColor,

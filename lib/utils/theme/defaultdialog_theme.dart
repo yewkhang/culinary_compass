@@ -5,12 +5,13 @@ import 'package:get/get.dart';
 class CCDefaultDialogTheme {
   CCDefaultDialogTheme._();
 
-  static defaultGetxDialog(String titleText, String middleText, String confirmText, void Function() onPressed) {
+  static defaultGetxDialog(String titleText, String middleText, String confirmText, void Function() onPressed, Key key) {
     return Get.defaultDialog(
       backgroundColor: Colors.white,
       title: titleText,
       middleText: middleText,
       confirm: ElevatedButton(
+        key: key, // confirm button
         style: CCElevatedTextButtonTheme.lightInputButtonStyle,
         onPressed: onPressed,
         child: Text(

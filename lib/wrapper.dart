@@ -6,11 +6,13 @@ import 'package:culinary_compass/navigation_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:culinary_compass/utils/constants/loading.dart';
 
 class Wrapper extends StatelessWidget {
-  Wrapper({super.key});
+  final ImagePicker imagePicker;
+  Wrapper({super.key, required this.imagePicker});
 
   // --------------------- FIREBASE --------------------- //
   // Firebase/Firestore instances
@@ -38,7 +40,7 @@ class Wrapper extends StatelessWidget {
           } else if (snapshot.hasData && snapshot.data == true) {
             // if user has already created username, direct to home page
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Get.off(() => const NavigationMenu());
+              Get.off(() => NavigationMenu(imagePicker: imagePicker));
             });
           } else {
             // if user has not created username, direct to username page

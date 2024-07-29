@@ -2,6 +2,7 @@ import 'package:culinary_compass/services/auth.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/loading.dart';
 import 'package:culinary_compass/utils/constants/misc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -14,7 +15,7 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordState extends State<ForgotPassword> {
 
   // to access auth services
-  final AuthService _auth = AuthService();
+  final AuthService _auth = AuthService(auth: FirebaseAuth.instance);
   // to help keep track of state of form, can access validation techniques
   final _formKey = GlobalKey<FormState>();
   // loading state

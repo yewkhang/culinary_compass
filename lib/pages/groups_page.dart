@@ -9,6 +9,7 @@ import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class GroupsPage extends StatelessWidget {
   final Map<String, dynamic> document;
@@ -17,7 +18,8 @@ class GroupsPage extends StatelessWidget {
   final ProfileController profileController = ProfileController.instance;
   final groupsController = Get.put(GroupsController());
   final userRepository = Get.put(UserRepository());
-  GroupsPage({super.key, required this.document, required this.groupID});
+  GroupsPage({super.key, required this.document, required this.groupID, required this.imagePicker});
+  final ImagePicker imagePicker;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class GroupsPage extends StatelessWidget {
             onPressed: () {
               Get.to(() => 
                 GroupInfoPage(
-                  groupID: groupID,
+                  groupID: groupID, imagePicker: imagePicker,
                 ), transition: Transition.rightToLeftWithFade
               );
             }
@@ -66,9 +68,7 @@ class GroupsPage extends StatelessWidget {
                       return (snapshot.connectionState ==
                               ConnectionState.waiting)
                           ? const Center(
-                              child: CircularProgressIndicator(
-                                color: CCColors.primaryColor,
-                              ),
+
                             )
                           : ListView.builder(
                               shrinkWrap: true,
@@ -106,6 +106,7 @@ class GroupsPage extends StatelessWidget {
                     Expanded(
                       // ------ MESSAGE TEXTFIELD ------ //
                       child: TextField(
+                          key: Key("GroupMessageTextField"),
                           controller: groupsController.chatTextController,
                           focusNode: groupsController.focusnode,
                           maxLines: null,
@@ -132,9 +133,6 @@ class GroupsPage extends StatelessWidget {
                                       context: context,
                                       builder: (context) {
                                         return const Center(
-                                          child: CircularProgressIndicator(
-                                            color: CCColors.primaryColor,
-                                          ),
                                         );
                                       });
                                   // always retrieve the most updated member list
@@ -159,6 +157,7 @@ class GroupsPage extends StatelessWidget {
                           color: CCColors.primaryColor, shape: BoxShape.circle),
                       margin: const EdgeInsets.only(left: 5.0),
                       child: IconButton(
+                        key: Key("GroupSendMessageButton"),
                         onPressed: () async {
                           if (groupsController.chatTextController.text
                               .trim()

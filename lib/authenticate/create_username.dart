@@ -5,6 +5,7 @@ import 'package:culinary_compass/utils/constants/misc.dart';
 import 'package:culinary_compass/utils/controllers/usernamecreation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateUsernamePage extends StatelessWidget {
   
@@ -51,6 +52,7 @@ class CreateUsernamePage extends StatelessWidget {
 
                         // Username TextForm Field
                         TextFormField(
+                          key: Key("CreateUsername"),
                           controller: usernameController.usernameTextField,
                           decoration: textInputDecoration.copyWith(hintText: "Username"),
                           validator: (typedUsername) {
@@ -77,7 +79,7 @@ class CreateUsernamePage extends StatelessWidget {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 await usernameController.finalUpdateUsernameToFirebase();
-                                Get.off(() => const NavigationMenu());
+                                Get.off(() => NavigationMenu(imagePicker: ImagePicker()));
                                 // clear controller
                               }
                             },

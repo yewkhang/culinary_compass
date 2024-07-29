@@ -16,10 +16,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 // ----------------------- DEFAULT SOCIAL PAGE ----------------------- //
 class SocialsPage extends StatelessWidget {
-  SocialsPage({super.key});
+  final ImagePicker imagePicker;
+  SocialsPage({super.key, required this.imagePicker});
 
   final ProfileController profileController = Get.put(ProfileController());
   final GroupsController groupsController = Get.put(GroupsController());
@@ -54,7 +56,7 @@ class SocialsPage extends StatelessWidget {
           body: TabBarView(
             children: [
               FriendsList(),
-              GroupsList(),
+              GroupsList(imagePicker: imagePicker),
             ],
           ),
           floatingActionButton: ElevatedButton(
@@ -150,6 +152,7 @@ class FriendsList extends StatelessWidget {
                   transition: Transition.rightToLeftWithFade);
             },
             trailing: IconButton(
+              key: Key("DeleteFriend${profileController.user.value.friendsUsername.elementAt(index)}"),
               icon: const Icon(Icons.delete),
               onPressed: () async {
                 return CCDefaultDialogTheme.defaultGetxDialog(
@@ -161,7 +164,7 @@ class FriendsList extends StatelessWidget {
                       .elementAt(index));
                   Get.back();
                   CCSnackBarTheme.defaultSuccessSnackBar('Friend Removed!');
-                });
+                }, Key("RemoveFriendButton"));
               },
             ),
           );
@@ -174,10 +177,11 @@ class FriendsList extends StatelessWidget {
 
 // ----------------------- GROUPS TAB ----------------------- //
 class GroupsList extends StatelessWidget {
-  GroupsList({super.key});
+  GroupsList({super.key, required this.imagePicker});
 
   final GroupsController groupsController = GroupsController.instance;
   final ProfileController profileController = ProfileController.instance;
+  final ImagePicker imagePicker;
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +230,7 @@ class GroupsList extends StatelessWidget {
                                       Get.back();
                                       CCSnackBarTheme.defaultSuccessSnackBar(
                                           'Left Group!');
-                                    }))
+                                    }, Key("LeaveGroupButton")))
                           ]),
                       child: ListTile(
                         title: Text(data['Name']),
@@ -235,6 +239,7 @@ class GroupsList extends StatelessWidget {
                               () => GroupsPage(
                                     document: data,
                                     groupID: groupID,
+                                    imagePicker: imagePicker,
                                   ),
                               transition: Transition.rightToLeftWithFade);
                         },
@@ -267,6 +272,7 @@ class AddFriendsDialog extends StatelessWidget {
             const Text("Add Friends",
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
             TextFormField(
+              key: const Key("AddFriendsTextField"),
               controller: friendsDialogController.friendUIDTextField,
               decoration: textFieldInputDecoration(
                   hintText: "Enter UID here", prefixIcon: Icons.person),
@@ -340,6 +346,7 @@ class CreateGroupDialog extends StatelessWidget {
           Form(
             key: _formKey,
             child: TextFormField(
+              key: Key("GroupName"),
               controller: groupNameController,
               decoration: textFieldInputDecoration(
                   hintText: 'Group Name', prefixIcon: Icons.people_alt),
@@ -375,6 +382,7 @@ class CreateGroupDialog extends StatelessWidget {
               controller: userSearchController,
               builder: (context, controller, focusNode) {
                 return TextField(
+                    key: Key("GroupEnterUsername"),
                     controller: controller,
                     focusNode: focusNode,
                     decoration: textFieldInputDecoration(
@@ -382,6 +390,7 @@ class CreateGroupDialog extends StatelessWidget {
               },
               itemBuilder: (BuildContext context, String itemData) {
                 return ListTile(
+                  key: Key("GroupEnterUsernameListTile$itemData"),
                   title: Text(itemData),
                   tileColor: Colors.white,
                 );
@@ -403,6 +412,7 @@ class CreateGroupDialog extends StatelessWidget {
               }),
           const SizedBox(height: 20.0),
           ElevatedButton(
+            key: Key("CreateGroupButton"),
             style: CCElevatedTextButtonTheme.lightInputButtonStyle,
             onPressed: () async {
               if (_formKey.currentState!.validate()) {

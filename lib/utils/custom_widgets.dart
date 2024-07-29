@@ -217,6 +217,7 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: Key("$username $message"),
       padding: const EdgeInsets.all(CCSizes.spaceBtwItems),
       decoration: BoxDecoration(
         color: isCurrentUser ? CCColors.secondaryColor : Colors.grey.shade200,

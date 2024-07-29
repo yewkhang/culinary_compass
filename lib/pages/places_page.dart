@@ -37,6 +37,7 @@ class PlacesPage extends StatelessWidget {
                   left: CCSizes.defaultSpace,
                   right: CCSizes.defaultSpace),
               child: TextField(
+                  key: Key("DishNamePlacesToTry"),
                   controller: placesController.nameTextField,
                   decoration: textFieldInputDecoration(
                       hintText: 'Dish Name', prefixIcon: Icons.local_dining)),
@@ -48,6 +49,7 @@ class PlacesPage extends StatelessWidget {
                   left: CCSizes.defaultSpace,
                   right: CCSizes.defaultSpace),
               child: TextField(
+                key: Key("DishLocationPlacesToTry"),
                 controller: locationController.locationSearch,
                 onChanged: (String value) {
                   if (value.isNotEmpty) {
@@ -86,6 +88,7 @@ class PlacesPage extends StatelessWidget {
                                 : 0,
                             itemBuilder: (context, index) {
                               return ListTile(
+                                key: Key("ListTilePlacesToTry$index"),
                                 title: Text(locationController.data[index]
                                         ['description']
                                     .toString()),
@@ -114,6 +117,7 @@ class PlacesPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(CCSizes.defaultSpace),
               child: TextField(
+                  key: Key("CommentsPlacesToTry"),
                   controller: placesController.descriptionTextField,
                   decoration: textFieldInputDecoration(
                       hintText: 'Comments', prefixIcon: Icons.notes)),

@@ -3,6 +3,7 @@ import 'package:culinary_compass/services/auth.dart';
 import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/loading.dart';
 import 'package:culinary_compass/utils/constants/misc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
@@ -17,7 +18,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   // to access auth services
-  final AuthService _auth = AuthService();
+  final AuthService _auth = AuthService(auth: FirebaseAuth.instance);
   // to help keep track of state of form, can access validation techniques
   final _formKey = GlobalKey<FormState>();
   // loading state
@@ -62,6 +63,7 @@ class _SignInState extends State<SignIn> {
 
                         // Email TextForm Field
                         TextFormField(
+                          key: const Key("EmailField"),
                           initialValue: email,
                           decoration: textInputDecoration.copyWith(hintText: "Email"),
                           // returns null --> means is valid
@@ -75,6 +77,7 @@ class _SignInState extends State<SignIn> {
                         // Password TextFormField
                         const SizedBox(height: 10.0),
                         TextFormField(
+                          key: const Key("PasswordField"),
                           initialValue: password,
                           decoration: textInputDecoration.copyWith(hintText: "Password"),
                           obscureText: true,

@@ -4,16 +4,19 @@ import 'package:culinary_compass/utils/constants/colors.dart';
 import 'package:culinary_compass/utils/constants/misc.dart';
 import 'package:culinary_compass/utils/controllers/profile_controller.dart';
 import 'package:culinary_compass/wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SettingsPage extends StatelessWidget {
 
-  final AuthService _auth = AuthService();
+  final AuthService _auth = AuthService(auth: FirebaseAuth.instance);
   final ProfileController profileController = Get.put(ProfileController());
+  final ImagePicker imagePicker;
 
-  SettingsPage({super.key});
+  SettingsPage({super.key, required this.imagePicker});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +71,7 @@ class SettingsPage extends StatelessWidget {
                 color: Colors.red,
                 onTap: () async {
                   await _auth.signOut();
-                  Get.offAll(() => Wrapper(), transition: Transition.rightToLeftWithFade); // also removes ALL Get Controllers
+                  Get.offAll(() => Wrapper(imagePicker: imagePicker), transition: Transition.rightToLeftWithFade); // also removes ALL Get Controllers
                 }
               )
             ],

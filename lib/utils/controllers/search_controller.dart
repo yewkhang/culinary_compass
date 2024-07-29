@@ -11,6 +11,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:culinary_compass/models/tags_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SearchFieldController extends GetxController {
   static SearchFieldController get instance => Get.find();
@@ -70,9 +71,6 @@ class SearchFieldController extends GetxController {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             // Retrieving from Firestore
-            child: CircularProgressIndicator(
-              color: CCColors.primaryColor,
-            ),
           );
         } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return Column(
@@ -138,6 +136,7 @@ class SearchFieldController extends GetxController {
                                           middleText:
                                               'Are you sure you want to delete this log?',
                                           confirm: ElevatedButton(
+                                              key: Key("DeleteLog"),
                                               style: CCElevatedTextButtonTheme
                                                   .lightInputButtonStyle,
                                               onPressed: () {
@@ -203,6 +202,7 @@ class SearchFieldController extends GetxController {
                                     tags: data['Tags']
                                         .whereType<String>()
                                         .toList(),
+                                    imagePicker: ImagePicker()
                                   ),
                             transition: Transition.rightToLeftWithFade);
                       },
